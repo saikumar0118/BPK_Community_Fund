@@ -1,0 +1,206 @@
+/* ==============================================================================
+   PBK COMMUNITY CHANDA FUND — ADMIN DASHBOARD STYLESHEET (style.css)
+   ==============================================================================
+   Provides specialized layout rules, responsive grids, custom scrollbars,
+   modal transitions, high-resolution printable receipt templates, and
+   data table styling for the Administrator Portal.
+   ============================================================================== */
+
+/* ============================================================================== */
+/* SECTION 1: GLOBAL RESET, TYPOGRAPHY, SCROLLBARS & UI BASE UTILITIES           */
+/* ============================================================================== */
+body{font-family:Inter,sans-serif}
+::-webkit-scrollbar{width:7px;height:7px}::-webkit-scrollbar-thumb{background:rgba(180,83,9,.35);border-radius:5px}
+.view{display:none}.view.active{display:block}.modal{display:none}.modal.open{display:flex}
+.sidebar-link.active{background:#f97316;color:#fff;box-shadow:0 4px 12px rgba(249,115,22,.22)}
+.dark .sidebar-link:not(.active):hover{background:#1f2937}.sidebar-link:not(.active):hover{background:#fff7ed}
+.table-wrap{overflow:auto}.toast{animation:toast .25s ease-out}@keyframes toast{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.delete-action{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;padding:.4rem .65rem;border-radius:.55rem;background:rgba(225,29,72,.10);border:1px solid rgba(225,29,72,.28);color:#fb7185;font-size:.75rem;font-weight:800;line-height:1;cursor:pointer;transition:.18s}
+.delete-action:hover{background:rgba(225,29,72,.18);border-color:#ef4444;color:#fda4af}
+.delete-action svg{width:14px;height:14px;flex:0 0 auto}
+
+.field { width: 100%; padding: 0.625rem 0.875rem; border-radius: 0.75rem; border: 1px solid rgba(156, 163, 175, 0.4); background: transparent; outline: none; transition: border-color 0.2s; }
+.field:focus { border-color: #b45309; }
+.label { display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #6b7280; margin-bottom: 0.375rem; }
+.saveBtn { margin-top: 1rem; width: 100%; background: #b45309; color: white; font-weight: 700; padding: 0.625rem 1rem; border-radius: 0.75rem; transition: background 0.2s; cursor: pointer; }
+.saveBtn:hover { background: #963100; }
+select { background-color: #ffffff; color: #111827; }
+.dark select { background-color: #111827; color: #f3f4f6; border-color: #374151; }
+select option { background-color: #ffffff; color: #111827; }
+.dark select option { background-color: #111827; color: #f3f4f6; }
+
+/* ============================================================================== */
+/* SECTION 2: CONTRIBUTION ANALYTICS, KPI CARDS & DATA TABLE STYLING             */
+/* ============================================================================== */
+.contrib-page .contrib-kpi{background:linear-gradient(145deg,rgba(17,24,39,.96),rgba(15,23,42,.96));border:1px solid rgba(71,85,105,.38);box-shadow:0 10px 28px rgba(0,0,0,.08)}
+.contrib-page .contrib-panel{background:linear-gradient(145deg,rgba(17,24,39,.98),rgba(15,23,42,.96));border:1px solid rgba(71,85,105,.38)}
+.contrib-page .contrib-kpi-icon{width:2.75rem;height:2.75rem;border-radius:.85rem;display:flex;align-items:center;justify-content:center}
+.contrib-page .contrib-filter{background:transparent;border:1px solid rgba(156,163,175,.28);border-radius:.8rem;padding:.68rem .85rem;outline:none;width:100%;transition:border-color .2s,box-shadow .2s}
+.contrib-page .contrib-filter:focus{border-color:#b45309;box-shadow:0 0 0 3px rgba(180,83,9,.12)}
+.contrib-page .contrib-table th{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-weight:800;white-space:nowrap}
+.contrib-page .contrib-table td{padding:.8rem .75rem;border-bottom:1px solid rgba(71,85,105,.25);vertical-align:middle}
+.contrib-page .contrib-table tbody tr{transition:background .18s}
+.contrib-page .contrib-table tbody tr:hover{background:rgba(148,163,184,.06)}
+.contrib-page .contrib-action{width:2rem;height:2rem;border:1px solid rgba(71,85,105,.45);border-radius:.65rem;display:inline-flex;align-items:center;justify-content:center;transition:.18s}
+.contrib-page .contrib-action:hover{border-color:#b45309;color:#f59e0b;background:rgba(180,83,9,.10)}
+.contrib-page .contrib-action.danger:hover{border-color:#ef4444;color:#f87171;background:rgba(239,68,68,.08)}
+.contrib-page .contrib-method{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;font-weight:700;color:#cbd5e1}
+.contrib-page .contrib-scroll{overflow-x:auto}
+.contrib-page .contrib-chart-wrap{position:relative;height:280px}
+.contrib-page .contrib-donut-wrap{position:relative;height:230px}
+.contrib-page .contrib-mini-scroll{max-height:255px;overflow:auto}
+.contrib-page .contrib-year{min-width:170px}
+.contrib-page .contrib-pagination button{min-width:2rem;height:2rem;border-radius:.6rem;border:1px solid rgba(71,85,105,.45);font-size:.75rem;font-weight:800}
+.contrib-page .contrib-pagination button.active{background:#f97316;color:#fff;border-color:#f97316}
+.contrib-page .contrib-pagination button:hover:not(.active){background:rgba(148,163,184,.08)}
+@media (max-width:900px){.contrib-page .contrib-chart-wrap{height:240px}.contrib-page .contrib-donut-wrap{height:210px}}
+
+/* ============================================================================== */
+/* SECTION 3: PRINTABLE DIGITAL RECEIPT VOUCHER & HIGH-RES PDF EXPORT            */
+/* ============================================================================== */
+.pbk-receipt-modal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}
+.pbk-receipt-modal.open{display:flex}
+.pbk-receipt-modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(5px)}
+.pbk-receipt-modal-card{position:relative;z-index:2;width:min(98vw,1200px);height:min(96vh,1600px);background:#0b1220;border:1px solid rgba(255,255,255,.12);border-radius:18px;overflow:hidden;box-shadow:0 25px 80px rgba(0,0,0,.45);display:flex;flex-direction:column}
+.pbk-receipt-toolbar{height:64px;flex:0 0 64px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#111827;color:#fff;border-bottom:1px solid rgba(255,255,255,.1)}
+.pbk-receipt-preview-wrap{flex:1;overflow:auto;background:#202020;padding:26px;display:flex;justify-content:center;align-items:flex-start}
+.pbk-receipt-sheet{position:relative;width:1024px;height:1536px;flex:0 0 1024px;background:#fff;color:#111;overflow:hidden;font-family:Arial,Helvetica,sans-serif;box-sizing:border-box;border-radius:22px;box-shadow:0 14px 45px rgba(0,0,0,.35);padding:34px 34px 28px}
+.pbk-receipt-sheet::before{content:"";position:absolute;inset:0;border:4px solid #f47a00;border-radius:28px;pointer-events:none}
+.pbk-receipt-sheet::after{content:"";position:absolute;left:0;right:0;top:0;height:22px;background:linear-gradient(130deg,#f59e0b 0 13%,#151515 13% 29%,#f59e0b 29% 43%,#fff 43% 72%,#f59e0b 72% 86%,#151515 86% 100%);opacity:.98;border-radius:26px 26px 0 0;pointer-events:none}
+.pbk-r-head{position:relative;z-index:1;height:235px;display:grid;grid-template-columns:205px 1fr 250px;gap:24px;align-items:start;padding-top:6px}
+.pbk-r-logo{width:202px;height:213px;object-fit:cover;border-radius:17px;border:3px solid #f59e0b;box-shadow:0 3px 10px rgba(0,0,0,.18)}
+.pbk-r-brand{padding-top:14px;text-align:center}
+.pbk-r-brand-line{height:4px;width:340px;margin:0 auto 10px;background:linear-gradient(90deg,transparent,#111,transparent);position:relative}
+.pbk-r-brand-crown{font-size:38px;color:#a94b0b;line-height:28px;margin-bottom:2px}
+.pbk-r-brand-title{font-size:50px;line-height:1;font-weight:900;letter-spacing:-2px;background:linear-gradient(90deg,#ef6c00,#111,#ef6c00);-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+.pbk-r-motto{font-size:17px;font-weight:900;letter-spacing:7px;margin-top:8px;white-space:nowrap}
+.pbk-r-fund{display:inline-block;margin-top:10px;padding:8px 36px;border-radius:30px;background:#111;color:#f59e0b;border:3px solid #d97706;font-size:18px;font-weight:900;letter-spacing:4px;white-space:nowrap}
+.pbk-r-tag{font-size:16px;font-weight:900;letter-spacing:3px;margin-top:9px}
+.pbk-r-contact{padding-top:19px;font-size:14px;line-height:1.5}
+.pbk-r-contact-row{display:flex;gap:10px;margin:5px 0;align-items:flex-start}
+.pbk-r-contact-icon{color:#e56700;font-size:22px;width:22px;text-align:center;line-height:1.1}
+.pbk-r-contact strong{font-size:15px}
+.pbk-r-title{position:relative;z-index:1;height:103px;border:3px solid #e86d00;border-radius:20px;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;margin:4px 0 18px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
+.pbk-r-title-main{font-family:Georgia,'Times New Roman',serif;font-size:43px;font-weight:700;letter-spacing:1px;line-height:1}
+.pbk-r-title-sub{font-size:16px;letter-spacing:5px;font-weight:700;margin-top:8px}
+.pbk-r-info{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.pbk-r-info-card{height:93px;background:linear-gradient(135deg,#fbfaf8,#f2f0ec);border-radius:17px;padding:15px 22px;display:flex;align-items:center;gap:18px}
+.pbk-r-info-icon{font-size:37px;color:#222;width:46px;text-align:center}
+.pbk-r-label{font-size:16px;color:#555;margin-bottom:3px}
+.pbk-r-value{font-size:25px;font-weight:900;color:#9d3f09}
+.pbk-r-date{font-size:23px;font-weight:900}
+.pbk-r-small{font-size:15px;color:#444;margin-top:2px}
+.pbk-r-member{background:linear-gradient(135deg,#fbfaf8,#f0efeb);border-radius:20px;min-height:185px;padding:24px 28px;display:grid;grid-template-columns:1.1fr 1fr;gap:25px;margin-bottom:18px}
+.pbk-r-member-left{display:grid;grid-template-columns:82px 1fr;gap:18px;align-items:start}
+.pbk-r-avatar{width:70px;height:70px;border-radius:50%;background:#b84b0a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:39px}
+.pbk-r-member-title{font-size:20px;font-weight:900;margin-bottom:6px}
+.pbk-r-name{font-size:30px;font-weight:900;margin-bottom:7px}
+.pbk-r-lines{font-size:18px;line-height:1.65;color:#333}
+.pbk-r-member-right{border-left:1px solid #cfcfcf;padding-left:30px;font-size:18px;line-height:1.9;color:#444}
+.pbk-r-details{border:1px solid #d6d3d0;border-radius:20px;overflow:hidden;margin-bottom:18px;background:#fff}
+.pbk-r-details-head{height:62px;background:linear-gradient(90deg,#9c3b08,#e26b00);color:#fff;display:flex;align-items:center;padding:0 28px;font-size:22px;font-weight:900}
+.pbk-r-details-row{display:grid;grid-template-columns:36% 64%;min-height:47px;align-items:center;font-size:18px;padding:0 32px;border-bottom:1px solid #e5e2de}
+.pbk-r-details-row:nth-child(odd){background:#f4f1ed}
+.pbk-r-details-row:last-child{border-bottom:0}
+.pbk-r-details-label{color:#444}
+.pbk-r-details-value{font-weight:600}
+.pbk-r-fund-name{font-size:23px;font-weight:900;color:#b04b08}
+.pbk-r-amount{font-size:31px;font-weight:900}
+.pbk-r-status{display:inline-flex;align-items:center;gap:8px;padding:6px 15px;border-radius:20px;background:#08a74f;color:#fff;font-size:16px;font-weight:900}
+.pbk-r-footer{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:center;padding:4px 18px 0;min-height:215px}
+.pbk-r-thanks{text-align:left}
+.pbk-r-thanks-script{font-family:'Brush Script MT','Segoe Script',cursive;font-size:50px;color:#ad430b;line-height:1}
+.pbk-r-thanks-text{font-size:15px;line-height:1.45;margin-top:8px}
+.pbk-r-seal{display:flex;justify-content:center;align-items:center}
+.pbk-r-seal img{width:190px;height:190px;object-fit:cover;border-radius:50%;mix-blend-mode:multiply}
+.pbk-r-sign{text-align:center}
+.pbk-r-sign-script{font-family:'Brush Script MT','Segoe Script',cursive;font-size:45px;line-height:1;margin-bottom:6px}
+.pbk-r-sign-line{height:2px;background:#111;width:200px;margin:0 auto 8px}
+.pbk-r-sign strong{font-size:17px}
+.pbk-r-sign div{font-size:15px;line-height:1.4}
+.pbk-r-bottom{border-top:2px solid #d8751d;margin:4px 0 0;height:48px;display:flex;align-items:end;justify-content:center;font-weight:900;letter-spacing:7px;font-size:15px;position:relative}
+.pbk-r-bottom::before{content:"♛";position:absolute;top:-25px;font-size:28px;color:#b34a0a;background:#fff;padding:0 10px}
+@media (max-width: 900px){.pbk-r-brand-title{font-size:38px}.pbk-r-head{grid-template-columns:160px 1fr 190px}.pbk-r-logo{width:160px;height:168px}.pbk-receipt-sheet{transform-origin:top center}}
+@media print{
+  @page{size:A4 portrait;margin:0}
+  html,body{width:210mm;height:297mm;margin:0!important;padding:0!important;background:#fff!important}
+  body.receipt-printing *{visibility:hidden!important}
+  body.receipt-printing #pbkReceiptPrintRoot,
+  body.receipt-printing #pbkReceiptPrintRoot *{visibility:visible!important}
+  body.receipt-printing #pbkReceiptPrintRoot{
+    position:absolute!important;
+    left:6mm!important;
+    top:0!important;
+    width:198mm!important;
+    height:297mm!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:hidden!important;
+  }
+  body.receipt-printing .pbk-receipt-sheet{
+    width:1024px!important;
+    height:1536px!important;
+    transform:scale(0.73046875)!important;
+    transform-origin:top left!important;
+    box-shadow:none!important;
+    border-radius:0!important;
+    margin:0!important;
+  }
+}
+
+/* ============================================================================== */
+/* SECTION 4: RECEIPT MANAGEMENT DASHBOARD, SEARCH FILTERS & SUMMARY PILLS       */
+/* ============================================================================== */
+.pbk-rm-page{color:#f8fafc}
+.pbk-rm-page .pbk-rm-header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:18px}
+.pbk-rm-page .pbk-rm-title-row{display:flex;align-items:center;gap:16px}
+.pbk-rm-page .pbk-rm-title-icon{width:58px;height:58px;border:2px solid #f97316;color:#f97316;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.pbk-rm-page .pbk-rm-title{font-size:32px;line-height:1.05;font-weight:900;letter-spacing:-.8px}
+.pbk-rm-page .pbk-rm-sub{font-size:14px;color:#94a3b8;margin-top:5px}
+.pbk-rm-page .pbk-rm-head-actions{display:flex;align-items:center;gap:10px;flex-wrap:nowrap}
+.pbk-rm-page .pbk-rm-control{height:48px;border:1px solid #26364b;background:#0d1727;border-radius:12px;color:#e5e7eb;padding:0 14px;outline:none}
+.pbk-rm-page .pbk-rm-control:focus{border-color:#f97316;box-shadow:0 0 0 3px rgba(249,115,22,.12)}
+.pbk-rm-page .pbk-rm-year{min-width:185px}
+.pbk-rm-page .pbk-rm-search-top{width:208px}
+.pbk-rm-page .pbk-rm-btn{height:48px;border-radius:12px;padding:0 16px;border:1px solid #26364b;background:#0d1727;color:#fff;font-weight:800;display:inline-flex;align-items:center;gap:9px;cursor:pointer;white-space:nowrap}
+.pbk-rm-page .pbk-rm-btn:hover{border-color:#f97316;background:#111e31}
+.pbk-rm-page .pbk-rm-btn.primary{background:#ff6b00;border-color:#ff6b00}
+.pbk-rm-page .pbk-rm-btn.primary:hover{background:#ea5d00}
+.pbk-rm-page .pbk-rm-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:14px}
+.pbk-rm-page .pbk-rm-kpi{min-height:92px;border:1px solid #23334a;border-radius:13px;background:linear-gradient(145deg,#0d1828,#0a1423);padding:15px;display:flex;align-items:center;gap:14px;box-shadow:0 10px 28px rgba(0,0,0,.16)}
+.pbk-rm-page .pbk-rm-kpi-icon{width:58px;height:58px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:0 0 58px}
+.pbk-rm-page .pbk-rm-kpi-icon.green{background:#00d084;color:white}.pbk-rm-page .pbk-rm-kpi-icon.blue{background:#0786ff;color:white}.pbk-rm-page .pbk-rm-kpi-icon.amber{background:#ffae1a;color:white}.pbk-rm-page .pbk-rm-kpi-icon.red{background:#ff4b55;color:white}
+.pbk-rm-page .pbk-rm-kpi-label{font-size:13px;color:#cbd5e1;margin-bottom:4px}.pbk-rm-page .pbk-rm-kpi-value{font-size:26px;font-weight:900;line-height:1}.pbk-rm-page .pbk-rm-kpi-side{margin-left:auto;text-align:right;font-size:12px;color:#cbd5e1;white-space:nowrap}.pbk-rm-page .pbk-rm-up{color:#00d084;font-size:14px;font-weight:900}
+.pbk-rm-page .pbk-rm-panel{border:1px solid #23334a;border-radius:13px;background:linear-gradient(145deg,#0d1828,#0a1423);overflow:hidden}
+.pbk-rm-page .pbk-rm-analytics{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(330px,1fr);gap:14px;margin-bottom:14px}
+.pbk-rm-page .pbk-rm-panel-head{height:56px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(71,85,105,.34)}
+.pbk-rm-page .pbk-rm-panel-title{font-size:17px;font-weight:900;display:flex;align-items:center;gap:10px}.pbk-rm-page .pbk-rm-panel-title i{color:#0793ff}
+.pbk-rm-page .pbk-rm-legend{display:flex;gap:18px;align-items:center;font-size:12px;color:#cbd5e1;flex-wrap:wrap}.pbk-rm-page .pbk-rm-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}
+.pbk-rm-page .pbk-rm-chart-box{height:205px;padding:8px 12px 12px}.pbk-rm-page .pbk-rm-chart-box canvas{width:100%!important;height:100%!important}
+.pbk-rm-page .pbk-rm-status-body{height:205px;padding:12px 18px;display:grid;grid-template-columns:190px 1fr;align-items:center;gap:12px}
+.pbk-rm-page .pbk-rm-donut{height:180px}.pbk-rm-page .pbk-rm-donut canvas{width:100%!important;height:100%!important}
+.pbk-rm-page .pbk-rm-status-list{display:flex;flex-direction:column;gap:17px}.pbk-rm-page .pbk-rm-status-row{display:grid;grid-template-columns:18px 1fr auto auto;gap:10px;align-items:center;font-size:13px}.pbk-rm-page .pbk-rm-status-name{font-weight:800}.pbk-rm-page .pbk-rm-status-pct{color:#cbd5e1}.pbk-rm-page .pbk-rm-status-count{font-weight:900}
+.pbk-rm-page .pbk-rm-filters{padding:8px 10px;display:grid;grid-template-columns:1.45fr .85fr .95fr .95fr .85fr auto;gap:10px;margin-bottom:10px}
+.pbk-rm-page .pbk-rm-filter{height:42px;border:1px solid #26364b;background:#0d1727;border-radius:10px;color:#e5e7eb;padding:0 12px;outline:none;min-width:0}.pbk-rm-page .pbk-rm-filter:focus{border-color:#f97316}
+.pbk-rm-page .pbk-rm-clear{height:42px;border:1px solid #26364b;background:#0d1727;color:#e5e7eb;border-radius:10px;padding:0 14px;font-weight:800;cursor:pointer}
+.pbk-rm-page .pbk-rm-download{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-color:#f97316;color:#fb923c}.pbk-rm-page .pbk-rm-download:hover{background:rgba(249,115,22,.10);border-color:#fb923c;color:#fdba74}
+.pbk-rm-page .pbk-rm-pending{margin:0 0 10px;border:1px solid #d66b09;border-radius:11px;background:linear-gradient(90deg,rgba(109,45,5,.9),rgba(55,25,9,.85));padding:10px 15px;display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:64px;box-sizing:border-box;position:relative;z-index:1}
+.pbk-rm-page .pbk-rm-pending-left{display:flex;align-items:center;gap:11px;min-width:0}.pbk-rm-page .pbk-rm-pending-icon{color:#ffad21;flex:0 0 auto}.pbk-rm-page .pbk-rm-pending-title{font-weight:900;line-height:1.2}.pbk-rm-page .pbk-rm-pending-sub{font-size:11px;color:#d6d3d1;margin-top:2px}.pbk-rm-page .pbk-rm-pending .pbk-rm-btn{flex:0 0 auto}
+@media(max-width:760px){.pbk-rm-page .pbk-rm-pending{align-items:flex-start;flex-direction:column}.pbk-rm-page .pbk-rm-pending .pbk-rm-btn{width:100%;justify-content:center}}
+.pbk-rm-page .pbk-rm-table-wrap{overflow:auto}.pbk-rm-page .pbk-rm-table{width:100%;min-width:1120px;border-collapse:collapse}.pbk-rm-page .pbk-rm-table th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#7d8da6;font-weight:900;text-align:left;padding:9px 10px;border-bottom:1px solid #23334a;white-space:nowrap}.pbk-rm-page .pbk-rm-table td{padding:9px 10px;border-bottom:1px solid rgba(35,51,74,.7);font-size:12px;vertical-align:middle;white-space:nowrap}.pbk-rm-page .pbk-rm-table tbody tr:hover{background:rgba(148,163,184,.035)}
+.pbk-rm-page .pbk-rm-check{width:15px;height:15px;accent-color:#f97316}.pbk-rm-page .pbk-rm-id{font-weight:900}.pbk-rm-page .pbk-rm-amount{font-weight:900}.pbk-rm-page .pbk-rm-action svg{display:block;flex:0 0 auto}.pbk-rm-page .pbk-rm-action{line-height:0}
+.pbk-rm-page .pbk-rm-action{width:36px;height:28px;border:1px solid #2a3b53;background:#0c1727;border-radius:8px;color:#e5e7eb;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;margin-right:5px}.pbk-rm-page .pbk-rm-action:hover{border-color:#f97316;color:#f59e0b}.pbk-rm-page .pbk-rm-action.verify{color:#22c55e;border-color:#12653d}
+.pbk-rm-page .pbk-rm-badge{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;font-size:10px;font-weight:900}.pbk-rm-page .pbk-rm-badge.done{background:rgba(0,208,132,.13);color:#00d084}.pbk-rm-page .pbk-rm-badge.pending{background:rgba(255,174,26,.13);color:#ffae1a}.pbk-rm-page .pbk-rm-badge.rejected{background:rgba(255,75,85,.13);color:#ff6b73}
+.pbk-rm-page .pbk-rm-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;color:#aab7c9;font-size:12px;flex-wrap:wrap;gap:12px;background:rgba(13,23,39,0.6);border-top:1px solid #1f2f45;border-radius:0 0 12px 12px;}
+.pbk-rm-summary-pills{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.pbk-summary-pill{display:inline-flex;align-items:center;gap:7px;padding:6px 13px;border-radius:8px;font-size:12px;font-weight:800;transition:all 0.2s;}
+.pbk-summary-pill.collected{background:rgba(6,78,59,0.45);border:1px solid rgba(16,185,129,0.4);color:#6ee7b7;}
+.pbk-summary-pill.pending{background:rgba(120,53,15,0.45);border:1px solid rgba(245,158,11,0.4);color:#fcd34d;}
+.pbk-summary-pill.rejected{background:rgba(136,19,55,0.45);border:1px solid rgba(244,63,94,0.4);color:#fda4af;}
+.pbk-summary-pill.total{background:rgba(30,41,59,0.85);border:1px solid rgba(71,85,105,0.55);color:#f8fafc;}
+.pbk-summary-dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.pbk-rm-page .pbk-rm-pages{display:flex;gap:6px;align-items:center}.pbk-rm-page .pbk-rm-pagebtn{min-width:38px;height:38px;border:1px solid #26364b;background:#0d1727;border-radius:9px;color:#e5e7eb;font-weight:900;cursor:pointer}.pbk-rm-page .pbk-rm-pagebtn.active{background:#ff6b00;border-color:#ff6b00;color:white}
+@media(max-width:1200px){.pbk-rm-page .pbk-rm-kpis{grid-template-columns:repeat(2,1fr)}.pbk-rm-page .pbk-rm-analytics{grid-template-columns:1fr}.pbk-rm-page .pbk-rm-filters{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:760px){.pbk-rm-page .pbk-rm-header{align-items:flex-start;flex-direction:column}.pbk-rm-page .pbk-rm-head-actions{width:100%}.pbk-rm-page .pbk-rm-control,.pbk-rm-page .pbk-rm-btn{flex:1}.pbk-rm-page .pbk-rm-kpis{grid-template-columns:1fr}.pbk-rm-page .pbk-rm-filters{grid-template-columns:1fr}.pbk-rm-page .pbk-rm-status-body{grid-template-columns:1fr;height:auto}.pbk-rm-page .pbk-rm-donut{height:190px}}
+
+/* Reports use Export instead of Print. */

@@ -1,0 +1,251 @@
+
+/* ==============================================================================
+   PBK COMMUNITY CHANDA FUND — AUTHENTICATION PORTAL STYLESHEET (style.css)
+   ==============================================================================
+   Provides the CSS design system, color variables, theme token mappings,
+   custom scrollbars, animations, and responsive layouts for the
+   Home, Login, Registration, and Password Reset portals.
+   ============================================================================== */
+
+/* ============================================================================== */
+/* SECTION 1: CSS CUSTOM VARIABLES, COLOR PALETTES & THEME TOKENS                */
+/* ============================================================================== */
+        :root {
+            /* Dashboard light palette */
+            --primary-brown: #b45309;
+            --primary-orange: #eea220;
+            --primary-hover: #963100;
+            --bg-light: #f3f4f6;
+            --bg-white: #ffffff;
+            --card-beige: #f9fafb;
+            --border-beige: #e5e7eb;
+            --text-dark: #111827;
+            --text-light: #ffffff;
+            --text-gray: #6b7280;
+            --shadow-header: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-element: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        html.dark {
+            /* Dashboard dark palette */
+            --bg-light: #030712;
+            --bg-white: #111827;
+            --card-beige: #1f2937;
+            --border-beige: #1f2937;
+            --text-dark: #f3f4f6;
+            --text-gray: #9ca3af;
+            --shadow-header: 0 4px 6px rgba(0, 0, 0, 0.35);
+            --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.25);
+            --shadow-element: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+/* ============================================================================== */
+/* SECTION 2: GLOBAL BODY, TRANSITIONS, SCROLLBARS & FADE-IN ANIMATIONS           */
+/* ============================================================================== */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light) !important;
+            color: var(--text-dark) !important;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .theme-transition, header, div, input, button, form, section {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-light);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-beige);
+            border-radius: 4px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+/* ============================================================================== */
+/* SECTION 3: TOP NAVIGATION BAR, BRAND LOGO & THEME SWITCHER BUTTON              */
+/* ============================================================================== */
+        header.pbk-top-header {
+            height: 70px;
+            min-height: 70px;
+            width: 100%;
+            background: linear-gradient(90deg, #78350f 0%, #963100 50%, #7c2d12 100%) !important;
+            border-bottom: 0 !important;
+            box-shadow: var(--shadow-header) !important;
+        }
+
+        html.dark header.pbk-top-header {
+            background: linear-gradient(90deg, #111827 0%, #451a03 50%, #111827 100%) !important;
+        }
+
+        header.pbk-top-header > a {
+            flex-shrink: 0;
+        }
+
+        header.pbk-top-header nav {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 100%;
+        }
+
+        header.pbk-top-header nav .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        header.pbk-top-header nav .nav-link:hover,
+        header.pbk-top-header nav .nav-link.text-amber-400 {
+            color: #eea220 !important;
+        }
+
+        header.pbk-top-header nav .nav-link.border-amber-400 {
+            border-color: #eea220 !important;
+        }
+
+        .pbk-theme-toggle {
+            height: 42px;
+            min-width: 108px;
+            padding: 0 12px;
+            gap: 7px;
+            color: rgba(255, 255, 255, 0.9) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            background: rgba(0, 0, 0, 0.2) !important;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .pbk-theme-toggle:hover {
+            color: #ffffff !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            background: rgba(0, 0, 0, 0.3) !important;
+        }
+
+/* ============================================================================== */
+/* SECTION 4: SURFACE MAPPINGS, COLOR OVERRIDES & CARD COMPONENT HOOKS            */
+/* ============================================================================== */
+        /* Map the portal's existing utility hooks to the Dashboard surfaces. */
+        [class~="bg-[#0b0f19]"] { background-color: var(--bg-light) !important; }
+        [class~="bg-[#111827]"] { background-color: var(--bg-white) !important; }
+        [class~="bg-[#1f2937]"] { background-color: var(--card-beige) !important; }
+        [class~="border-[#374151]"],
+        [class~="border-[#374151]/60"] { border-color: var(--border-beige) !important; }
+        [class~="text-[#f8fafc]"] { color: var(--text-dark) !important; }
+
+        [class~="from-[#963100]"][class~="via-[#c24603]"][class~="to-[#eea220]"] {
+            background-image: linear-gradient(135deg, #92400e 0%, #963100 50%, #7c2d12 100%) !important;
+        }
+
+        [class~="bg-[#963100]"][class~="hover:bg-[#7a2800]"] {
+            background-color: var(--primary-brown) !important;
+        }
+
+        [class~="bg-[#963100]"][class~="hover:bg-[#7a2800]"]:hover {
+            background-color: var(--primary-hover) !important;
+        }
+
+        [class~="from-[#963100]"][class~="to-[#c24603]"] {
+            background-image: linear-gradient(90deg, #b45309 0%, #963100 50%, #7c2d12 100%) !important;
+        }
+
+        [class~="from-[#963100]"][class~="to-[#c24603]"]:hover {
+            background-image: linear-gradient(90deg, #963100 0%, #7c2d12 50%, #652b19 100%) !important;
+        }
+
+        .page-view > div:nth-child(2),
+        .page-view > div:nth-child(2) [class~="bg-[#111827]"] {
+            box-shadow: var(--shadow-card) !important;
+        }
+
+        .page-view > div:nth-child(2) .text-gray-200,
+        .page-view > div:nth-child(2) .text-gray-300 {
+            color: var(--text-dark) !important;
+        }
+
+        .page-view > div:nth-child(2) .text-gray-400,
+        .page-view > div:nth-child(2) .text-gray-500 {
+            color: var(--text-gray) !important;
+        }
+
+        .page-view > div:nth-child(2) [class~="text-white"]:not(button):not([class*="bg-[#963100]"]):not([class*="bg-gradient"]) {
+            color: var(--text-dark) !important;
+        }
+
+        .page-view > div:nth-child(2) .hover\:bg-slate-700:hover,
+        .page-view > div:nth-child(2) .hover\:bg-slate-800:hover,
+        #mobileMenu .hover\:bg-slate-800:hover {
+            background-color: var(--card-beige) !important;
+        }
+
+        #mobileMenu > div { background-color: var(--bg-white) !important; }
+        #mobileMenu .text-gray-200 { color: var(--text-dark) !important; }
+        #mobileMenu .text-gray-400 { color: var(--text-gray) !important; }
+
+/* ============================================================================== */
+/* SECTION 5: THEME MODAL DROPDOWN, ARIA SELECTORS & MOBILE BREAKPOINTS           */
+/* ============================================================================== */
+        #themeMenu button[aria-pressed="true"] {
+            background-color: #fffbeb;
+        }
+
+        html.dark #themeMenu button[aria-pressed="true"] {
+            background-color: #1f2937;
+        }
+
+        #themeMenu {
+            background-color: var(--bg-white) !important;
+            border-color: var(--border-beige) !important;
+            border-radius: 1rem !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+            padding: 0.5rem 0 !important;
+            color: var(--text-dark) !important;
+        }
+
+        #themeMenu button {
+            color: var(--text-dark) !important;
+            padding: 0.625rem 1rem !important;
+            font-size: 0.75rem !important;
+            font-weight: 700 !important;
+        }
+
+        #themeMenu button:hover { background-color: #fffbeb !important; }
+        html.dark #themeMenu button:hover { background-color: #1f2937 !important; }
+
+        @media (max-width: 767px) {
+            header.pbk-top-header {
+                height: 64px;
+                min-height: 64px;
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+            }
+
+            header.pbk-top-header nav {
+                display: none !important;
+            }
+
+            .pbk-theme-toggle {
+                min-width: 42px;
+                width: 42px;
+                padding: 0 !important;
+            }
+
+            .pbk-theme-toggle #themeLabel,
+            .pbk-theme-toggle [data-lucide="chevron-down"] {
+                display: none;
+            }
+        }

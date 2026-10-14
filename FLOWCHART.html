@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BPK Community Fund - Master 10-Step Flowchart</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f172a;
+      color: #f1f5f9;
+      padding: 30px 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      font-size: 28px;
+      color: #38bdf8;
+      margin-bottom: 8px;
+    }
+    .header p {
+      font-size: 15px;
+      color: #94a3b8;
+    }
+    .container {
+      width: 100%;
+      max-width: 850px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .step-card {
+      width: 100%;
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 18px 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      border-left: 6px solid #38bdf8;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s;
+    }
+    .step-card:hover {
+      transform: translateY(-2px);
+    }
+    .step-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #0284c7;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-content {
+      flex: 1;
+    }
+    .step-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .step-tag {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .step-desc {
+      font-size: 14px;
+      color: #cbd5e1;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+    .code-box {
+      background: #090d16;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 13px;
+      color: #38bdf8;
+      word-break: break-all;
+    }
+    .arrow {
+      font-size: 24px;
+      color: #64748b;
+      line-height: 1;
+    }
+    /* Specific Colors */
+    .c1 { border-color: #3b82f6; } .c1 .step-num { background: #3b82f6; } .c1 .step-title { color: #60a5fa; }
+    .c2 { border-color: #8b5cf6; } .c2 .step-num { background: #8b5cf6; } .c2 .step-title { color: #a78bfa; }
+    .c3 { border-color: #f59e0b; } .c3 .step-num { background: #f59e0b; } .c3 .step-title { color: #fbbf24; }
+    .c4 { border-color: #f97316; } .c4 .step-num { background: #f97316; } .c4 .step-title { color: #fb923c; }
+    .c5 { border-color: #ef4444; } .c5 .step-num { background: #ef4444; } .c5 .step-title { color: #f87171; }
+    .c6 { border-color: #10b981; } .c6 .step-num { background: #10b981; } .c6 .step-title { color: #34d399; }
+    .c7 { border-color: #14b8a6; } .c7 .step-num { background: #14b8a6; } .c7 .step-title { color: #2dd4bf; }
+    .c8 { border-color: #d946ef; } .c8 .step-num { background: #d946ef; } .c8 .step-title { color: #e879f9; }
+    .c9 { border-color: #eab308; } .c9 .step-num { background: #eab308; } .c9 .step-title { color: #fde047; }
+    .c10 { border-color: #06b6d4; } .c10 .step-num { background: #06b6d4; } .c10 .step-title { color: #22d3ee; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>🏛️ BPK Community Fund — 10-Step Visual Flowchart</h1>
+    <p>Follow these 10 steps sequentially to set up, test, and upload the project to GitHub.</p>
+  </div>
+
+  <div class="container">
+
+    <!-- STEP 1 -->
+    <div class="step-card c1">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">Install Required Software <span class="step-tag">Prerequisites</span></div>
+        <div class="step-desc">Install <b>Python 3.10+</b>, <b>MySQL Server/Workbench</b>, <b>Git</b>, and <b>VS Code</b> on your Windows PC.</div>
+        <div class="code-box">python --version &nbsp;|&nbsp; git --version &nbsp;|&nbsp; mysql --version</div>
+      </div>
+    </div>
+
+    <div class="arrow">▼</div>
+
+    <!-- STEP 2 -->
+    <div class="step-card c2">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">Place Project Folders <span class="step-tag">Structure</span></div>
+        <div class="step-desc">Keep project at <code>D:\BPK_Community_Fund</code>. BackEnd folder holds Python code; FrontEnd folder holds HTML/CSS/JS.</div>
+        <div class="code-box">D:\BPK_Community_Fund\BackEnd &nbsp;&nbsp;|&nbsp;&nbsp; D:\BPK_Community_Fund\FrontEnd</div>
+      </div>
+    </div>
+
+    <div class="arrow">▼</div>
+
+    <!-- STEP 3 -->
+    <div class="step-card c3">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">Configure MySQL Password in Code <span class="step-tag">Settings</span></div>
+        <div class="step-desc">Open <code>BackEnd/database.py</code> (Line 15). Replace <code>root:root</code> with your actual MySQL password.</div>
+        <div class="code-box">DATABASE_URL = "mysql+pymysql://root:YOUR_PASSWORD@localhost:3306/pbk_db"</div>
+      </div>
+    </div>
+
+    <div class="arrow">▼</div>
+
+    <!-- STEP 4 -->
+    <div class="step-card c4">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title">Create Database & All 13 Tables <span class="step-tag">Database</span></div>
+        <div class="step-desc">Run our 1-click Python initializer. It creates <code>pbk_db</code>, all 13 tables, and the default Super Admin.</div>
+        <div class="code-box">cd D:\BPK_Community_Fund\BackEnd ; python init_db.py</div>
+      </div>
+    </div>
+
+    <div class="arrow">▼</div>
+
+    <!-- STEP 5 -->
+    <div class="step-card c5">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <div class="step-title">Setup Python Virtual Environment <span class="step-tag">Packages</span></div>
+        <div class="step-desc">Create isolated virtual environment and install FastAPI, Uvicorn, SQLAlchemy, and PyMySQL.</div>
+        <div class="code-box">python -m venv venv ; .\venv\Scripts\Activate.ps1 ; pip install -r requirements.txt</div>
+      </div>
+    </div>
+
+    <div class="arrow">▼</div>
+
+    <!-- STEP 6 -->
+    <div class="step-card c6">
+      <div class="step-num">6</div>
+      <div class="step-content">
+        <div class="step-title">Start FastAPI Backend Server <span class="step-tag">API Live</span></div>
+        <div class="step-desc">Start the Uvicorn server at port 8000. Keep this terminal open! Visit <code>http://127.0.0.1:8000/docs</code> to test API.</div>
+        <div class="code-box">uvicorn main:app --reload --host 127.0.0.1 --port 8000</div>
+      </div>
+    </div>
+
+    <div class="arrow">▼</div>
+
+    <!-- STEP 7 -->
+    <div class="step-card c7">
+      <div class="step-num">7</div>
+      <div class="step-content">
+        <div class="step-title">Open Frontend Web Portals <span class="step-tag">UI</span></div>
+        <div class="step-desc">Open Windows File Explorer and double-click <code>HomeLogRegisPass.html</code>, <code>admin.html</code>, or <code>member.html</code>.</div>
+        <div class="code-box">FrontEnd\HomeLogRegisPass\HomeLogRegisPass.html</div>
+      </div>
+    </div>
+
+    <div class="arrow">▼</div>
+
+    <!-- STEP 8 -->
+    <div class="step-card c8">
+      <div class="step-num">8</div>
+      <div class="step-content">
+        <div class="step-title">Test End-to-End System <span class="step-tag">Testing</span></div>
+        <div class="step-desc">Register member, login as Super Admin (<code>admin@pbkfund.org</code> / <code>admin</code>), make a donation, and download a PDF receipt.</div>
+      </div>
+    </div>
+
+    <div class="arrow">▼</div>
+
+    <!-- STEP 9 -->
+    <div class="step-card c9">
+      <div class="step-num">9</div>
+      <div class="step-content">
+        <div class="step-title">Check GitHub File Security <span class="step-tag">Security</span></div>
+        <div class="step-desc">Only push source code. <b>Never push</b> the 50,000 files in <code>venv/</code> or private <code>.env</code> passwords. Protected by <code>.gitignore</code>.</div>
+      </div>
+    </div>
+
+    <div class="arrow">▼</div>
+
+    <!-- STEP 10 -->
+    <div class="step-card c10">
+      <div class="step-num">10</div>
+      <div class="step-content">
+        <div class="step-title">Push to GitHub Box-by-Box <span class="step-tag">Upload</span></div>
+        <div class="step-desc">Run standard Git commands to link your local code to your online GitHub repository.</div>
+        <div class="code-box">git init ; git add . ; git commit -m "feat: initial commit" ; git push -u origin main</div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

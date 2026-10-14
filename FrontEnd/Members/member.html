@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PBK Community Chanda Fund Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#b45309',
+                        brand: {
+                            50: '#fdf8f6',
+                            100: '#fbe8e4',
+                            500: '#b45309',
+                            600: '#963100',
+                            700: '#7c2d12',
+                            800: '#652b19',
+                            900: '#532314',
+                            orange: '#eea220',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Dancing+Script:wght@700&family=Great+Vibes&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="jspdf.umd.min.js"></script>
+    <script src="html2canvas.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+</head>
+
+<body class="bg-gray-100 dark:bg-gray-950 text-gray-900 dark:text-gray-100 antialiased min-h-screen flex flex-col transition-colors duration-300" onclick="handleBodyClick(event)">
+    
+    <!-- ============================================================================== -->
+    <!-- SECTION 1: TOP HEADER & NAVIGATION BAR                                         -->
+    <!-- Contains: Brand logo, Theme Switcher, Announcements Bell & User Profile Chip  -->
+    <!-- ============================================================================== -->
+    <header class="bg-gradient-to-r from-amber-900 via-[#963100] to-[#7c2d12] dark:from-gray-900 dark:via-amber-950 dark:to-gray-900 text-white shadow-md sticky top-0 z-[60] transition-colors duration-300">
+        <div class="w-[98%] max-w-[1920px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <!-- Mobile Hamburger Menu Button -->
+                <button onclick="toggleSidebar(event)" class="lg:hidden p-2 -ml-2 text-white/90 hover:text-white transition rounded-lg hover:bg-white/10">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+                <div class="w-10 h-10 rounded-xl bg-black/40 border border-amber-500/40 p-0.5 shadow-md hidden sm:flex items-center justify-center overflow-hidden shrink-0">
+                    <img src="pbk_logo.jpg" alt="PBK Logo" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h1 id="i18n-brand-title" class="font-extrabold text-lg leading-tight tracking-wide text-white drop-shadow-sm">PBK Community</h1>
+                    <p id="i18n-brand-sub" class="text-xs text-[#eea220] font-bold uppercase tracking-wider">Chanda Fund</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <!-- Theme Dropdown -->
+                <div class="relative">
+                    <button onclick="toggleThemeDropdown(event)" class="p-2 text-white/90 hover:text-white transition bg-black/20 rounded-xl border border-white/10 flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold shadow-sm">
+                        <span id="headerThemeIcon"><i data-lucide="monitor" class="w-4 h-4"></i></span>
+                        <span class="hidden sm:inline" id="headerThemeText">System</span>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-white/70"></i>
+                    </button>
+                    <div id="themeDropdownMenu" class="absolute right-0 mt-2 w-44 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 py-2 hidden z-50 text-gray-900 dark:text-gray-100 text-xs font-bold">
+                        <button onclick="setTheme('white')" class="w-full text-left px-4 py-2.5 hover:bg-amber-50 dark:hover:bg-gray-800 flex items-center gap-2"><i data-lucide="sun" class="w-4 h-4 text-amber-500"></i> White</button>
+                        <button onclick="setTheme('dark')" class="w-full text-left px-4 py-2.5 hover:bg-amber-50 dark:hover:bg-gray-800 flex items-center gap-2"><i data-lucide="moon" class="w-4 h-4 text-indigo-400"></i> Dark</button>
+                        <button onclick="setTheme('system')" class="w-full text-left px-4 py-2.5 hover:bg-amber-50 dark:hover:bg-gray-800 flex items-center gap-2"><i data-lucide="monitor" class="w-4 h-4 text-gray-400"></i> System</button>
+                    </div>
+                </div>
+
+                <!-- Notification Bell (Announcements from Admin) -->
+                <div class="relative">
+                    <button id="memberNotificationBtn" onclick="toggleNotificationDropdown(event)" class="p-2 text-white/90 hover:text-white transition bg-black/20 hover:bg-black/35 rounded-xl border border-white/10 flex items-center justify-center relative cursor-pointer shadow-sm group" title="Announcements & Notifications" aria-label="Announcements & Notifications">
+                        <i data-lucide="bell" class="w-4 h-4 text-white group-hover:scale-110 transition-transform"></i>
+                        <!-- Notification Badge Count -->
+                        <span id="memberNotificationBadge" class="hidden absolute -top-1.5 -right-1.5 min-w-[19px] h-[19px] px-1 bg-red-600 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-[#7c2d12] dark:border-gray-900 shadow-md">0</span>
+                    </button>
+
+                    <!-- Dropdown Panel -->
+                    <div id="memberNotificationDropdown" class="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-[#111827] rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 py-0 hidden z-50 text-gray-900 dark:text-gray-100 text-xs overflow-hidden">
+                        <!-- Header -->
+                        <div class="p-3.5 px-4 bg-gradient-to-r from-amber-900/10 via-[#963100]/10 to-transparent dark:from-amber-950/40 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-700 dark:text-amber-400 flex items-center justify-center shrink-0">
+                                    <i data-lucide="bell" class="w-3.5 h-3.5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-extrabold text-sm text-gray-900 dark:text-white leading-tight">Notifications</h4>
+                                    <p class="text-[10px] text-gray-500 dark:text-gray-400" id="notificationDropdownSubtitle">Announcements &amp; Community Causes</p>
+                                </div>
+                            </div>
+                            <button type="button" onclick="markAllNotificationsRead(event)" id="btnMarkAllRead" class="text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 hover:underline cursor-pointer">
+                                Mark all as read
+                            </button>
+                        </div>
+
+                        <!-- Announcements List -->
+                        <div id="notificationList" class="max-h-80 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800/60">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="p-2.5 px-4 bg-gray-50 dark:bg-gray-900/80 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-[11px]">
+                            <span class="text-gray-500 dark:text-gray-400 font-medium" id="notificationStatusText">0 Announcements</span>
+                            <button type="button" onclick="goToAnnouncementsTab(event)" class="font-extrabold text-[#963100] dark:text-amber-400 hover:underline flex items-center gap-1 cursor-pointer">
+                                <span>View Causes & Events</span>
+                                <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-3 bg-black/25 px-3.5 py-1.5 rounded-full border border-white/15 shadow-inner">
+                    <div class="text-left">
+                        <p class="text-xs font-bold leading-none text-white" id="headerProfileName">Member</p>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                            <span id="headerMemberId" class="text-[10px] text-[#eea220] font-semibold">PBK-M021</span>
+                            <span class="text-white/40 text-[10px]">·</span>
+                            <span id="headerMemberStatus" class="text-[10px] text-emerald-400 font-extrabold flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Active
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- ============================================================================== -->
+    <!-- SECTION 2: SIDEBAR NAVIGATION                                                  -->
+    <!-- Contains: Menu links (Dashboard, Contribute, Funds, Causes, History, Profile) -->
+    <!-- ============================================================================== -->
+    <div class="w-[98%] max-w-[1920px] mx-auto px-2 sm:px-4 py-6 flex-1 flex flex-col lg:flex-row gap-6 items-start relative">
+        <div id="mobileSidebarOverlay" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity" onclick="toggleSidebar(event)"></div>
+        
+        <aside id="appSidebar" class="fixed inset-y-0 left-0 z-50 w-72 transform -translate-x-full lg:translate-x-0 lg:sticky lg:top-20 lg:z-30 lg:block bg-[#f4f0ea] dark:bg-[#171b24] rounded-none lg:rounded-2xl shadow-2xl lg:shadow-sm border-r lg:border border-gray-200 dark:border-gray-800 p-4 h-full lg:h-[calc(100vh-6rem)] lg:max-h-[calc(100vh-6rem)] flex flex-col justify-between shrink-0 transition-transform duration-300 ease-in-out overflow-y-auto">
+            <div>
+                <div class="hidden lg:flex items-center gap-3 mb-5 px-2 pb-4 border-b border-gray-200 dark:border-gray-800">
+                    <div class="w-10 h-10 rounded-xl bg-black/30 dark:bg-black/60 border border-amber-500/30 p-0.5 shadow-sm flex items-center justify-center overflow-hidden shrink-0">
+                        <img src="pbk_logo.jpg" alt="PBK Emblem" class="w-full h-full object-contain">
+                    </div>
+                    <div>
+                        <div class="text-[10px] uppercase tracking-widest font-extrabold text-amber-700 dark:text-amber-400">PBK Member Portal</div>
+                        <div class="font-extrabold text-sm text-gray-900 dark:text-white">Community Hub</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between lg:hidden mb-6 px-2">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-black/30 border border-amber-500/30 p-0.5 flex items-center justify-center overflow-hidden">
+                            <img src="pbk_logo.jpg" alt="PBK Emblem" class="w-full h-full object-contain">
+                        </div>
+                        <h2 class="font-extrabold text-base text-gray-900 dark:text-white">Member Menu</h2>
+                    </div>
+                    <button onclick="toggleSidebar(event)" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                <nav class="space-y-1">
+                    <a href="#" onclick="switchTab('dashboard', event)" id="nav-dashboard" class="sidebar-link flex items-center space-x-3 px-4 py-2 rounded-xl font-bold text-[17px] transition bg-orange-500 text-white shadow-md hover:bg-orange-600">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5 text-white shrink-0"></i>
+                        <span data-i18n="sidebar_dashboard">Dashboard</span>
+                    </a>
+                    <a href="#" onclick="switchTab('contribute', event)" id="nav-contribute" class="sidebar-link flex items-center space-x-3 px-4 py-2 rounded-xl font-bold text-[17px] transition text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-gray-800 hover:text-amber-800 dark:hover:text-amber-400">
+                        <i data-lucide="heart" class="w-5 h-5 text-amber-700 shrink-0"></i>
+                        <span data-i18n="sidebar_contribute">Contribute</span>
+                    </a>
+                    <a href="#" onclick="switchTab('fund-details', event)" id="nav-fund-details" class="sidebar-link flex items-center space-x-3 px-4 py-2 rounded-xl font-bold text-[17px] transition text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-gray-800 hover:text-amber-800 dark:hover:text-amber-400">
+                        <i data-lucide="database" class="w-5 h-5 text-amber-700 shrink-0"></i>
+                        <span data-i18n="sidebar_fund_details">Fund Details</span>
+                    </a>
+                    <a href="#" onclick="switchTab('causes', event)" id="nav-causes" class="sidebar-link flex items-center space-x-3 px-4 py-2 rounded-xl font-bold text-[17px] transition text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-gray-800 hover:text-amber-800 dark:hover:text-amber-400">
+                        <i data-lucide="target" class="w-5 h-5 text-amber-700 shrink-0"></i>
+                        <span data-i18n="sidebar_causes">Causes / Events</span>
+                    </a>
+                    <a href="#" onclick="switchTab('my-contributions', event)" id="nav-my-contributions" class="sidebar-link flex items-center space-x-3 px-4 py-2 rounded-xl font-bold text-[17px] transition text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-gray-800 hover:text-amber-800 dark:hover:text-amber-400">
+                        <i data-lucide="file-text" class="w-5 h-5 text-amber-700 shrink-0"></i>
+                        <span data-i18n="sidebar_my_contrib">My Contributions</span>
+                    </a>
+                    <a href="#" onclick="switchTab('profile', event)" id="nav-profile" class="sidebar-link flex items-center space-x-3 px-4 py-2 rounded-xl font-bold text-[17px] transition text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-gray-800 hover:text-amber-800 dark:hover:text-amber-400 relative">
+                        <div class="w-6 h-6 rounded-full overflow-hidden border-2 border-[#963100] dark:border-amber-400 shrink-0 relative z-10 bg-amber-100 dark:bg-amber-950/80 text-[#963100] dark:text-amber-400 flex items-center justify-center">
+                            <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                        </div>
+                        <span class="relative z-10" data-i18n="sidebar_profile">Profile</span>
+                    </a>
+                </nav>
+            </div>
+            <div class="pt-2 border-t border-gray-200 dark:border-gray-800 mt-4">
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 font-bold text-sm transition shadow-sm">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span data-i18n="logout_btn">Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ========================================================================== -->
+        <!-- MAIN CONTENT AREA - TAB VIEWS                                              -->
+        <!-- ========================================================================== -->
+        <main class="flex-1 space-y-6 min-w-0 w-full">
+            
+            <!-- ====================================================================== -->
+            <!-- SECTION 3: TAB VIEW - DASHBOARD                                        -->
+            <!-- Contains: Welcome banner, KPI metric cards, Recent contributions table -->
+            <!-- ====================================================================== -->
+            <div id="view-dashboard" class="space-y-6">
+                <div class="bg-gradient-to-r from-amber-800 via-[#963100] to-[#7c2d12] dark:from-gray-900 dark:via-amber-950 dark:to-gray-900 rounded-2xl p-6 md:p-8 text-white shadow-lg relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border border-amber-700/50 dark:border-gray-800">
+                    <div class="absolute right-0 top-0 opacity-15 transform translate-x-8 -translate-y-8 pointer-events-none">
+                        <i data-lucide="heart" class="w-64 h-64 text-white"></i>
+                    </div>
+                    <div class="relative z-10 flex items-center gap-4">
+                        <div class="w-16 h-16 rounded-2xl bg-black/40 border border-amber-400/40 p-1 shadow-lg flex items-center justify-center overflow-hidden shrink-0 hidden sm:flex">
+                            <img src="pbk_logo.jpg" alt="PBK Emblem" class="w-full h-full object-contain">
+                        </div>
+                        <div>
+                            <h2 class="text-2xl md:text-3xl font-extrabold flex items-center gap-2 drop-shadow">
+                                <span data-i18n="welcome_prefix">Welcome</span>, <span id="welcomeName">Member</span> 
+                                <span class="inline-block animate-bounce">👋</span>
+                            </h2>
+                            <p id="i18n-welcome-subtitle" class="text-amber-100 font-medium mt-1.5 text-sm md:text-base max-w-2xl">
+                                Thank you for being an esteemed part of PBK Community Chanda Fund. Together we empower our community!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="relative z-10 flex flex-row items-center gap-3 shrink-0">
+                        <div class="bg-white/10 dark:bg-black/30 backdrop-blur-md px-3 py-2 rounded-xl border border-white/20 flex items-center gap-2">
+                            <span class="text-xs font-bold text-amber-200 whitespace-nowrap" data-i18n="fin_year_label">Financial Year:</span>
+                            <select id="globalYearSelect" onchange="changeFinancialYear(this.value)" class="bg-amber-900 dark:bg-gray-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-amber-700 dark:border-gray-700 focus:outline-none">
+                                <option value="2026">2026 - 2027</option>
+                                <option value="2025">2025 - 2026</option>
+                                <option value="2024">2024 - 2025</option>
+                            </select>
+                        </div>
+                        <button onclick="switchTab('contribute', event)" class="bg-white text-amber-900 font-bold px-5 py-2.5 rounded-xl shadow-md hover:bg-amber-50 transition flex items-center gap-2 text-sm border border-amber-200 whitespace-nowrap h-[41px]">
+                            <i data-lucide="heart" class="w-4 h-4 text-red-600 fill-red-600"></i>
+                            <span data-i18n="contribute_now_btn">Contribute Now</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Inactive Account Warning Banner -->
+                <div id="memberInactiveWarningBanner" class="hidden bg-rose-50 dark:bg-rose-950/50 border border-rose-300 dark:border-rose-800/80 rounded-2xl p-4 flex items-start gap-3 shadow-sm transition">
+                    <div class="p-2 rounded-xl bg-rose-500 text-white shrink-0">
+                        <i data-lucide="alert-octagon" class="w-5 h-5"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-extrabold text-rose-900 dark:text-rose-200 text-sm">Account Status Notice: Inactive / Disabled</h4>
+                            <span class="text-[10px] bg-rose-200 dark:bg-rose-900/60 text-rose-800 dark:text-rose-300 px-2 py-0.5 rounded font-extrabold uppercase tracking-wide">Disabled by Admin</span>
+                        </div>
+                        <p class="text-xs text-rose-800 dark:text-rose-300 mt-1 leading-relaxed">
+                            Your member profile is currently set to <strong>Inactive</strong> by the community administration. Contribution visibility and active permissions are restricted until your account is re-enabled.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Announcement Banner -->
+                <div id="memberAnnouncementBanner" class="hidden bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800/60 rounded-2xl p-4 flex items-start gap-3 shadow-sm transition">
+
+                    <div class="p-2 rounded-xl bg-amber-500 text-white shrink-0">
+                        <i data-lucide="megaphone" class="w-5 h-5"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <h4 id="announcementTitle" class="font-extrabold text-amber-900 dark:text-amber-200 text-sm">Announcement</h4>
+                            <span id="announcementDate" class="text-[10px] text-amber-700/80 dark:text-amber-400 font-bold"></span>
+                        </div>
+                        <p id="announcementMessage" class="text-xs text-amber-800 dark:text-amber-300 mt-1 leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div onclick="switchTab('fund-details')" class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col justify-between relative overflow-hidden group hover:border-amber-500 transition cursor-pointer">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-400 flex items-center justify-center">
+                                        <i data-lucide="award" class="w-4 h-4"></i>
+                                    </div>
+                                    <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-600 dark:text-gray-400" data-i18n="card_youth_funds">YOUTH FUNDS</h4>
+                                </div>
+                                <span class="text-[11px] font-extrabold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded flex items-center gap-0.5">
+                                    <i data-lucide="trending-up" class="w-3 h-3"></i> +12.4%
+                                </span>
+                            </div>
+                            <div class="my-1">
+                                <h3 id="statYouthFunds" class="text-2xl font-extrabold text-gray-900 dark:text-white">₹65,000</h3>
+                                <p class="text-[11px] font-semibold text-gray-500 dark:text-gray-400" data-i18n="card_youth_sub">Sports & skill development</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div onclick="switchTab('fund-details')" class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col justify-between relative overflow-hidden group hover:border-indigo-500 transition cursor-pointer">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-400 flex items-center justify-center">
+                                        <i data-lucide="home" class="w-4 h-4"></i>
+                                    </div>
+                                    <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-600 dark:text-gray-400" data-i18n="card_village_funds">VILLAGE FUNDS</h4>
+                                </div>
+                                <span class="text-[11px] font-extrabold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded flex items-center gap-0.5">
+                                    <i data-lucide="trending-up" class="w-3 h-3"></i> +8.9%
+                                </span>
+                            </div>
+                            <div class="my-1">
+                                <h3 id="statVillageFunds" class="text-2xl font-extrabold text-gray-900 dark:text-white">₹0</h3>
+                                <p class="text-[11px] font-semibold text-gray-500 dark:text-gray-400" data-i18n="card_village_sub">Infrastructure & welfare</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div onclick="switchTab('fund-details')" class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col justify-between relative overflow-hidden group hover:border-emerald-500 transition cursor-pointer">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-400 flex items-center justify-center">
+                                        <i data-lucide="database" class="w-4 h-4"></i>
+                                    </div>
+                                    <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-600 dark:text-gray-400" data-i18n="card_total_collected">TOTAL COLLECTED</h4>
+                                </div>
+                                <span class="text-[11px] font-extrabold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded flex items-center gap-0.5">
+                                    <i data-lucide="trending-up" class="w-3 h-3"></i> +15.2%
+                                </span>
+                            </div>
+                            <div class="my-1">
+                                <h3 id="statTotalCollected" class="text-2xl font-extrabold text-gray-900 dark:text-white">₹0</h3>
+                                <p id="statCollectedSub" class="text-[11px] font-semibold text-gray-500 dark:text-gray-400" data-i18n="card_collected_sub">from 0 contributions</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div onclick="switchTab('fund-details')" class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col justify-between relative overflow-hidden group hover:border-rose-500 transition cursor-pointer">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-8 h-8 rounded-lg bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-400 flex items-center justify-center">
+                                        <i data-lucide="trending-up" class="w-4 h-4"></i>
+                                    </div>
+                                    <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-600 dark:text-gray-400" data-i18n="card_total_used">TOTAL USED</h4>
+                                </div>
+                                <span class="text-[11px] font-extrabold text-amber-600 bg-amber-50 dark:bg-amber-950/50 px-2 py-0.5 rounded" data-i18n="card_optimized">Optimized</span>
+                            </div>
+                            <div class="my-1">
+                                <h3 id="statTotalUsed" class="text-2xl font-extrabold text-gray-900 dark:text-white">₹0</h3>
+                                <p id="statUsedSub" class="text-[11px] font-semibold text-gray-500 dark:text-gray-400" data-i18n="card_used_sub">for 0 causes / events</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div onclick="switchTab('fund-details')" class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col justify-between relative overflow-hidden group hover:border-sky-500 transition cursor-pointer">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-950/60 text-sky-800 dark:text-sky-400 flex items-center justify-center">
+                                        <i data-lucide="wallet" class="w-4 h-4"></i>
+                                    </div>
+                                    <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-600 dark:text-gray-400" data-i18n="card_current_balance">CURRENT BALANCE</h4>
+                                </div>
+                                <span class="text-[11px] font-extrabold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded" data-i18n="card_active">Active</span>
+                            </div>
+                            <div class="my-1">
+                                <h3 id="statCurrentBalance" class="text-2xl font-extrabold text-gray-900 dark:text-white">₹0</h3>
+                                <p class="text-[11px] font-semibold text-gray-500 dark:text-gray-400" data-i18n="card_balance_sub">Available reserves</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div onclick="switchTab('my-contributions')" class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col justify-between relative overflow-hidden group hover:border-purple-500 transition cursor-pointer">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-400 flex items-center justify-center">
+                                        <i data-lucide="users" class="w-4 h-4"></i>
+                                    </div>
+                                    <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-600 dark:text-gray-400" data-i18n="card_total_contributors">TOTAL CONTRIBUTORS</h4>
+                                </div>
+                                <span class="text-[11px] font-extrabold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded" data-i18n="card_new_contrib">+0 new</span>
+                            </div>
+                            <div class="my-1">
+                                <h3 id="statTotalContributors" class="text-2xl font-extrabold text-gray-900 dark:text-white">0</h3>
+                                <p class="text-[11px] font-semibold text-gray-500 dark:text-gray-400" data-i18n="card_contrib_sub">Community members</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div onclick="switchTab('causes')" class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col justify-between relative overflow-hidden group hover:border-orange-500 transition cursor-pointer">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-950/60 text-orange-800 dark:text-orange-400 flex items-center justify-center">
+                                        <i data-lucide="award" class="w-4 h-4"></i>
+                                    </div>
+                                    <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-600 dark:text-gray-400" data-i18n="card_total_youth">TOTAL YOUTH</h4>
+                                </div>
+                                <span class="text-[11px] font-extrabold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded" data-i18n="card_new_youth">+0 youth</span>
+                            </div>
+                            <div class="my-1">
+                                <h3 id="statTotalYouth" class="text-2xl font-extrabold text-gray-900 dark:text-white">0</h3>
+                                <p class="text-[11px] font-semibold text-gray-500 dark:text-gray-400" data-i18n="card_youth_members">Youth members</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div onclick="switchTab('causes')" class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col justify-between relative overflow-hidden group hover:border-teal-500 transition cursor-pointer">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-8 h-8 rounded-lg bg-teal-100 dark:bg-teal-950/60 text-teal-800 dark:text-teal-400 flex items-center justify-center">
+                                        <i data-lucide="home" class="w-4 h-4"></i>
+                                    </div>
+                                    <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-600 dark:text-gray-400" data-i18n="card_total_villagers">TOTAL VILLAGERS</h4>
+                                </div>
+                                <span class="text-[11px] font-extrabold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded" data-i18n="card_registered">Registered</span>
+                            </div>
+                            <div class="my-1">
+                                <h3 id="statTotalVillagers" class="text-2xl font-extrabold text-gray-900 dark:text-white">0</h3>
+                                <p class="text-[11px] font-semibold text-gray-500 dark:text-gray-400" data-i18n="card_residents_sub">Registered residents</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="bar-chart-3" class="w-6 h-6 text-amber-700"></i>
+                            <h3 class="font-extrabold text-gray-900 dark:text-white text-lg" data-i18n="chart_title">Yearly Fund Summary (Collections vs. Uses)</h3>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span id="chartYearIndicator" class="text-xs font-bold text-amber-800 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50 px-3 py-1 rounded-full border border-amber-200 dark:border-amber-900/50">2022 - 2027</span>
+                        </div>
+                    </div>
+                    <div class="relative h-80 w-full">
+                        <canvas id="yearlyChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col justify-between">
+                        <div>
+                            <div class="p-5 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-900/50">
+                                <div class="flex items-center space-x-2">
+                                    <i data-lucide="heart" class="w-5 h-5 text-amber-700"></i>
+                                    <h3 class="font-extrabold text-gray-900 dark:text-white text-base" data-i18n="table_recent_contrib">Recent Contributions</h3>
+                                </div>
+                                <span class="text-xs font-bold text-amber-800 dark:text-amber-400 hover:underline cursor-pointer" onclick="switchTab('my-contributions', event)" data-i18n="view_all">View All</span>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse text-xs">
+                                    <thead>
+                                        <tr class="bg-gray-100/70 dark:bg-gray-800/70 text-gray-700 dark:text-gray-300 font-extrabold border-b border-gray-200 dark:border-gray-800">
+                                            <th class="py-3 px-4" data-i18n="th_date">Date</th>
+                                            <th class="py-3 px-4" data-i18n="th_member_name">Member Name</th>
+                                            <th class="py-3 px-4" data-i18n="th_amount">Amount</th>
+                                            <th class="py-3 px-4" data-i18n="th_mode">Mode</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="memberRecentContribTableBody" class="divide-y divide-gray-200 dark:divide-gray-800 text-gray-800 dark:text-gray-200 font-medium">
+                                        <tr>
+                                            <td colspan="4" class="py-6 text-center text-gray-400 font-bold">No contributions recorded yet.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col justify-between">
+                        <div>
+                            <div class="p-5 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-900/50">
+                                <div class="flex items-center space-x-2">
+                                    <i data-lucide="trending-up" class="w-5 h-5 text-amber-700"></i>
+                                    <h3 class="font-extrabold text-gray-900 dark:text-white text-base" data-i18n="table_recent_usage">Recent Fund Usage</h3>
+                                </div>
+                                <span class="text-xs font-bold text-amber-800 dark:text-amber-400 hover:underline cursor-pointer" onclick="switchTab('fund-details', event)" data-i18n="view_all">View All</span>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse text-xs">
+                                    <thead>
+                                        <tr class="bg-gray-100/70 dark:bg-gray-800/70 text-gray-700 dark:text-gray-300 font-extrabold border-b border-gray-200 dark:border-gray-800">
+                                            <th class="py-3 px-4" data-i18n="th_date">Date</th>
+                                            <th class="py-3 px-4" data-i18n="th_purpose">Purpose</th>
+                                            <th class="py-3 px-4" data-i18n="th_amount">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="memberRecentUsageTableBody" class="divide-y divide-gray-200 dark:divide-gray-800 text-gray-800 dark:text-gray-200 font-medium">
+                                        <tr class="hover:bg-amber-50/30">
+                                            <td class="py-3 px-4 text-gray-500">26 Sep 2026</td>
+                                            <td class="py-3 px-4 font-bold text-gray-900 dark:text-white">Community Event (Snacks)</td>
+                                            <td class="py-3 px-4 font-extrabold text-rose-600">₹5,000</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====================================================================== -->
+            <!-- SECTION 4: TAB VIEW - CONTRIBUTE                                       -->
+            <!-- Contains: Dynamic Amount-Embedded QR Generator, 5 UPI App Shortcuts,  -->
+            <!-- Strictly Positive Amount Enforcement, Bank Details & Dedication Notes  -->
+            <!-- ====================================================================== -->
+            <div id="view-contribute" class="space-y-6 hidden">
+                <div class="bg-gradient-to-r from-amber-800 via-[#963100] to-[#7c2d12] dark:from-gray-900 dark:via-amber-950 dark:to-gray-900 rounded-2xl p-6 md:p-8 text-white shadow-lg relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border border-amber-700/50 dark:border-gray-800">
+                    <div class="absolute right-0 top-0 opacity-15 transform translate-x-8 -translate-y-8 pointer-events-none">
+                        <i data-lucide="heart" class="w-64 h-64 text-white"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <h2 class="text-2xl md:text-3xl font-extrabold flex items-center gap-2 drop-shadow">
+                            Make a Contribution
+                        </h2>
+                        <p class="text-amber-100 font-medium mt-1.5 text-sm md:text-base max-w-2xl">
+                            Support our community causes. Your donations empower our village, youth, and emergency funds.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left: Form Area -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white dark:bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800">
+                            <h3 class="font-extrabold text-lg text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                                <i data-lucide="zap" class="w-5 h-5 text-amber-600"></i> Quick Donation
+                            </h3>
+                            
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-extrabold text-gray-900 dark:text-gray-100 mb-2">Contribution Amount (₹)</label>
+                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                                        <button type="button" onclick="setPageAmount(501, this)" class="page-amt-btn py-3 text-sm sm:text-base font-extrabold rounded-xl border-2 border-amber-600 bg-amber-50 dark:bg-amber-950/50 text-amber-900 dark:text-amber-300 shadow-sm transition">₹501</button>
+                                        <button type="button" onclick="setPageAmount(1001, this)" class="page-amt-btn py-3 text-sm sm:text-base font-extrabold rounded-xl border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">₹1001</button>
+                                        <button type="button" onclick="setPageAmount(5001, this)" class="page-amt-btn py-3 text-sm sm:text-base font-extrabold rounded-xl border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">₹5001</button>
+                                        <button type="button" onclick="setPageAmount(10001, this)" class="page-amt-btn py-3 text-sm sm:text-base font-extrabold rounded-xl border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">₹10001</button>
+                                    </div>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-700 dark:text-gray-300 font-extrabold text-lg">₹</span>
+                                        <input type="number" id="pageCustomAmount" min="1" step="1" onkeydown="if(['-','+','e','E','.'].includes(event.key)) event.preventDefault();" oninput="syncPageAmount()" value="501" class="w-full pl-11 pr-4 py-3.5 text-base sm:text-lg font-extrabold border-2 border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white" placeholder="Enter positive amount (e.g. 501)">
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-extrabold text-gray-900 dark:text-gray-100 mb-2">Contribution Type</label>
+                                        <select id="pagePurpose" class="w-full px-4 py-3 text-sm font-bold border-2 border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                                            <option value="Youth Fund">Youth Fund</option>
+                                            <option value="Village Fund">Village Fund</option>
+                                            <option value="General Fund">General Fund</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-extrabold text-gray-900 dark:text-gray-100 mb-2">Contribution Date</label>
+                                        <input type="date" id="pageDate" class="w-full px-4 py-3 text-sm font-bold border-2 border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-extrabold text-gray-900 dark:text-gray-100 mb-2">Payment Method</label>
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        <label id="pagePayCard-UPI" onclick="setPagePaymentMethod('UPI')" class="page-pay-method-card border-2 border-amber-600 bg-amber-50/90 dark:bg-amber-950/60 rounded-xl p-3.5 flex items-center space-x-2.5 cursor-pointer text-sm font-extrabold text-amber-900 dark:text-amber-300 shadow-sm transition">
+                                            <input type="radio" name="pagePayMethod" value="UPI" checked class="text-amber-600 w-4 h-4 pointer-events-none">
+                                            <i data-lucide="qr-code" class="w-4 h-4 text-amber-700 dark:text-amber-400"></i>
+                                            <span>QR Code / UPI</span>
+                                        </label>
+                                        <label id="pagePayCard-Bank Transfer" onclick="setPagePaymentMethod('Bank Transfer')" class="page-pay-method-card border-2 border-gray-300 dark:border-gray-700 rounded-xl p-3.5 flex items-center space-x-2.5 cursor-pointer text-sm font-extrabold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                                            <input type="radio" name="pagePayMethod" value="Bank Transfer" class="text-amber-600 w-4 h-4 pointer-events-none">
+                                            <i data-lucide="building-2" class="w-4 h-4 text-gray-500"></i>
+                                            <span>Bank Transfer</span>
+                                        </label>
+                                        <label id="pagePayCard-Cash" onclick="setPagePaymentMethod('Cash')" class="page-pay-method-card border-2 border-gray-300 dark:border-gray-700 rounded-xl p-3.5 flex items-center space-x-2.5 cursor-pointer text-sm font-extrabold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                                            <input type="radio" name="pagePayMethod" value="Cash" class="text-amber-600 w-4 h-4 pointer-events-none">
+                                            <i data-lucide="banknote" class="w-4 h-4 text-gray-500"></i>
+                                            <span>Cash</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div id="pageTxnRefWrapper">
+                                    <label class="block text-sm font-extrabold text-gray-900 dark:text-gray-100 mb-2">Transaction Reference / UTR (Optional)</label>
+                                    <input type="text" id="pageTxnRef" placeholder="e.g. 12-digit UPI / UTR Reference ID after payment..." class="w-full px-4 py-3 text-sm font-bold border-2 border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-extrabold text-gray-900 dark:text-gray-100 mb-2">Optional Notes / Dedication</label>
+                                    <input type="text" id="pageNotes" placeholder="Add any special remarks or dedication..." class="w-full px-4 py-3 text-sm font-bold border-2 border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                                </div>
+
+                                <button onclick="submitPageContribution()" class="w-full bg-gradient-to-r from-[#963100] via-amber-800 to-amber-950 hover:from-amber-900 hover:to-amber-900 text-white font-extrabold py-5 sm:py-6 rounded-2xl shadow-xl transition text-base sm:text-lg tracking-wider uppercase border-2 border-amber-400/30 flex items-center justify-center gap-3">
+                                    <i data-lucide="heart" class="w-6 h-6 fill-white"></i>
+                                    <span>Submit Contribution (₹<span id="pagePayBtnAmt">501</span>)</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Dynamic QR Code & Payment Details Area -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <!-- Panel 1: QR Code & UPI Apps Panel (Default) -->
+                        <div id="memberUpiPaymentPanel" class="bg-white dark:bg-gray-900 p-6 sm:p-7 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 text-center">
+                            <h3 class="font-extrabold text-lg text-gray-900 dark:text-white mb-1 flex items-center justify-center gap-2">
+                                <i data-lucide="qr-code" class="w-5 h-5 text-amber-600"></i> Scan to Pay via UPI
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 font-semibold">Open PhonePe, GPay, Paytm, or BHIM to scan</p>
+                            
+                            <!-- Highlighted Amount Banner -->
+                            <div class="bg-gradient-to-r from-amber-500/10 via-amber-500/20 to-amber-500/10 border-2 border-amber-500/30 rounded-2xl p-3 mb-4 text-center">
+                                <span class="text-[11px] font-black uppercase tracking-wider text-amber-800 dark:text-amber-400 block">Pre-filled Amount in QR</span>
+                                <div class="text-2xl sm:text-3xl font-black text-[#963100] dark:text-amber-300 my-0.5">₹<span id="qrPayAmountDisplay">501</span></div>
+                                <span class="text-[10px] text-gray-500 dark:text-gray-400 font-bold flex items-center justify-center gap-1">
+                                    <i data-lucide="sparkles" class="w-3 h-3 text-amber-600"></i> QR code dynamically updates with your amount
+                                </span>
+                            </div>
+
+                            <!-- Dynamic QR Code Canvas -->
+                            <div class="bg-white p-3.5 rounded-2xl border-4 border-amber-500/25 inline-block mb-4 shadow-md">
+                                <div id="memberDynamicQrCode" class="w-44 h-44 flex items-center justify-center mx-auto"></div>
+                            </div>
+
+                            <!-- UPI Apps Selector (General, PhonePe, Google Pay, Paytm, BHIM) -->
+                            <div class="mb-3 text-left">
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1.5">Select UPI App:</label>
+                                <div class="grid grid-cols-5 gap-1.5" id="memberUpiAppGrid">
+                                    <button type="button" onclick="selectUpiApp('general', this)" class="upi-app-btn active p-2 rounded-xl border-2 border-amber-600 bg-amber-50 dark:bg-amber-950/60 text-center transition flex flex-col items-center justify-center gap-1 shadow-sm cursor-pointer">
+                                        <i data-lucide="smartphone" class="w-4 h-4 text-amber-700 dark:text-amber-400"></i>
+                                        <span class="text-[9px] font-black leading-tight text-gray-800 dark:text-white">General</span>
+                                    </button>
+                                    <button type="button" onclick="selectUpiApp('phonepe', this)" class="upi-app-btn p-2 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-purple-500 text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                                        <span class="w-4 h-4 rounded-full bg-[#5f259f] text-white text-[9px] font-black flex items-center justify-center">पे</span>
+                                        <span class="text-[9px] font-black leading-tight text-gray-800 dark:text-white">PhonePe</span>
+                                    </button>
+                                    <button type="button" onclick="selectUpiApp('gpay', this)" class="upi-app-btn p-2 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                                        <span class="w-4 h-4 rounded-full bg-blue-600 text-white text-[9px] font-black flex items-center justify-center">G</span>
+                                        <span class="text-[9px] font-black leading-tight text-gray-800 dark:text-white">GPay</span>
+                                    </button>
+                                    <button type="button" onclick="selectUpiApp('paytm', this)" class="upi-app-btn p-2 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-sky-500 text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                                        <span class="w-4 h-4 rounded-full bg-[#00b9f5] text-white text-[9px] font-black flex items-center justify-center">₹</span>
+                                        <span class="text-[9px] font-black leading-tight text-gray-800 dark:text-white">Paytm</span>
+                                    </button>
+                                    <button type="button" onclick="selectUpiApp('bhim', this)" class="upi-app-btn p-2 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-teal-500 text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                                        <span class="w-4 h-4 rounded-full bg-teal-600 text-white text-[9px] font-black flex items-center justify-center">B</span>
+                                        <span class="text-[9px] font-black leading-tight text-gray-800 dark:text-white">BHIM</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Mobile Intent Pay Button -->
+                            <a id="btnDirectUpiPay" href="#" class="w-full py-2.5 px-3 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-black text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm mb-3 cursor-pointer">
+                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                <span>Pay ₹<span id="upiDirectAmt">501</span> via <span id="selectedAppNameDisplay">Any UPI App</span></span>
+                            </a>
+
+                            <!-- Official UPI Details -->
+                            <div class="bg-amber-50 dark:bg-amber-950/40 p-3.5 rounded-xl border border-amber-200 dark:border-amber-900/50 mb-3 text-left">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[10px] font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider">Payee Name</p>
+                                        <p class="text-xs font-black text-gray-900 dark:text-white" id="memberPayeeNameDisplay">PBK Community Welfare Fund</p>
+                                    </div>
+                                    <span class="px-2 py-0.5 rounded text-[9px] font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">Verified</span>
+                                </div>
+                                <div class="mt-2 pt-2 border-t border-amber-200/60 dark:border-amber-900/40 flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[10px] font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider">Official UPI ID</p>
+                                        <p class="text-xs sm:text-sm font-extrabold text-gray-900 dark:text-white font-mono break-all" id="memberUpiIdDisplay">chanda.collection@bank</p>
+                                    </div>
+                                    <button type="button" onclick="copyUpiId()" class="p-1.5 px-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition flex items-center gap-1 cursor-pointer shrink-0" title="Copy UPI ID">
+                                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel 2: Bank Transfer Details Panel (Hidden by default) -->
+                        <div id="memberBankPaymentPanel" class="bg-white dark:bg-gray-900 p-6 sm:p-7 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 text-left hidden">
+                            <h3 class="font-extrabold text-lg text-gray-900 dark:text-white mb-1 flex items-center gap-2">
+                                <i data-lucide="building-2" class="w-5 h-5 text-amber-600"></i> Bank Transfer Details
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 font-semibold">Transfer via NEFT, IMPS, or RTGS</p>
+                            
+                            <div class="bg-amber-50 dark:bg-amber-950/30 p-3 rounded-xl border border-amber-200 dark:border-amber-900/50 mb-4 text-center">
+                                <span class="text-[10px] font-black uppercase text-amber-800 dark:text-amber-400">Transfer Amount</span>
+                                <div class="text-2xl font-black text-[#963100] dark:text-amber-300">₹<span id="bankPayAmountDisplay">501</span></div>
+                            </div>
+
+                            <div class="space-y-3 text-xs">
+                                <div class="p-3 bg-gray-50 dark:bg-gray-800/60 rounded-xl border border-gray-200 dark:border-gray-700">
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase block">Bank Name</span>
+                                    <span class="font-extrabold text-sm text-gray-900 dark:text-white" id="memberBankNameDisplay">State Bank of India</span>
+                                </div>
+                                <div class="p-3 bg-gray-50 dark:bg-gray-800/60 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                                    <div>
+                                        <span class="text-[10px] text-gray-500 font-bold uppercase block">Account Number</span>
+                                        <span class="font-mono font-extrabold text-sm text-gray-900 dark:text-white" id="memberBankAccDisplay">987654321012</span>
+                                    </div>
+                                    <button type="button" onclick="copyText('memberBankAccDisplay', 'Account Number')" class="p-1 px-2 rounded-lg bg-amber-600 text-white font-bold text-[10px]">Copy</button>
+                                </div>
+                                <div class="p-3 bg-gray-50 dark:bg-gray-800/60 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                                    <div>
+                                        <span class="text-[10px] text-gray-500 font-bold uppercase block">IFSC Code</span>
+                                        <span class="font-mono font-extrabold text-sm text-gray-900 dark:text-white" id="memberBankIfscDisplay">SBIN0001234</span>
+                                    </div>
+                                    <button type="button" onclick="copyText('memberBankIfscDisplay', 'IFSC Code')" class="p-1 px-2 rounded-lg bg-amber-600 text-white font-bold text-[10px]">Copy</button>
+                                </div>
+                                <div class="p-3 bg-gray-50 dark:bg-gray-800/60 rounded-xl border border-gray-200 dark:border-gray-700">
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase block">Account Holder / Payee</span>
+                                    <span class="font-extrabold text-sm text-gray-900 dark:text-white" id="memberBankHolderDisplay">PBK Community Welfare Fund</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel 3: Cash Payment Panel (Hidden by default) -->
+                        <div id="memberCashPaymentPanel" class="bg-white dark:bg-gray-900 p-6 sm:p-7 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 text-left hidden">
+                            <h3 class="font-extrabold text-lg text-gray-900 dark:text-white mb-1 flex items-center gap-2">
+                                <i data-lucide="banknote" class="w-5 h-5 text-amber-600"></i> Cash Contribution
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 font-semibold">Authorized Village / Community Collection</p>
+                            
+                            <div class="bg-amber-50 dark:bg-amber-950/30 p-4 rounded-xl border border-amber-200 dark:border-amber-900/50 mb-4 text-center">
+                                <span class="text-[10px] font-black uppercase text-amber-800 dark:text-amber-400">Cash Amount to Hand Over</span>
+                                <div class="text-2xl font-black text-[#963100] dark:text-amber-300">₹<span id="cashPayAmountDisplay">501</span></div>
+                            </div>
+
+                            <div class="space-y-3 text-xs text-gray-600 dark:text-gray-300">
+                                <div class="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20 flex items-start gap-2">
+                                    <i data-lucide="info" class="w-4 h-4 text-amber-700 dark:text-amber-400 shrink-0 mt-0.5"></i>
+                                    <p>Please submit this cash directly to the community treasurer or authorized village administrator. Your contribution receipt will be issued upon cash verification.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Info box -->
+                        <div class="bg-emerald-50 dark:bg-emerald-950/30 p-5 rounded-2xl border border-emerald-200 dark:border-emerald-900/50 flex items-start gap-3">
+                            <i data-lucide="shield-check" class="w-6 h-6 text-emerald-600 shrink-0 mt-0.5"></i>
+                            <div>
+                                <h4 class="font-extrabold text-emerald-900 dark:text-emerald-400 text-sm mb-1">Secure & Transparent</h4>
+                                <p class="text-xs text-emerald-800 dark:text-emerald-500 font-medium">All contributions are securely logged. You will receive an official digital receipt immediately upon successful submission.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Section: Recent Contributions & Causes -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
+                        <div class="p-5 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-900/50">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="clock" class="w-5 h-5 text-amber-700"></i>
+                                <h3 class="font-extrabold text-gray-900 dark:text-white text-base">Recent Contributions</h3>
+                            </div>
+                            <span class="text-xs font-bold text-amber-800 dark:text-amber-400 hover:underline cursor-pointer" onclick="switchTab('my-contributions', event)">View All</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-gray-100/70 dark:bg-gray-800/70 text-gray-700 dark:text-gray-300 font-extrabold border-b border-gray-200 dark:border-gray-800">
+                                        <th class="py-3 px-4">ID</th>
+                                        <th class="py-3 px-4">Amount</th>
+                                        <th class="py-3 px-4">Date</th>
+                                        <th class="py-3 px-4">Method</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pageRecentContributionsBody" class="divide-y divide-gray-200 dark:divide-gray-800 font-medium"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center space-x-2 mb-4">
+                                <i data-lucide="target" class="w-5 h-5 text-amber-700"></i>
+                                <h3 class="font-extrabold text-gray-900 dark:text-white text-base">Our Cause</h3>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-4">
+                                The PBK Community Chanda Fund is dedicated to empowering our people. Your donations directly support critical infrastructure, emergency medical relief, and youth development programs across our villages. 
+                            </p>
+                            <ul class="space-y-2 text-xs font-bold text-gray-800 dark:text-gray-200">
+                                <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-amber-500"></div> General Community Maintenance</li>
+                                <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-indigo-500"></div> Village Infrastructure & Welfare</li>
+                                <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-rose-500"></div> Emergency Medical Support</li>
+                                <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Youth Education & Sports</li>
+                            </ul>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800 flex justify-end">
+                             <span class="text-xs font-bold text-amber-800 dark:text-amber-400 hover:underline cursor-pointer" onclick="switchTab('causes', event)">Learn more about causes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====================================================================== -->
+            <!-- SECTION 5: TAB VIEW - MY CONTRIBUTIONS                                 -->
+            <!-- Contains: Contribution History Table, Search & Filter, PDF/Print Receipts -->
+            <!-- ====================================================================== -->
+            <div id="view-my-contributions" class="space-y-6 hidden">
+                <div class="bg-gradient-to-r from-amber-800 via-[#963100] to-[#7c2d12] dark:from-gray-900 dark:via-amber-950 dark:to-gray-900 rounded-2xl p-6 md:p-8 text-white shadow-lg relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border border-amber-700/50 dark:border-gray-800">
+                    <div class="relative z-10">
+                        <h2 class="text-2xl md:text-3xl font-extrabold flex items-center gap-2 drop-shadow" data-i18n="my_contrib_title">
+                            My Contributions
+                        </h2>
+                        <p class="text-amber-100 font-medium mt-1.5 text-sm md:text-base max-w-2xl" data-i18n="my_contrib_subtitle">
+                            Track your contributions to the PBK Community Chanda Fund.
+                        </p>
+                    </div>
+                    <div class="relative z-10">
+                        <button onclick="switchTab('contribute', event)" class="bg-white text-amber-900 font-bold px-5 py-3 rounded-xl shadow-md hover:bg-amber-50 transition flex items-center gap-2 text-sm border border-amber-200">
+                            <i data-lucide="heart" class="w-4 h-4 text-red-600 fill-red-600"></i>
+                            <span data-i18n="make_contribution_btn">Make a Contribution</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border-2 border-emerald-300 dark:border-emerald-700/50 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="text-xs font-extrabold uppercase tracking-wider text-emerald-900 dark:text-emerald-300" data-i18n="card_total_contributed">Total Contributed</h4>
+                            <div class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-400 flex items-center justify-center">
+                                <i data-lucide="wallet" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 id="myStatTotal" class="text-2xl font-extrabold text-gray-900 dark:text-white">₹0</h3>
+                            <p class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 mt-0.5" data-i18n="lifetime_contrib">Lifetime contributions</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border-2 border-amber-300 dark:border-amber-700/50 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="text-xs font-extrabold uppercase tracking-wider text-amber-900 dark:text-amber-300" data-i18n="contrib_this_year">Contributions This Year</h4>
+                            <div class="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-400 flex items-center justify-center">
+                                <i data-lucide="calendar" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 id="myStatThisYear" class="text-2xl font-extrabold text-gray-900 dark:text-white">₹0</h3>
+                            <p class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 mt-0.5 dynamic-fin-year">2026-2027</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border-2 border-purple-300 dark:border-purple-700/50 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="text-xs font-extrabold uppercase tracking-wider text-purple-900 dark:text-purple-300" data-i18n="number_of_contrib">Number of Contributions</h4>
+                            <div class="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-400 flex items-center justify-center">
+                                <i data-lucide="hash" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 id="myStatCount" class="text-2xl font-extrabold text-gray-900 dark:text-white">0</h3>
+                            <p class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 mt-0.5" data-i18n="successful_payments">Total successful payments</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border-2 border-indigo-300 dark:border-indigo-700/50 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="text-xs font-extrabold uppercase tracking-wider text-indigo-900 dark:text-indigo-300" data-i18n="last_contribution">Last Contribution</h4>
+                            <div class="w-8 h-8 rounded-xl bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-400 flex items-center justify-center">
+                                <i data-lucide="clock" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 id="myStatLastAmt" class="text-2xl font-extrabold text-gray-900 dark:text-white">₹0</h3>
+                            <p id="myStatLastDate" class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 mt-0.5">—</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="w-full md:w-1/3 relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                            <i data-lucide="search" class="w-4 h-4"></i>
+                        </span>
+                        <input type="text" id="filterSearch" oninput="filterContributions()" placeholder="Search purpose or ID..." class="w-full pl-10 pr-4 py-2.5 text-xs font-bold rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div class="w-full md:auto flex flex-wrap items-center gap-3">
+                    <select id="filterPurpose" onchange="filterContributions()" class="px-3 py-2.5 text-xs font-bold rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none">
+                        <option value="" data-i18n="all_types">All Contribution Types</option>
+                        <option value="Youth Fund">Youth Fund</option>
+                        <option value="Village Fund">Village Fund</option>
+                        <option value="General Fund">General Fund</option>
+                    </select>
+                    <button onclick="clearContributionFilters()" class="px-4 py-2.5 text-xs font-bold rounded-xl border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition" data-i18n="clear_filters">
+                        Clear Filters
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
+                <div class="p-5 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-900/50">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="file-text" class="w-6 h-6 text-amber-700"></i>
+                        <h3 class="font-extrabold text-gray-900 dark:text-white text-lg" data-i18n="contrib_history">Contribution History</h3>
+                    </div>
+                    <span id="contributionsCountBadge" class="text-xs font-bold bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 px-3 py-1 rounded-full">8 records</span>
+                </div>
+
+                <div class="overflow-x-auto hidden md:block">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-gray-100/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 font-extrabold border-b border-gray-200 dark:border-gray-800">
+                                <th class="py-3.5 px-4" data-i18n="th_date">Date</th>
+                                <th class="py-3.5 px-4" data-i18n="th_contrib_id">Contribution ID</th>
+                                <th class="py-3.5 px-4" data-i18n="th_contrib_type">Contribution Type</th>
+                                <th class="py-3.5 px-4" data-i18n="th_amount">Amount</th>
+                                <th class="py-3.5 px-4" data-i18n="th_pay_method">Payment Method</th>
+                                <th class="py-3.5 px-4" data-i18n="th_status">Status</th>
+                                <th class="py-3.5 px-4" data-i18n="th_receipt">Receipt</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contributionsTableBody" class="divide-y divide-gray-200 dark:divide-gray-800 text-gray-800 dark:text-gray-200 font-medium"></tbody>
+                        <tfoot id="contributionsTableFoot">
+                            <tr class="bg-gray-50/90 dark:bg-gray-800/90 font-extrabold border-t-2 border-gray-200 dark:border-gray-700 text-xs">
+                                <td colspan="3" class="py-3 px-4 text-right text-gray-500 uppercase tracking-wider font-extrabold">Contribution Totals:</td>
+                                <td colspan="4" class="py-3 px-4">
+                                    <div class="flex items-center gap-3 flex-wrap">
+                                        <span class="text-emerald-600 font-extrabold">Collected: <strong id="mFootCompleted">₹0</strong></span>
+                                        <span class="text-amber-600 font-extrabold">Pending: <strong id="mFootPending">₹0</strong></span>
+                                        <span class="text-rose-600 font-extrabold">Rejected: <strong id="mFootRejected">₹0</strong></span>
+                                        <span class="text-gray-900 dark:text-white font-extrabold border-l pl-2 border-gray-300 dark:border-gray-600">Total: <strong id="mFootTotal">₹0</strong></span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div id="contributionsCardsMobile" class="block md:hidden divide-y divide-gray-200 dark:divide-gray-800"></div>
+
+                <div id="contributionsEmptyState" class="p-12 text-center hidden">
+                        <div class="w-16 h-16 bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="heart" class="w-8 h-8"></i>
+                        </div>
+                        <h4 class="text-lg font-extrabold text-gray-900 dark:text-white" data-i18n="no_contrib_yet">No Contributions Yet</h4>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 max-w-sm mx-auto mt-1 mb-6" data-i18n="no_contrib_desc">
+                            You haven't made any contributions yet. Start supporting the PBK Community today.
+                        </p>
+                        <button onclick="switchTab('contribute', event)" class="bg-[#963100] text-white font-bold px-6 py-3 rounded-xl shadow-md hover:bg-amber-900 transition text-xs" data-i18n="contribute_now_btn">
+                            Contribute Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====================================================================== -->
+            <!-- SECTION 6: TAB VIEW - FUND DETAILS                                     -->
+            <!-- Contains: Active Fund Targets, Target vs Collected Progress Bars,      -->
+            <!-- Expenditure / Disbursement Transparency Breakdown Records              -->
+            <!-- ====================================================================== -->
+            <div id="view-fund-details" class="space-y-6 hidden">
+                <div class="bg-gradient-to-r from-amber-800 via-[#963100] to-[#7c2d12] dark:from-gray-900 dark:via-amber-950 dark:to-gray-900 rounded-2xl p-6 md:p-8 text-white shadow-lg relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border border-amber-700/50 dark:border-gray-800">
+                    <div class="relative z-10">
+                        <h2 class="text-2xl md:text-3xl font-extrabold flex items-center gap-2 drop-shadow" data-i18n="sidebar_fund_details">
+                            Fund Details
+                        </h2>
+                        <p class="text-amber-100 font-medium mt-1.5 text-sm md:text-base max-w-2xl" data-i18n="fund_subtitle">
+                            View the current status and usage of the PBK Community Chanda Fund.
+                        </p>
+                    </div>
+                    <div class="relative z-10 flex items-center gap-3">
+                        <div class="text-xs font-bold bg-amber-900/80 dark:bg-gray-800 px-3 py-2 rounded-xl border border-amber-600/50 flex items-center gap-2">
+                            <span data-i18n="fin_year_label">Financial Year:</span>
+                            <select id="fundDetailsYearSelect" onchange="changeFinancialYear(this.value)" class="bg-amber-900 dark:bg-gray-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-amber-700 dark:border-gray-700 focus:outline-none">
+                                <option value="2026">2026 - 2027</option>
+                                <option value="2025">2025 - 2026</option>
+                                <option value="2024">2024 - 2025</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 dark:bg-amber-950/40 p-4 rounded-2xl border border-amber-200 dark:border-amber-900/50 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2 bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 rounded-xl">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-extrabold text-sm text-gray-900 dark:text-white" data-i18n="fin_year_heading">Financial Year</h4>
+                            <p class="text-xs text-amber-800 dark:text-amber-300 font-bold">
+                                <span data-i18n="fin_year_label">Financial Year:</span> <span class="dynamic-fin-year">2026–2027</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h3 class="font-extrabold text-lg text-gray-900 dark:text-white flex items-center gap-2">
+                        <i data-lucide="database" class="w-5 h-5 text-amber-700"></i> <span data-i18n="sec_fund_overview">1. Fund Overview</span>
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800">
+                            <p class="text-xs font-extrabold text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="card_total_collected">Total Fund Collected</p>
+                            <h3 id="fdTotalCollected" class="text-2xl font-extrabold text-emerald-600 mt-2">₹0</h3>
+                        </div>
+                        <div class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800">
+                            <p class="text-xs font-extrabold text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="card_total_used">Total Fund Used</p>
+                            <h3 id="fdTotalUsed" class="text-2xl font-extrabold text-rose-600 mt-2">₹0</h3>
+                        </div>
+                        <div class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800">
+                            <p class="text-xs font-extrabold text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="card_current_balance">Available Balance</p>
+                            <h3 id="fdAvailableBalance" class="text-2xl font-extrabold text-sky-600 mt-2">₹0</h3>
+                        </div>
+                        <div class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800">
+                            <p class="text-xs font-extrabold text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="card_total_contributors">Total Contributors</p>
+                            <h3 id="fdTotalContributors" class="text-2xl font-extrabold text-purple-600 mt-2">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm w-full space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-gray-100 dark:border-gray-800">
+                        <div>
+                            <h3 class="font-extrabold text-lg text-gray-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="pie-chart" class="w-5 h-5 text-amber-700"></i> <span data-i18n="sec_fund_wise_distribution">2. Fund-Wise Distribution</span>
+                            </h3>
+                            <p class="text-xs text-gray-500 mt-0.5">Share of collected amount by category</p>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-950/50 px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-800">
+                            <span class="text-xs text-gray-500 font-bold mr-2">Total:</span>
+                            <span id="memberTotalDistLabel" class="text-sm font-extrabold text-gray-900 dark:text-white">₹0</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                        <div class="relative h-[240px] w-full flex items-center justify-center">
+                            <canvas id="memberFundsDonutChart"></canvas>
+                        </div>
+                        <div id="memberFundDistLegend" class="space-y-3"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <h3 class="font-extrabold text-lg text-gray-900 dark:text-white flex items-center gap-2">
+                            <i data-lucide="trending-up" class="w-5 h-5 text-amber-700"></i> <span data-i18n="sec_fund_usage">3. Fund Usage</span>
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-gray-500 dark:text-gray-400">Fund Type:</span>
+                            <select id="memberFundUsageFilter" onchange="renderMemberFundUsage()" class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 focus:outline-none">
+                                <option value="all">All Fund Types</option>
+                                <option value="Youth Fund">Youth Fund</option>
+                                <option value="Village Fund">Village Fund</option>
+                                <option value="General Fund">General Fund</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-extrabold border-b border-gray-200 dark:border-gray-800">
+                                        <th class="py-3.5 px-4" data-i18n="th_date">Date</th>
+                                        <th class="py-3.5 px-4" data-i18n="th_fund_type">Fund Type</th>
+                                        <th class="py-3.5 px-4" data-i18n="th_purpose">Purpose</th>
+                                        <th class="py-3.5 px-4" data-i18n="th_amount_used">Amount Used</th>
+                                        <th class="py-3.5 px-4">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="memberFundUsageTableBody" class="divide-y divide-gray-200 dark:divide-gray-800 text-gray-800 dark:text-gray-200 font-medium">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 space-y-2">
+                    <h4 class="font-extrabold text-sm text-gray-900 dark:text-white flex items-center gap-2">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-amber-700"></i> <span data-i18n="transparency_heading">Transparency Information</span>
+                    </h4>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 font-medium leading-relaxed" data-i18n="transparency_desc">
+                        "All fund collections and expenditures are recorded for community transparency. Members can view fund allocation, usage, and available balance details."
+                    </p>
+                </div>
+            </div>
+
+            <!-- ====================================================================== -->
+            <!-- SECTION 7: TAB VIEW - PROFILE & SECURITY SETTINGS                      -->
+            <!-- Contains: Member Personal Details, Address Form, Exclusive Performance -->
+            <!-- Metrics Box, Security Settings (Change Password, Phone/Email OTP,      -->
+            <!-- Disable Account, and Delete Account with 30-Day Retention Grace Period)-->
+            <!-- ====================================================================== -->
+            <div id="view-profile" class="space-y-6 hidden">
+                <div class="bg-gradient-to-r from-amber-800 via-[#963100] to-[#7c2d12] dark:from-gray-900 dark:via-amber-950 dark:to-gray-900 rounded-2xl p-6 md:p-8 text-white shadow-lg relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border border-amber-700/50 dark:border-gray-800">
+                    <div class="relative z-10">
+                        <h2 class="text-2xl md:text-3xl font-extrabold flex items-center gap-2 drop-shadow" data-i18n="sidebar_profile">
+                            Profile
+                        </h2>
+                        <p class="text-amber-100 font-medium mt-1.5 text-sm md:text-base max-w-2xl" data-i18n="profile_subtitle">
+                            Manage your member profile, account security, and preferences.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-4 border-b border-gray-200 dark:border-gray-800 pb-4">
+                    <button onclick="switchProfileTab('overview')" id="profile-tab-overview" class="px-7 py-3.5 rounded-2xl text-base font-extrabold bg-[#963100] text-white shadow-md transition" data-i18n="tab_overview">Profile Overview</button>
+                    <button onclick="switchProfileTab('personal'); startEditingProfile();" id="profile-tab-personal" class="px-7 py-3.5 rounded-2xl text-base font-extrabold bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:bg-amber-50 dark:hover:bg-gray-800 transition shadow-sm" data-i18n="tab_personal">Personal Information</button>
+                    <button onclick="switchProfileTab('security')" id="profile-tab-security" class="px-7 py-3.5 rounded-2xl text-base font-extrabold bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 hover:bg-amber-50 dark:hover:bg-gray-800 transition shadow-sm" data-i18n="tab_security">Security</button>
+                </div>
+
+                <div id="profile-content-overview" class="space-y-6">
+                    <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row items-center gap-6">
+                        <div class="w-24 h-24 rounded-2xl bg-amber-100/80 dark:bg-amber-950/60 text-amber-800 dark:text-amber-400 flex items-center justify-center border-2 border-amber-500 shadow-md shrink-0">
+                            <i data-lucide="users" class="w-12 h-12"></i>
+                        </div>
+                        <div class="flex-1 text-center sm:text-left space-y-1">
+                            <h3 class="text-xl font-extrabold text-gray-900 dark:text-white" id="overviewName">Member</h3>
+                            <p class="text-sm font-bold text-amber-800 dark:text-amber-400" id="dispMemberIdBadge">Member ID: —</p>
+                            <div id="dispMemberStatusContainer" class="mt-1">
+                                <p class="text-sm font-semibold text-emerald-600 dark:text-emerald-400 flex items-center justify-center sm:justify-start gap-1.5" id="dispMemberStatus">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="status_active_member">Status: Active Member</span>
+                                </p>
+                            </div>
+
+                        </div>
+                        <button onclick="switchProfileTab('personal'); startEditingProfile();" class="px-5 py-2.5 rounded-xl bg-[#963100] text-white text-xs font-bold shadow hover:bg-amber-900 transition flex items-center gap-2">
+                            <i data-lucide="edit-3" class="w-4 h-4"></i> <span data-i18n="edit_profile_btn">Edit Profile</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-extrabold text-base text-gray-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="user" class="w-5 h-5 text-amber-700"></i> <span data-i18n="tab_personal">Personal Information</span>
+                            </h4>
+                            <div id="personalInfoViewActions">
+                                <button onclick="switchProfileTab('personal'); startEditingProfile();" class="text-xs font-bold text-amber-800 dark:text-amber-400 hover:underline flex items-center gap-1">
+                                    <i data-lucide="edit" class="w-3.5 h-3.5"></i> <span data-i18n="edit_details">Edit Details</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="personalInfoDisplayMode" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm pt-2 border-t border-gray-100 dark:border-gray-800">
+                            <div>
+                                <span class="text-gray-500 font-semibold block text-sm" data-i18n="lbl_firstname">First Name</span>
+                                <strong id="dispFirstName" class="text-gray-900 dark:text-white text-base">—</strong>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 font-semibold block text-sm" data-i18n="lbl_lastname">Last Name</span>
+                                <strong id="dispLastName" class="text-gray-900 dark:text-white text-base">—</strong>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 font-semibold block text-sm" data-i18n="lbl_dob">Date of Birth</span>
+                                <strong id="dispDob" class="text-gray-900 dark:text-white text-base">—</strong>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 font-semibold block text-sm" data-i18n="lbl_doorno">Door / Plot Number</span>
+                                <strong id="dispDoorNo" class="text-gray-900 dark:text-white text-base">—</strong>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 font-semibold block text-sm" data-i18n="lbl_village">Village / Area</span>
+                                <strong id="dispVillage" class="text-gray-900 dark:text-white text-base">—</strong>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 font-semibold block text-sm" data-i18n="lbl_city">City</span>
+                                <strong id="dispCity" class="text-gray-900 dark:text-white text-base">—</strong>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 font-semibold block text-sm" data-i18n="lbl_district">District</span>
+                                <strong id="dispDistrict" class="text-gray-900 dark:text-white text-base">—</strong>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 font-semibold block text-sm" data-i18n="lbl_state">State</span>
+                                <strong id="dispState" class="text-gray-900 dark:text-white text-base">—</strong>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <span class="text-gray-500 font-semibold block text-sm" data-i18n="lbl_address">Full Address</span>
+                                <strong id="dispAddress" class="text-gray-900 dark:text-white text-base">—</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="profile-content-personal" class="space-y-6 hidden">
+                    <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-extrabold text-base text-gray-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="user" class="w-5 h-5 text-amber-700"></i> <span data-i18n="tab_personal">Personal Information</span>
+                            </h4>
+                            <span class="text-xs text-gray-500" data-i18n="personal_note">Update your general profile details below. Note: Phone and Email editing is located in Security.</span>
+                        </div>
+
+                        <div id="personalInfoEditMode" class="space-y-4 pt-2 border-t border-gray-100 dark:border-gray-800">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300 text-sm" data-i18n="lbl_firstname">First Name</label>
+                                    <input type="text" id="editFirstName" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 font-bold text-sm">
+                                </div>
+                                <div>
+                                    <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300 text-sm" data-i18n="lbl_lastname">Last Name</label>
+                                    <input type="text" id="editLastName" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 font-bold text-sm">
+                                </div>
+                                <div>
+                                    <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300 text-sm" data-i18n="lbl_dob">Date of Birth</label>
+                                    <input type="date" id="editDob" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 font-bold text-sm">
+                                </div>
+                                <div>
+                                    <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300 text-sm" data-i18n="lbl_doorno">Door / Plot Number</label>
+                                    <input type="text" id="editDoorNo" oninput="updateAutoAddress()" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 font-bold text-sm">
+                                </div>
+                                <div>
+                                    <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300 text-sm" data-i18n="lbl_village">Village / Area</label>
+                                    <input type="text" id="editVillage" oninput="updateAutoAddress()" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 font-bold text-sm">
+                                </div>
+                                <div>
+                                    <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300 text-sm" data-i18n="lbl_city">City</label>
+                                    <input type="text" id="editCity" oninput="updateAutoAddress()" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 font-bold text-sm">
+                                </div>
+                                <div>
+                                    <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300 text-sm" data-i18n="lbl_district">District</label>
+                                    <input type="text" id="editDistrict" oninput="updateAutoAddress()" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 font-bold text-sm">
+                                </div>
+                                <div>
+                                    <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300 text-sm" data-i18n="lbl_state">State</label>
+                                    <input type="text" id="editState" oninput="updateAutoAddress()" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 font-bold text-sm">
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300 text-sm" data-i18n="lbl_address">Full Address</label>
+                                    <textarea id="editAddress" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 font-bold text-sm"></textarea>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3 pt-3">
+                                <button onclick="saveProfileChanges()" class="px-6 py-2.5 bg-[#963100] text-white font-bold text-sm rounded-xl shadow hover:bg-amber-900 transition flex items-center gap-1.5">
+                                    <i data-lucide="check" class="w-4 h-4"></i> <span data-i18n="save_changes">Save Changes</span>
+                                </button>
+                                <button onclick="switchProfileTab('overview')" class="px-6 py-2.5 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold text-sm rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition" data-i18n="cancel">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="profile-content-security" class="space-y-6 hidden">
+                    <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 space-y-4">
+                        <h4 class="font-extrabold text-base text-gray-900 dark:text-white flex items-center gap-2">
+                            <i data-lucide="shield" class="w-5 h-5 text-amber-700"></i> <span data-i18n="tab_security">Account & Security</span>
+                        </h4>
+                        <div class="divide-y divide-gray-100 dark:divide-gray-800 text-sm">
+                            <!-- 1. Change Password -->
+                            <div class="py-4 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <i data-lucide="key" class="w-5 h-5 text-amber-700"></i>
+                                        <div>
+                                            <p class="font-extrabold text-gray-900 dark:text-white text-sm" data-i18n="change_password">Change Password</p>
+                                            <p class="text-gray-500 text-sm" id="secPasswordHint" data-i18n="password_sub">Update your account login password</p>
+                                        </div>
+                                    </div>
+                                    <button onclick="togglePasswordEdit()" id="passwordEditToggleBtn" class="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition" data-i18n="update_btn">Change</button>
+                                </div>
+                                <div id="passwordEditForm" class="hidden p-4 bg-gray-50 dark:bg-gray-800/60 rounded-xl space-y-3 border border-gray-200 dark:border-gray-700">
+                                    <div>
+                                        <label class="block font-bold text-xs text-gray-700 dark:text-gray-300 mb-1">Current Password</label>
+                                        <input type="password" id="secCurrentPassword" placeholder="Enter your current password" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm font-bold">
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="block font-bold text-xs text-gray-700 dark:text-gray-300 mb-1">New Password</label>
+                                            <input type="password" id="secNewPassword" placeholder="Minimum 6 characters" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm font-bold">
+                                        </div>
+                                        <div>
+                                            <label class="block font-bold text-xs text-gray-700 dark:text-gray-300 mb-1">Confirm New Password</label>
+                                            <input type="password" id="secConfirmPassword" placeholder="Re-enter new password" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm font-bold">
+                                        </div>
+                                    </div>
+                                    <div class="flex space-x-2 pt-1">
+                                        <button onclick="savePasswordChanges()" class="px-4 py-2 bg-[#963100] text-white font-bold text-xs rounded-lg shadow hover:bg-amber-900 transition flex items-center gap-1.5">
+                                            <i data-lucide="check" class="w-3.5 h-3.5"></i> Save Password
+                                        </button>
+                                        <button onclick="cancelPasswordEdit()" class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-xs font-bold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition" data-i18n="cancel">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. Change Phone Number with OTP verification -->
+                            <div class="py-4 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <i data-lucide="smartphone" class="w-5 h-5 text-amber-700"></i>
+                                        <div>
+                                            <p class="font-extrabold text-gray-900 dark:text-white text-sm" data-i18n="change_phone">Change Phone Number</p>
+                                            <p id="secPhoneDisp" class="text-gray-500 text-sm">+91 98765 43210 (Verified)</p>
+                                        </div>
+                                    </div>
+                                    <button onclick="togglePhoneEdit()" id="phoneEditToggleBtn" class="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition" data-i18n="edit_btn">Edit</button>
+                                </div>
+                                <div id="phoneEditForm" class="hidden p-4 bg-gray-50 dark:bg-gray-800/60 rounded-xl space-y-3 border border-gray-200 dark:border-gray-700">
+                                    <div>
+                                        <label class="block font-bold text-xs text-gray-700 dark:text-gray-300 mb-1" data-i18n="new_phone">New Phone Number</label>
+                                        <div class="flex gap-2">
+                                            <div class="relative flex-1">
+                                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-sm font-bold text-gray-500">+91</span>
+                                                <input type="text" id="secEditPhone" maxlength="10" placeholder="10-digit mobile number" class="w-full pl-12 pr-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm font-bold" oninput="markPhoneEdited()">
+                                            </div>
+                                            <button type="button" id="secPhoneSendOtpBtn" onclick="requestPhoneOtp()" class="px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs rounded-lg transition shrink-0 whitespace-nowrap flex items-center gap-1.5 shadow-sm">
+                                                <i data-lucide="send" class="w-3.5 h-3.5"></i> Send OTP
+                                            </button>
+                                        </div>
+                                        <span id="secPhoneStatusHint" class="text-[11px] text-amber-600 font-semibold mt-1 block">⚠ Verification required for new phone number</span>
+                                    </div>
+
+                                    <!-- OTP verification box -->
+                                    <div id="secPhoneOtpContainer" class="hidden space-y-2 p-3 bg-amber-50/70 dark:bg-amber-950/40 rounded-xl border border-amber-300 dark:border-amber-800">
+                                        <label class="block font-bold text-xs text-amber-950 dark:text-amber-200">Enter 4-Digit Verification Code (OTP)</label>
+                                        <div class="flex items-center gap-2">
+                                            <input type="text" id="secPhoneOtpCode" maxlength="4" placeholder="••••" class="w-36 px-3 py-2 rounded-lg border border-amber-400 dark:border-amber-700 bg-white dark:bg-gray-900 text-base font-extrabold tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                            <button type="button" id="secPhoneVerifyBtn" onclick="verifyPhoneOtpAndSave()" class="px-4 py-2 bg-[#963100] hover:bg-amber-900 text-white font-bold text-xs rounded-lg shadow transition flex items-center gap-1.5 shrink-0">
+                                                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Verify & Update Phone
+                                            </button>
+                                        </div>
+                                        <p id="secPhoneOtpMsg" class="text-[11px] text-amber-800 dark:text-amber-300 font-medium"></p>
+                                    </div>
+
+                                    <div class="flex space-x-2 pt-1">
+                                        <button onclick="cancelPhoneEdit()" class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-xs font-bold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition" data-i18n="cancel">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. Change Email Address with OTP verification -->
+                            <div class="py-4 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <i data-lucide="mail" class="w-5 h-5 text-amber-700"></i>
+                                        <div>
+                                            <p class="font-extrabold text-gray-900 dark:text-white text-sm" data-i18n="change_email">Change Email Address</p>
+                                            <p id="secEmailDisp" class="text-gray-500 text-sm">—</p>
+                                        </div>
+                                    </div>
+                                    <button onclick="toggleEmailEdit()" id="emailEditToggleBtn" class="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition" data-i18n="edit_btn">Edit</button>
+                                </div>
+                                <div id="emailEditForm" class="hidden p-4 bg-gray-50 dark:bg-gray-800/60 rounded-xl space-y-3 border border-gray-200 dark:border-gray-700">
+                                    <div>
+                                        <label class="block font-bold text-xs text-gray-700 dark:text-gray-300 mb-1" data-i18n="new_email">New Email Address</label>
+                                        <div class="flex gap-2">
+                                            <input type="email" id="secEditEmail" placeholder="new.email@example.com" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm font-bold" oninput="markEmailEdited()">
+                                            <button type="button" id="secEmailSendOtpBtn" onclick="requestEmailOtp()" class="px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs rounded-lg transition shrink-0 whitespace-nowrap flex items-center gap-1.5 shadow-sm">
+                                                <i data-lucide="send" class="w-3.5 h-3.5"></i> Send OTP
+                                            </button>
+                                        </div>
+                                        <span id="secEmailStatusHint" class="text-[11px] text-amber-600 font-semibold mt-1 block">⚠ Verification required for new email address</span>
+                                    </div>
+
+                                    <!-- OTP verification box -->
+                                    <div id="secEmailOtpContainer" class="hidden space-y-2 p-3 bg-amber-50/70 dark:bg-amber-950/40 rounded-xl border border-amber-300 dark:border-amber-800">
+                                        <label class="block font-bold text-xs text-amber-950 dark:text-amber-200">Enter 4-Digit Verification Code (OTP)</label>
+                                        <div class="flex items-center gap-2">
+                                            <input type="text" id="secEmailOtpCode" maxlength="4" placeholder="••••" class="w-36 px-3 py-2 rounded-lg border border-amber-400 dark:border-amber-700 bg-white dark:bg-gray-900 text-base font-extrabold tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                            <button type="button" id="secEmailVerifyBtn" onclick="verifyEmailOtpAndSave()" class="px-4 py-2 bg-[#963100] hover:bg-amber-900 text-white font-bold text-xs rounded-lg shadow transition flex items-center gap-1.5 shrink-0">
+                                                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Verify & Update Email
+                                            </button>
+                                        </div>
+                                        <p id="secEmailOtpMsg" class="text-[11px] text-amber-800 dark:text-amber-300 font-medium"></p>
+                                    </div>
+
+                                    <div class="flex space-x-2 pt-1">
+                                        <button onclick="cancelEmailEdit()" class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-xs font-bold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition" data-i18n="cancel">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                                <div class="py-4 flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <i data-lucide="shield-check" class="w-5 h-5 text-amber-700"></i>
+                                        <div>
+                                            <p class="font-extrabold text-gray-900 dark:text-white text-sm" data-i18n="two_factor">Two-Factor Authentication</p>
+                                            <p class="text-emerald-600 font-semibold text-sm" data-i18n="two_factor_sub">Enabled (Authenticator App)</p>
+                                        </div>
+                                    </div>
+                                    <button onclick="showToast('2FA settings updated')" class="px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition" data-i18n="manage_btn">Manage</button>
+                                </div>
+                            </div>
+
+                            <!-- 4. Account Lifecycle: Disable & Delete with 30-Day Retention & OTP Verification -->
+                            <div class="pt-6 border-t border-gray-200 dark:border-gray-800 space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="shield-alert" class="w-5 h-5 text-red-600"></i>
+                                        <h5 class="font-extrabold text-sm text-red-600 dark:text-red-400 uppercase tracking-wider">Account Status &amp; Management Controls</h5>
+                                    </div>
+                                    <span class="text-[11px] font-bold text-gray-400">Self-Service Protection</span>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <!-- Disable Account Card -->
+                                    <div class="p-5 rounded-2xl border border-amber-200 dark:border-amber-900/50 bg-amber-50/40 dark:bg-amber-950/20 flex flex-col justify-between space-y-4 shadow-sm">
+                                        <div class="space-y-2.5">
+                                            <div class="flex items-center justify-between">
+                                                <span class="font-extrabold text-sm text-amber-950 dark:text-amber-200 flex items-center gap-1.5">
+                                                    <i data-lucide="pause-circle" class="w-4 h-4 text-amber-600"></i> Disable Account
+                                                </span>
+                                                <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-amber-200 dark:bg-amber-900/80 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700">Temporary</span>
+                                            </div>
+                                            <p class="text-xs text-amber-950/80 dark:text-amber-300/80 leading-relaxed font-medium">
+                                                Temporarily pause your account. Your profile, receipts, and contribution history remain completely safe. You can reactivate anytime simply by logging back in.
+                                            </p>
+                                            <div class="bg-white/60 dark:bg-gray-900/40 rounded-xl p-3 border border-amber-200/60 dark:border-amber-900/40 text-[11px] space-y-1.5 font-medium text-amber-950 dark:text-amber-300">
+                                                <div class="flex items-start gap-1.5">
+                                                    <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5"></i>
+                                                    <span><strong>Preserved:</strong> All receipts &amp; payments intact</span>
+                                                </div>
+                                                <div class="flex items-start gap-1.5">
+                                                    <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5"></i>
+                                                    <span><strong>Reactivation:</strong> Instant 1-click restore on next login</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="button" onclick="openDisableAccountModal()" class="w-full py-2.5 rounded-xl border border-amber-400 dark:border-amber-700 bg-white dark:bg-gray-900 text-amber-900 dark:text-amber-200 font-extrabold text-xs hover:bg-amber-100 dark:hover:bg-gray-800 transition shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
+                                            <i data-lucide="pause" class="w-3.5 h-3.5"></i> Disable My Account
+                                        </button>
+                                    </div>
+
+                                    <!-- Delete Account Card -->
+                                    <div class="p-5 rounded-2xl border border-red-200 dark:border-red-900/60 bg-red-50/40 dark:bg-red-950/20 flex flex-col justify-between space-y-4 shadow-sm">
+                                        <div class="space-y-2.5">
+                                            <div class="flex items-center justify-between">
+                                                <span class="font-extrabold text-sm text-red-600 dark:text-red-400 flex items-center gap-1.5">
+                                                    <i data-lucide="trash-2" class="w-4 h-4 text-red-600"></i> Delete Account
+                                                </span>
+                                                <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-red-200 dark:bg-red-900/80 text-red-900 dark:text-red-200 border border-red-300 dark:border-red-700">30-Day Retention</span>
+                                            </div>
+                                            <p class="text-xs text-red-950/80 dark:text-red-300/80 leading-relaxed font-medium">
+                                                Schedule permanent account deletion with a <strong>30-day recovery grace period</strong>. Requires OTP verification via registered Phone or Email.
+                                            </p>
+                                            <div class="bg-white/60 dark:bg-gray-900/40 rounded-xl p-3 border border-red-200/60 dark:border-red-900/40 text-[11px] space-y-1.5 font-medium text-red-950 dark:text-red-300">
+                                                <div class="flex items-start gap-1.5">
+                                                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5"></i>
+                                                    <span><strong>Security:</strong> Protected by Phone/Email OTP</span>
+                                                </div>
+                                                <div class="flex items-start gap-1.5">
+                                                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5"></i>
+                                                    <span><strong>30-Day Undo:</strong> Restore simply by logging in</span>
+                                                </div>
+                                                <div class="flex items-start gap-1.5">
+                                                    <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-red-500 shrink-0 mt-0.5"></i>
+                                                    <span><strong>After 30 Days:</strong> Data permanently purged</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="button" onclick="openDeleteAccountModal()" class="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs transition shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
+                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Delete My Account (30 Days)
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 space-y-4">
+                    <h4 class="font-extrabold text-base text-gray-900 dark:text-white flex items-center gap-2">
+                        <i data-lucide="sliders" class="w-5 h-5 text-amber-700"></i> <span data-i18n="preferences_heading">Preferences</span>
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm pt-2">
+                        <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-2">
+                            <span class="font-bold text-gray-500 block text-sm" data-i18n="theme_mode_label">Theme Mode</span>
+                            <select id="prefThemeSelect" onchange="onPreferenceThemeChange(this.value)" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 font-bold text-xs text-gray-900 dark:text-white focus:outline-none">
+                                <option value="system">System</option>
+                                <option value="dark">Dark Theme</option>
+                                <option value="white">White Theme</option>
+                            </select>
+                        </div>
+                        <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-2">
+                            <span class="font-bold text-gray-500 block text-sm" data-i18n="language_label">Language</span>
+                            <select id="prefLangSelect" onchange="onPreferenceLanguageChange(this.value)" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 font-bold text-xs text-gray-900 dark:text-white focus:outline-none">
+                                <option value="en">English (Default)</option>
+                                <option value="te">తెలుగు (Telugu)</option>
+                            </select>
+                        </div>
+                        <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3">
+                            <span class="font-bold text-gray-500 block text-sm" data-i18n="notifications_label">Notifications</span>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between text-xs font-bold">
+                                    <span data-i18n="notif_email">Email Notifications</span>
+                                    <div class="flex items-center gap-2">
+                                        <span id="state-email" class="text-[10px] font-extrabold text-amber-700 dark:text-amber-400">ON</span>
+                                        <button type="button" id="toggle-email" onclick="toggleNotificationSwitch('email')" class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-[#b45309]" role="switch">
+                                            <span id="thumb-email" class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out translate-x-5"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between text-xs font-bold">
+                                    <span data-i18n="notif_whatsapp">WhatsApp Notifications</span>
+                                    <div class="flex items-center gap-2">
+                                        <span id="state-whatsapp" class="text-[10px] font-extrabold text-amber-700 dark:text-amber-400">ON</span>
+                                        <button type="button" id="toggle-whatsapp" onclick="toggleNotificationSwitch('whatsapp')" class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-[#b45309]" role="switch">
+                                            <span id="thumb-whatsapp" class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out translate-x-5"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====================================================================== -->
+            <!-- SECTION 8: TAB VIEW - CAUSES / EVENTS                                  -->
+            <!-- Contains: Community Emergency Relief Cards, Per-Member Targets & CTAs  -->
+            <!-- ====================================================================== -->
+            <div id="view-causes" class="space-y-6 hidden">
+                <div class="bg-gradient-to-r from-amber-800 via-[#963100] to-[#7c2d12] dark:from-gray-900 dark:via-amber-950 dark:to-gray-900 rounded-2xl p-6 md:p-8 text-white shadow-lg">
+                    <h2 class="text-2xl md:text-3xl font-extrabold">Causes / Events</h2>
+                    <p class="text-amber-100 mt-1 text-sm">Community causes and events supported by the Chanda Fund.</p>
+                </div>
+                <div id="memberCausesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                </div>
+            </div>
+
+            <!-- ====================================================================== -->
+            <!-- SECTION 9: FALLBACK GENERIC TAB VIEW                                   -->
+            <!-- ====================================================================== -->
+            <div id="view-generic" class="space-y-6 hidden">
+                <div class="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 text-center py-20">
+                    <h3 id="genericViewTitle" class="text-2xl font-extrabold text-gray-900 dark:text-white mb-2">Section View</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">This section is fully integrated into the PBK Community Chanda Fund platform.</p>
+                    <button onclick="switchTab('dashboard', event)" class="bg-[#963100] text-white font-bold px-6 py-3 rounded-xl shadow-md" data-i18n="back_to_dash">Back to Dashboard</button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ============================================================================== -->
+    <!-- SECTION 10: MODALS, DIALOGUES & TOAST NOTIFICATIONS                            -->
+    <!-- Contains: Quick Contribute, Official PDF Receipt, Toast Alert, Disable Account,-->
+    <!-- 30-Day Soft Deletion Confirmation, and Announcement Detail Overlays            -->
+    <!-- ============================================================================== -->
+
+    <!-- Contribute Modal -->
+    <div id="contributeModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
+        <div class="bg-white dark:bg-gray-900 rounded-3xl max-w-2xl w-full p-6 sm:p-8 md:p-10 shadow-2xl relative animate-in fade-in zoom-in duration-200 border-2 border-amber-300 dark:border-amber-700 text-gray-900 dark:text-gray-100 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-200 dark:border-gray-800 sticky top-0 bg-white dark:bg-gray-900 z-10">
+                <h3 class="font-extrabold text-2xl sm:text-3xl text-amber-900 dark:text-amber-400 flex items-center gap-3">
+                    <div class="p-2.5 bg-red-100 dark:bg-red-950/60 rounded-2xl text-red-600 dark:text-red-400 shrink-0">
+                        <i data-lucide="heart" class="w-7 h-7 sm:w-8 sm:h-8 fill-red-600"></i>
+                    </div> 
+                    <span data-i18n="make_contribution_btn">Make a Contribution</span>
+                </h3>
+                <button onclick="closeContributeModal()" class="text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-extrabold text-gray-900 dark:text-gray-100 mb-2" data-i18n="modal_amt_label">Contribution Amount (₹)</label>
+                    <div class="grid grid-cols-4 gap-3 mb-3">
+                        <button type="button" onclick="setModalAmount(501, this)" class="modal-amt-btn py-3 text-sm sm:text-base font-extrabold rounded-xl border-2 border-amber-600 bg-amber-50 dark:bg-amber-950/50 text-amber-900 dark:text-amber-300 shadow-sm transition">₹501</button>
+                        <button type="button" onclick="setModalAmount(1001, this)" class="modal-amt-btn py-3 text-sm sm:text-base font-extrabold rounded-xl border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">₹1001</button>
+                        <button type="button" onclick="setModalAmount(5001, this)" class="modal-amt-btn py-3 text-sm sm:text-base font-extrabold rounded-xl border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">₹5001</button>
+                        <button type="button" onclick="setModalAmount(10001, this)" class="modal-amt-btn py-3 text-sm sm:text-base font-extrabold rounded-xl border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">₹10001</button>
+                    </div>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-700 dark:text-gray-300 font-extrabold text-lg">₹</span>
+                        <input type="number" id="modalCustomAmount" min="1" step="1" onkeydown="if(['-','+','e','E','.'].includes(event.key)) event.preventDefault();" oninput="syncModalAmount()" value="501" class="w-full pl-11 pr-4 py-3.5 text-base sm:text-lg font-extrabold border-2 border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white" placeholder="Enter positive amount (e.g. 501)">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-extrabold text-gray-900 dark:text-gray-100 mb-2" data-i18n="modal_type_label">Contribution Type</label>
+                        <select id="modalPurpose" class="w-full px-4 py-3 text-sm font-bold border-2 border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                            <option value="Youth Fund">Youth Fund</option>
+                            <option value="Village Fund">Village Fund</option>
+                            <option value="General Fund">General Fund</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-extrabold text-gray-900 dark:text-gray-100 mb-2" data-i18n="modal_date_label">Contribution Date</label>
+                        <input type="date" id="modalDate" class="w-full px-4 py-3 text-sm font-bold border-2 border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-extrabold text-gray-900 dark:text-gray-100 mb-2" data-i18n="modal_method_label">Payment Method</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <label id="payCard-UPI" onclick="setPaymentMethod('UPI')" class="pay-method-card border-2 border-amber-600 bg-amber-50/90 dark:bg-amber-950/60 rounded-xl p-3.5 flex items-center space-x-2.5 cursor-pointer text-xs sm:text-sm font-extrabold text-amber-900 dark:text-amber-300 shadow-sm transition">
+                            <input type="radio" name="payMethod" value="UPI" checked class="text-amber-600 w-4 h-4 pointer-events-none">
+                            <span>QR Code / UPI</span>
+                        </label>
+                        <label id="payCard-Bank Transfer" onclick="setPaymentMethod('Bank Transfer')" class="pay-method-card border-2 border-gray-300 dark:border-gray-700 rounded-xl p-3.5 flex items-center space-x-2.5 cursor-pointer text-xs sm:text-sm font-extrabold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                            <input type="radio" name="payMethod" value="Bank Transfer" class="text-amber-600 w-4 h-4 pointer-events-none">
+                            <span>Bank Transfer</span>
+                        </label>
+                        <label id="payCard-Cash" onclick="setPaymentMethod('Cash')" class="pay-method-card border-2 border-gray-300 dark:border-gray-700 rounded-xl p-3.5 flex items-center space-x-2.5 cursor-pointer text-xs sm:text-sm font-extrabold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                            <input type="radio" name="payMethod" value="Cash" class="text-amber-600 w-4 h-4 pointer-events-none">
+                            <span>Cash</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-extrabold text-gray-900 dark:text-gray-100 mb-2" data-i18n="modal_notes_label">Optional Notes / Dedication</label>
+                    <input type="text" id="modalNotes" placeholder="Add any special remarks or dedication..." class="w-full px-4 py-3 text-sm font-bold border-2 border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                </div>
+
+                <button onclick="submitContribution()" class="w-full bg-gradient-to-r from-[#963100] via-amber-800 to-amber-950 hover:from-amber-900 hover:to-amber-900 text-white font-extrabold py-5 sm:py-6 rounded-2xl shadow-2xl transition text-base sm:text-lg tracking-wider uppercase border-2 border-amber-400/30 flex items-center justify-center gap-3">
+                    <i data-lucide="heart" class="w-6 h-6 fill-white"></i>
+                    <span><span data-i18n="submit_contrib_btn">Submit Contribution</span> (₹<span id="modalPayBtnAmt">501</span>)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================================== -->
+    <!-- SECTION 10 (CONT.): OFFICIAL A4 DONATION RECEIPT MODAL                         -->
+    <!-- Formatted strictly in A4 proportions with gold eagle logo, official seal,       -->
+    <!-- verified badges, member details, and high-resolution print/PDF export           -->
+    <!-- ============================================================================== -->
+    <div id="receiptModal" class="fixed inset-0 bg-black/80 z-[120] flex items-center justify-center p-2 sm:p-4 hidden backdrop-blur-md overflow-y-auto">
+        <div id="receiptModalScrollContainer" class="bg-white dark:bg-gray-950 rounded-3xl max-w-4xl w-full p-3 sm:p-6 shadow-2xl relative border-2 border-amber-400 dark:border-amber-800 max-h-[96vh] overflow-y-auto my-auto text-gray-900">
+            
+            <!-- Close Button (Screen only) -->
+            <button onclick="closeReceiptModal()" class="no-print absolute top-4 right-4 z-20 text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 p-2.5 rounded-full transition shadow-sm" title="Close Receipt">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- A4 Sheet Container -->
+            <div id="receiptA4Sheet" class="receipt-a4-sheet bg-white rounded-[26px] border-[2.5px] border-[#d97706] p-6 sm:p-9 relative shadow-2xl font-sans text-gray-900 select-text overflow-hidden">
+
+                <!-- 4 Geometric Corner Notches in Dark Amber Gradient matching user reference -->
+                <!-- Top-Left Corner Notch -->
+                <div class="absolute top-0 left-0 w-14 h-14 pointer-events-none overflow-hidden rounded-tl-[23px] z-10">
+                    <div class="w-full h-full bg-gradient-to-br from-[#451a03] via-[#963100] to-[#f59e0b]" style="clip-path: polygon(0 0, 100% 0, 0 100%);"></div>
+                </div>
+                <!-- Top-Right Corner Notch -->
+                <div class="absolute top-0 right-0 w-14 h-14 pointer-events-none overflow-hidden rounded-tr-[23px] z-10">
+                    <div class="w-full h-full bg-gradient-to-bl from-[#451a03] via-[#963100] to-[#f59e0b]" style="clip-path: polygon(0 0, 100% 0, 100% 100%);"></div>
+                </div>
+                <!-- Bottom-Left Corner Notch -->
+                <div class="absolute bottom-0 left-0 w-14 h-14 pointer-events-none overflow-hidden rounded-bl-[23px] z-10">
+                    <div class="w-full h-full bg-gradient-to-tr from-[#451a03] via-[#963100] to-[#f59e0b]" style="clip-path: polygon(0 0, 0 100%, 100% 100%);"></div>
+                </div>
+                <!-- Bottom-Right Corner Notch -->
+                <div class="absolute bottom-0 right-0 w-14 h-14 pointer-events-none overflow-hidden rounded-br-[23px] z-10">
+                    <div class="w-full h-full bg-gradient-to-tl from-[#451a03] via-[#963100] to-[#f59e0b]" style="clip-path: polygon(100% 0, 100% 100%, 0 100%);"></div>
+                </div>
+
+                <!-- TOP HEADER -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b border-amber-200/80 relative z-20">
+                    <!-- Left: Square PBK 3D Emblem with Orange Glowing Border -->
+                    <div class="shrink-0 flex items-center justify-center">
+                        <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-black border-2 border-amber-500/70 p-1 shadow-md flex items-center justify-center overflow-hidden">
+                            <img src="pbk_logo.jpg" alt="PBK Community Emblem" class="w-full h-full object-contain">
+                        </div>
+                    </div>
+
+                    <!-- Center: Organization Title, Slogan, and Pill Badge -->
+                    <div class="text-center flex-1 px-1">
+                        <!-- Small Crown Flourish -->
+                        <div class="flex items-center justify-center text-amber-600 mb-0.5">
+                            <i data-lucide="crown" class="w-4 h-4 fill-amber-500 text-amber-600"></i>
+                        </div>
+                        <!-- Main Title: PBK in warm amber, COMMUNITY in rich charcoal -->
+                        <h1 class="text-2xl sm:text-3xl font-black tracking-wide leading-none uppercase font-sans">
+                            <span class="text-[#c2410c]">PBK </span><span class="text-gray-950">COMMUNITY</span>
+                        </h1>
+                        <div class="text-[10px] sm:text-[11px] font-bold tracking-[0.25em] text-gray-800 uppercase mt-1">
+                            PEOPLE &nbsp;|&nbsp; BELIEVE &nbsp;|&nbsp; KINDNESS
+                        </div>
+                        <!-- Black Pill Badge -->
+                        <div class="inline-block bg-[#1a140f] text-[#facc15] text-[10px] sm:text-[11px] font-black uppercase px-6 py-1 rounded-full tracking-wider mt-2 shadow-sm border border-amber-500/50">
+                            COMMUNITY CHANDA FUND
+                        </div>
+                        <div class="text-[9px] sm:text-[10px] font-bold text-gray-700 tracking-wider uppercase mt-1.5">
+                            TOGETHER FOR A STRONGER COMMUNITY
+                        </div>
+                    </div>
+
+                    <!-- Right: Official Organization Coordinates with Warm Amber Icons -->
+                    <div class="shrink-0 text-left space-y-1.5 text-xs text-gray-700 min-w-[210px] border-t sm:border-t-0 sm:border-l border-amber-200/80 pt-3 sm:pt-0 sm:pl-4">
+                        <div class="flex items-start gap-2">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-[#c2410c] shrink-0 mt-0.5"></i>
+                            <div>
+                                <span class="font-black text-gray-950 block leading-tight text-xs">PBK Community</span>
+                                <span class="text-[10px] text-gray-500 font-semibold leading-tight block">Community Fund Initiative</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="mail" class="w-3.5 h-3.5 text-[#c2410c] shrink-0"></i>
+                            <span class="font-semibold text-[11px] text-gray-800">support@pbkcommunity.org</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="globe" class="w-3.5 h-3.5 text-[#c2410c] shrink-0"></i>
+                            <span class="font-semibold text-[11px] text-gray-800">www.pbkcommunity.org</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="users" class="w-3.5 h-3.5 text-[#c2410c] shrink-0"></i>
+                            <span class="font-semibold text-[11px] text-gray-800">People | Believe | Kindness</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLACK HORIZONTAL DONATION RECEIPT BANNER -->
+                <div class="bg-gradient-to-r from-gray-950 via-gray-900 to-gray-950 text-white py-3 px-4 rounded-xl text-center shadow-md my-3.5 border border-gray-800 relative overflow-hidden">
+                    <div class="flex items-center justify-center gap-3">
+                        <span class="h-[1.5px] bg-amber-400/60 w-14 sm:w-28"></span>
+                        <h2 class="text-base sm:text-lg font-black tracking-[0.25em] uppercase text-white font-serif">DONATION RECEIPT</h2>
+                        <span class="h-[1.5px] bg-amber-400/60 w-14 sm:w-28"></span>
+                    </div>
+                    <div class="text-[9.5px] sm:text-[10.5px] font-bold tracking-[0.22em] text-[#fde047] uppercase mt-1">
+                        THANK YOU FOR YOUR GENEROUS CONTRIBUTION
+                    </div>
+                </div>
+
+                <!-- TWO METADATA CARDS: Receipt No. & Date of Issue -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 my-3.5">
+                    <div class="bg-[#f8fafc] p-3.5 sm:p-4 rounded-2xl border border-gray-200/90 flex items-center gap-3.5 shadow-xs">
+                        <div class="w-10 h-10 rounded-xl bg-gray-100 border border-gray-200 text-gray-800 flex items-center justify-center shrink-0">
+                            <i data-lucide="file-text" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold uppercase text-gray-500 tracking-wider block">Receipt No.</span>
+                            <span id="a4ReceiptNumber" class="text-base sm:text-lg font-black text-[#963100] tracking-wide">REC-PBK-C001</span>
+                        </div>
+                    </div>
+                    <div class="bg-[#f8fafc] p-3.5 sm:p-4 rounded-2xl border border-gray-200/90 flex items-center gap-3.5 shadow-xs">
+                        <div class="w-10 h-10 rounded-xl bg-gray-100 border border-gray-200 text-gray-800 flex items-center justify-center shrink-0">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold uppercase text-gray-500 tracking-wider block">Date of Issue</span>
+                            <span id="a4ReceiptIssueDate" class="text-sm sm:text-base font-black text-gray-950 block leading-tight">10 Aug 2026</span>
+                            <span id="a4ReceiptIssueTime" class="text-[11px] text-gray-500 font-bold block">10:30 AM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MEMBER / DONOR DETAILS CARD -->
+                <div class="bg-[#f8fafc] rounded-2xl p-4 sm:p-5 border border-gray-200/90 my-3.5 shadow-xs">
+                    <div class="flex items-center gap-3.5 mb-3.5 pb-3 border-b border-gray-200">
+                        <div class="w-12 h-12 rounded-full bg-[#963100] text-white flex items-center justify-center shrink-0 shadow-sm">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold uppercase text-gray-500 tracking-wider block leading-tight">Member / Donor Details</span>
+                            <h3 id="a4DonorName" class="text-lg sm:text-xl font-black text-gray-950 leading-tight">Rahul S.</h3>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2.5 text-xs">
+                        <div class="flex items-center justify-between sm:justify-start gap-2">
+                            <span class="text-gray-500 font-bold w-24 shrink-0">PBK ID</span>
+                            <span class="text-gray-400 font-bold mr-1">:</span>
+                            <span id="a4DonorId" class="font-extrabold text-gray-950">PBK-M001</span>
+                        </div>
+                        <div class="flex items-center justify-between sm:justify-start gap-2">
+                            <span class="text-gray-500 font-bold w-28 shrink-0 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-gray-400"></i> Date of Birth</span>
+                            <span class="text-gray-400 font-bold mr-1">:</span>
+                            <span id="a4DonorDob" class="font-extrabold text-gray-950">1994-05-12</span>
+                        </div>
+
+                        <div class="flex items-center justify-between sm:justify-start gap-2">
+                            <span class="text-gray-500 font-bold w-24 shrink-0">Phone</span>
+                            <span class="text-gray-400 font-bold mr-1">:</span>
+                            <span id="a4DonorPhone" class="font-extrabold text-gray-950">+91 9876543210</span>
+                        </div>
+                        <div class="flex items-center justify-between sm:justify-start gap-2">
+                            <span class="text-gray-500 font-bold w-28 shrink-0 flex items-center gap-1.5"><i data-lucide="user" class="w-3.5 h-3.5 text-gray-400"></i> Gender</span>
+                            <span class="text-gray-400 font-bold mr-1">:</span>
+                            <span id="a4DonorGender" class="font-extrabold text-gray-950">Male</span>
+                        </div>
+
+                        <div class="flex items-center justify-between sm:justify-start gap-2">
+                            <span class="text-gray-500 font-bold w-24 shrink-0">Email</span>
+                            <span class="text-gray-400 font-bold mr-1">:</span>
+                            <span id="a4DonorEmail" class="font-extrabold text-gray-950 break-all">rahul@example.com</span>
+                        </div>
+                        <div class="flex items-center justify-between sm:justify-start gap-2">
+                            <span class="text-gray-500 font-bold w-28 shrink-0 flex items-center gap-1.5"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-gray-400"></i> Address</span>
+                            <span class="text-gray-400 font-bold mr-1">:</span>
+                            <span id="a4DonorAddress" class="font-extrabold text-gray-950 truncate">PBK Community Member</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONTRIBUTION DETAILS SECTION -->
+                <div class="my-3.5 rounded-2xl overflow-hidden border border-gray-200/90 shadow-xs">
+                    <div class="bg-[#8c3200] text-white px-4 py-2.5 flex items-center gap-2.5 font-black text-xs sm:text-sm uppercase tracking-wide">
+                        <i data-lucide="landmark" class="w-4 h-4"></i>
+                        <span>Contribution Details</span>
+                    </div>
+
+                    <table class="w-full text-left text-xs border-collapse">
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="bg-white">
+                                <td class="py-2.5 px-4 font-bold text-gray-500 w-1/3 sm:w-1/4">Transaction ID</td>
+                                <td class="py-2.5 px-4 font-black text-gray-950" id="a4TxId">PBK-C001</td>
+                            </tr>
+                            <tr class="bg-[#fafafa]">
+                                <td class="py-2.5 px-4 font-bold text-gray-500">Fund Name</td>
+                                <td class="py-2.5 px-4 font-black text-[#c2410c] text-sm" id="a4FundName">Village Fund</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="py-2.5 px-4 font-bold text-gray-500">Contribution Amount</td>
+                                <td class="py-2.5 px-4 font-black text-gray-950 text-2xl" id="a4AmountNum">₹2,500</td>
+                            </tr>
+                            <tr class="bg-[#fafafa]">
+                                <td class="py-2.5 px-4 font-bold text-gray-500">Amount in Words</td>
+                                <td class="py-2.5 px-4 font-extrabold text-gray-800" id="a4AmountWords">Rupees Two Thousand Five Hundred Only</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="py-2.5 px-4 font-bold text-gray-500">Payment Method</td>
+                                <td class="py-2.5 px-4 font-bold text-gray-950" id="a4PaymentMethod">Bank Transfer</td>
+                            </tr>
+                            <tr class="bg-[#fafafa]">
+                                <td class="py-2.5 px-4 font-bold text-gray-500">Transaction / Reference ID</td>
+                                <td class="py-2.5 px-4 font-mono font-bold text-gray-950" id="a4RefId">UTR123456789</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="py-2.5 px-4 font-bold text-gray-500">Transaction Date</td>
+                                <td class="py-2.5 px-4 font-bold text-gray-950" id="a4TxDate">10 Aug 2026, 10:30 AM</td>
+                            </tr>
+                            <tr class="bg-[#fafafa]">
+                                <td class="py-2.5 px-4 font-bold text-gray-500">Receipt Status</td>
+                                <td class="py-2.5 px-4">
+                                    <span id="a4StatusBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-emerald-700 text-white shadow-xs">
+                                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                                        <span>Verified / Completed</span>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="py-2.5 px-4 font-bold text-gray-500">Verified On</td>
+                                <td class="py-2.5 px-4 font-bold text-gray-950" id="a4VerifiedOn">10 Aug 2026, 11:15 AM</td>
+                            </tr>
+                            <tr class="bg-[#fafafa]">
+                                <td class="py-2.5 px-4 font-bold text-gray-500">Verified By</td>
+                                <td class="py-2.5 px-4 font-bold text-gray-950" id="a4VerifiedBy">Administrator (Super Admin)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- FOOTER: Thank You | Circular Official Stamp | Signature -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4 mt-5 pt-4 border-t border-gray-200">
+                    <!-- Left: Thank You & Purpose -->
+                    <div class="text-center sm:text-left">
+                        <div class="text-3xl sm:text-4xl font-bold text-[#963100]" style="font-family: 'Great Vibes', 'Dancing Script', cursive;">
+                            Thank You!
+                        </div>
+                        <p class="text-xs text-gray-600 font-medium italic mt-1 leading-relaxed max-w-[220px]">
+                            "Your contribution helps us build a stronger and brighter community."
+                        </p>
+                    </div>
+
+                    <!-- Center: Official Circular Stamp Seal -->
+                    <div class="flex items-center justify-center">
+                        <div class="relative w-32 h-32 flex items-center justify-center select-none" id="a4OfficialSeal">
+                            <svg viewBox="0 0 160 160" class="w-full h-full relative z-10" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <path id="sealTopArc" d="M 22,80 A 58,58 0 0,1 138,80" fill="none" />
+                                    <path id="sealBottomArc" d="M 138,80 A 58,58 0 0,1 22,80" fill="none" />
+                                </defs>
+                                <!-- Double Circular Rings -->
+                                <circle cx="80" cy="80" r="76" fill="#fff" stroke="#963100" stroke-width="2.5" />
+                                <circle cx="80" cy="80" r="70" fill="none" stroke="#963100" stroke-width="1.2" stroke-dasharray="3,3" />
+                                <circle cx="80" cy="80" r="48" fill="none" stroke="#963100" stroke-width="1.8" />
+                                
+                                <!-- Top Curved Text: PBK COMMUNITY -->
+                                <text fill="#963100" font-size="10" font-family="'Inter', sans-serif" font-weight="900" letter-spacing="2">
+                                    <textPath href="#sealTopArc" startOffset="50%" text-anchor="middle">
+                                        ★ PBK COMMUNITY ★
+                                    </textPath>
+                                </text>
+
+                                <!-- Bottom Curved Text: Dynamic (OFFICIAL RECEIPT or PROVISIONAL RECEIPT) -->
+                                <text fill="#963100" font-size="9" font-family="'Inter', sans-serif" font-weight="900" letter-spacing="2">
+                                    <textPath href="#sealBottomArc" startOffset="50%" text-anchor="middle" id="a4SealBottomText">
+                                        OFFICIAL RECEIPT
+                                    </textPath>
+                                </text>
+                            </svg>
+                            <!-- Center PBK Eagle Logo Overlay -->
+                            <div class="absolute inset-0 m-auto w-14 h-14 rounded-full overflow-hidden border border-[#963100] flex items-center justify-center bg-black z-20 shadow-xs pointer-events-none">
+                                <img src="pbk_logo.jpg" alt="PBK Emblem" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Authorized Signature -->
+                    <div class="text-center sm:text-right">
+                        <div class="inline-block text-center">
+                            <div class="text-3xl sm:text-4xl font-bold text-gray-950 tracking-wider select-none" style="font-family: 'Great Vibes', 'Dancing Script', cursive;">
+                                Aatan
+                            </div>
+                            <div class="w-36 h-0.5 bg-gray-600 mx-auto my-1"></div>
+                            <div class="font-black text-xs text-gray-950 uppercase tracking-wider">Authorized Signature</div>
+                            <div class="text-[11px] text-gray-500 font-semibold leading-tight mt-0.5">
+                                PBK Community<br>Admin Team
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM MOTTO & CROWN -->
+                <div class="mt-4 pt-3 border-t border-amber-200/80 text-center relative z-20">
+                    <div class="flex items-center justify-center gap-1 text-amber-600 mb-1">
+                        <i data-lucide="crown" class="w-4 h-4 fill-amber-500 text-amber-600"></i>
+                    </div>
+                    <div class="text-[11px] font-black tracking-[0.28em] text-gray-800 uppercase">
+                        PEOPLE &nbsp;|&nbsp; BELIEVE &nbsp;|&nbsp; KINDNESS
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- MODAL ACTION TOOLBAR (Hidden in Print) -->
+            <div class="no-print mt-4 pt-3 border-t border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="text-xs text-gray-500 font-semibold text-center sm:text-left flex items-center gap-1.5" id="a4ReceiptStatusNotice">
+                    <i data-lucide="info" class="w-4 h-4 text-amber-600"></i>
+                    <span>Official A4 formatted receipt voucher. Ready for print or high-res PDF download.</span>
+                </div>
+                
+                <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                    <button type="button" onclick="printReceipt()" class="flex-1 sm:flex-none px-4 py-2.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-100 font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-xs cursor-pointer" title="Print full unclipped A4 receipt">
+                        <i data-lucide="printer" class="w-4 h-4 text-gray-600 dark:text-gray-300"></i>
+                        <span>Print Receipt</span>
+                    </button>
+                    <button type="button" onclick="downloadReceiptImage()" class="flex-1 sm:flex-none px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-extrabold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-xs cursor-pointer" title="Download crystal clear PNG image slip">
+                        <i data-lucide="image" class="w-4 h-4"></i>
+                        <span>Download Slip (PNG)</span>
+                    </button>
+                    <button type="button" onclick="downloadReceipt()" class="flex-1 sm:flex-none px-5 py-2.5 bg-[#963100] hover:bg-amber-900 text-white font-extrabold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-md cursor-pointer" title="Download official complete A4 PDF">
+                        <i data-lucide="file-down" class="w-4 h-4"></i>
+                        <span>Download PDF</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast Notification (Top-level z-[200] to ensure full visibility on top of modals) -->
+    <div id="toast" class="fixed top-6 right-6 bg-gray-900 dark:bg-gray-800 text-white px-5 py-3.5 rounded-2xl shadow-2xl text-xs font-bold transition-all duration-300 transform -translate-y-20 opacity-0 z-[200] flex items-center space-x-3 border border-gray-700 pointer-events-auto">
+        <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+        <span id="toastMsg">Action completed successfully!</span>
+    </div>
+
+
+    <!-- Disable Account Modal -->
+    <div id="disableAccountModal" class="fixed inset-0 z-[150] bg-black/70 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="w-full max-w-lg bg-white dark:bg-[#111827] border-2 border-amber-500/60 rounded-3xl shadow-2xl text-left max-h-[90vh] flex flex-col my-auto overflow-hidden">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-5 sm:p-6 pb-4 border-b border-gray-100 dark:border-gray-800 shrink-0">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                        <i data-lucide="pause-circle" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white leading-tight">Temporarily Disable Account</h3>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30">Pause Access</span>
+                        </div>
+                        <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">Pause your member access while keeping all records completely safe.</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeDisableAccountModal()" class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer shrink-0" title="Close">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body (Scrollable if needed) -->
+            <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-3.5">
+                <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-2xl p-3.5 space-y-2 text-xs text-amber-950 dark:text-amber-200">
+                    <div class="flex items-start gap-2">
+                        <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+                        <p><strong>Your Records Are Safe:</strong> All your past contributions, digital receipts, and verified documents remain untouched in the database.</p>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+                        <p><strong>Instant Reactivation:</strong> You can log in at any time to reactivate your account with a single click.</p>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <i data-lucide="log-out" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+                        <p><strong>Logged Out Immediately:</strong> You will be signed out from your active session upon confirmation.</p>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-xs text-gray-700 dark:text-gray-300 mb-1">Confirm with your Current Password (Optional)</label>
+                    <input type="password" id="disableAccPassword" placeholder="Enter your current password" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+            </div>
+
+            <!-- Pinned Action Footer -->
+            <div class="shrink-0 p-4 sm:p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50/70 dark:bg-gray-900/70 flex gap-3 rounded-b-3xl">
+                <button type="button" onclick="closeDisableAccountModal()" class="flex-1 py-3 rounded-xl border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold text-xs transition cursor-pointer">
+                    Cancel / Keep Active
+                </button>
+                <button type="button" id="confirmDisableBtn" onclick="executeDisableAccount()" class="flex-1 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-extrabold text-xs shadow-lg shadow-amber-900/30 transition cursor-pointer flex items-center justify-center gap-2">
+                    <i data-lucide="pause" class="w-4 h-4"></i> Yes, Disable Account
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Account with OTP & 30-Day Retention Modal -->
+    <div id="deleteAccountModal" class="fixed inset-0 z-[160] bg-black/70 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="w-full max-w-lg bg-white dark:bg-[#111827] border-2 border-red-600/70 rounded-3xl shadow-2xl text-left max-h-[90vh] flex flex-col my-auto overflow-hidden">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-5 sm:p-6 pb-4 border-b border-gray-100 dark:border-gray-800 shrink-0">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-2xl bg-red-600/15 border border-red-500/40 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
+                        <i data-lucide="alert-triangle" class="w-5 h-5 text-red-500"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white leading-tight">Delete Account Request</h3>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30">30-Day Window</span>
+                        </div>
+                        <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">Verification required to protect your PBK community identity.</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeDeleteAccountModal()" class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer shrink-0" title="Close">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body (Scrollable if viewport is constrained) -->
+            <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-3.5">
+                <!-- 30-Day Grace Period Compact Banner -->
+                <div class="bg-red-50/90 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-3.5 space-y-1.5 text-xs text-red-950 dark:text-red-200">
+                    <div class="flex items-start gap-2">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5"></i>
+                        <p class="leading-relaxed"><strong>30-Day Undo Window:</strong> Account is safe for 30 days. Log back in anytime to restore ("written back").</p>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <i data-lucide="trash-2" class="w-4 h-4 text-red-500 shrink-0 mt-0.5"></i>
+                        <p class="leading-relaxed"><strong>Permanent Purge:</strong> After 30 days, all account credentials will be permanently removed from the database.</p>
+                    </div>
+                </div>
+
+                <!-- In-Modal Status Notification Banner -->
+                <div id="delModalAlert" class="hidden p-3.5 rounded-xl border text-xs font-bold transition"></div>
+
+                <!-- OTP Verification Pipeline -->
+                <div class="space-y-3">
+                    <div>
+                        <label class="block font-bold text-xs text-gray-700 dark:text-gray-300 mb-1.5">Step 1: Choose Where to Receive Verification OTP *</label>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60 cursor-pointer hover:border-amber-500 transition">
+                                <input type="radio" name="deleteOtpChannel" value="Phone" checked class="accent-amber-600">
+                                <div>
+                                    <strong class="block text-gray-900 dark:text-white font-bold text-xs">Mobile OTP</strong>
+                                    <span id="delOtpPhoneTarget" class="text-[11px] text-gray-500 font-mono">+91 ******</span>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60 cursor-pointer hover:border-amber-500 transition">
+                                <input type="radio" name="deleteOtpChannel" value="Email" class="accent-amber-600">
+                                <div>
+                                    <strong class="block text-gray-900 dark:text-white font-bold text-xs">Email OTP</strong>
+                                    <span id="delOtpEmailTarget" class="text-[11px] text-gray-500 font-mono">e***@pbk.org</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button type="button" id="btnSendDeleteOtp" onclick="sendDeleteAccountOtp()" class="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-bold text-xs transition shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
+                            <i data-lucide="send" class="w-3.5 h-3.5"></i> Send Verification OTP Code
+                        </button>
+                    </div>
+
+                    <!-- OTP Input Container -->
+                    <div id="delOtpInputContainer" class="hidden space-y-2 p-3 rounded-xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800">
+                        <div class="flex items-center justify-between">
+                            <label class="block font-bold text-xs text-amber-950 dark:text-amber-200">Step 2: Enter 6-Digit Verification Code</label>
+                            <span id="delOtpTargetHint" class="text-[10px] text-amber-800 dark:text-amber-300 font-mono font-bold"></span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <input type="text" id="delOtpCodeInput" maxlength="6" placeholder="••••••" class="w-36 px-3 py-2 rounded-lg border border-amber-400 dark:border-amber-700 bg-white dark:bg-gray-900 text-base font-extrabold tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-amber-500">
+                            <span class="text-[11px] text-gray-500 dark:text-gray-400 font-medium">Valid for 10 minutes</span>
+                        </div>
+                        <p id="delOtpCodeDisplay" class="text-[11px] text-amber-800 dark:text-amber-300 font-medium"></p>
+                    </div>
+
+                    <!-- Deletion Reason -->
+                    <div>
+                        <label class="block font-bold text-xs text-gray-700 dark:text-gray-300 mb-1">Reason for Account Deletion (Optional)</label>
+                        <select id="delReasonSelect" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-xs font-bold text-gray-800 dark:text-gray-200">
+                            <option value="Personal Reasons">Personal reasons / Taking a break</option>
+                            <option value="Relocated">Relocated / Moved outside community</option>
+                            <option value="Duplicate Account">Duplicate member account</option>
+                            <option value="Privacy Preference">Privacy preferences</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pinned Action Footer -->
+            <div class="shrink-0 p-4 sm:p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50/70 dark:bg-gray-900/70 flex gap-3 rounded-b-3xl">
+                <button type="button" onclick="closeDeleteAccountModal()" class="flex-1 py-3 rounded-xl border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold text-xs transition cursor-pointer">
+                    Cancel / Keep Account
+                </button>
+                <button type="button" id="confirmDeleteAccountBtn" onclick="confirmDeleteAccount()" class="flex-1 py-3 rounded-xl bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-extrabold text-xs shadow-lg shadow-red-900/40 transition cursor-pointer flex items-center justify-center gap-2">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i> Confirm Deletion (30 Days)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcement Detail Notice Modal -->
+    <div id="announcementDetailModal" class="fixed inset-0 z-[170] bg-black/70 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="w-full max-w-lg bg-white dark:bg-[#111827] border-2 border-amber-500/60 rounded-3xl shadow-2xl text-left max-h-[90vh] flex flex-col my-auto overflow-hidden">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-5 pb-3 border-b border-gray-100 dark:border-gray-800 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                        <i data-lucide="megaphone" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <span id="detailAnnTypeBadge" class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">Notice</span>
+                        <h3 id="detailAnnTitle" class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white leading-tight mt-0.5">Announcement Title</h3>
+                    </div>
+                </div>
+                <button type="button" onclick="closeAnnouncementDetailModal()" class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer shrink-0" title="Close">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4">
+                <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-gray-800/60 pb-3">
+                    <span class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> Posted on: <strong id="detailAnnDate" class="text-gray-700 dark:text-gray-200"></strong></span>
+                    <span class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Verified Admin Notice</span>
+                </div>
+                <div class="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-line leading-relaxed font-medium bg-gray-50/80 dark:bg-gray-900/60 p-4 rounded-2xl border border-gray-200/60 dark:border-gray-800" id="detailAnnMessage">
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="shrink-0 p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/70 dark:bg-gray-900/70 flex justify-end gap-3 rounded-b-3xl">
+                <button type="button" onclick="closeAnnouncementDetailModal()" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-bold text-xs transition cursor-pointer">
+                    Close Notice
+                </button>
+            </div>
+        </div>
+    </div>
+
+  <script src="qrcode.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

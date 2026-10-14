@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PBK Community Chanda Fund Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#b45309',
+                        brand: {
+                            50: '#fdf8f6',
+                            100: '#fbe8e4',
+                            500: '#b45309',
+                            600: '#963100',
+                            700: '#7c2d12',
+                            800: '#652b19',
+                            900: '#532314',
+                            orange: '#eea220'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+</head>
+<body class="bg-[#fdfbf8] dark:bg-[#0b0f19] text-[#222222] dark:text-[#f8fafc]">
+
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('pbk_theme') || 'system';
+            const selectedTheme = savedTheme === 'light' ? 'white' : savedTheme;
+            const shouldUseDark = selectedTheme === 'dark' ||
+                (selectedTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            document.documentElement.classList.toggle('dark', shouldUseDark);
+        })();
+    </script>
+
+<!-- ==============================================================================
+     PBK COMMUNITY CHANDA FUND — AUTHENTICATION & ONBOARDING PORTAL
+     (HomeLogRegisPass.html)
+     ==============================================================================
+     This portal serves as the entry point for all users of the PBK Community Fund:
+       - Section 1: Navigation Header, Theme Selector & Mobile Menu
+       - Section 2: Home Page (Community Mission, Fund Objectives & Statistics)
+       - Section 3: Login View (Dual Tabs: Member Login & Super Admin Login)
+       - Section 4: Registration View (Member OTP Signup & Admin Invitation Signup)
+       - Section 5: Password Management (Change Password & Identity Verification OTP)
+       - Section 6: 30-Day Retention Account Restoration Modal
+     ============================================================================== -->
+
+    <!-- ============================================================================== -->
+    <!-- SECTION 1: GLOBAL NAVIGATION HEADER, THEME SWITCHER & MOBILE MENU              -->
+    <!-- Contains: Brand identity, desktop tab navigation, theme modal, and mobile menu -->
+    <!-- ============================================================================== -->
+    <header class="pbk-top-header w-full bg-gradient-to-r from-[#240b01] via-[#10141d] to-[#0b0f19] border-b border-[#374151]/60 shadow-[0_4px_16px_rgba(0,0,0,0.6)] flex justify-between items-center px-4 md:px-8 h-[70px] sticky top-0 z-50">
+        <a href="#home" onclick="switchPage('home')" class="flex items-center gap-3 no-underline group cursor-pointer">
+            <div class="w-10 h-10 rounded-xl bg-black/60 border border-amber-500/40 p-0.5 shadow-md flex items-center justify-center overflow-hidden shrink-0">
+                <img src="pbk_logo.jpg" alt="PBK Emblem" class="w-full h-full object-contain">
+            </div>
+            <div>
+                <div class="text-lg md:text-xl font-extrabold text-white leading-tight">PBK Community</div>
+                <div class="text-[10px] md:text-xs text-[#eea220] font-bold uppercase tracking-wider">CHANDA FUND</div>
+            </div>
+        </a>
+
+        <nav class="hidden md:flex items-center h-full gap-2">
+            <a href="#home" onclick="switchPage('home')" id="nav-link-home" class="nav-link px-3 h-full flex items-center font-semibold text-sm text-amber-400 border-b-[3px] border-amber-400 transition">Home</a>
+            <a href="#login" onclick="switchPage('login')" id="nav-link-login" class="nav-link px-3 h-full flex items-center font-semibold text-sm text-gray-300 hover:text-amber-400 border-b-[3px] border-transparent transition">Login</a>
+            <a href="#register" onclick="switchPage('register')" id="nav-link-register" class="nav-link px-3 h-full flex items-center font-semibold text-sm text-gray-300 hover:text-amber-400 border-b-[3px] border-transparent transition">Register</a>
+            <a href="#changepassword" onclick="switchPage('changepassword')" id="nav-link-changepassword" class="nav-link px-3 h-full flex items-center font-semibold text-sm text-gray-300 hover:text-amber-400 border-b-[3px] border-transparent transition">Change Password</a>
+        </nav>
+
+        <div class="flex items-center gap-3">
+            <div class="relative">
+                <button id="themeToggleBtn" onclick="toggleThemeMenu()" class="pbk-theme-toggle bg-transparent border border-[#374151] text-gray-300 hover:text-amber-400 rounded-xl flex items-center justify-center transition shadow-sm cursor-pointer" title="Theme Options" aria-haspopup="true" aria-expanded="false">
+                    <i data-lucide="moon" id="themeIcon" class="w-4 h-4"></i>
+                    <span id="themeLabel" class="font-semibold">Dark</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 opacity-80"></i>
+                </button>
+                <div id="themeMenu" class="absolute right-0 mt-2 w-44 bg-[#111827] border border-[#374151] rounded-xl shadow-xl hidden flex-col overflow-hidden z-50">
+                    <button data-theme="light" onclick="setTheme('light')" class="w-full text-left px-4 py-3 text-sm font-semibold text-gray-200 hover:bg-slate-800 flex items-center gap-2.5 transition cursor-pointer"><i data-lucide="sun" class="w-4 h-4 text-amber-500"></i> Light</button>
+                    <button data-theme="dark" onclick="setTheme('dark')" class="w-full text-left px-4 py-3 text-sm font-semibold text-gray-200 hover:bg-slate-800 flex items-center gap-2.5 transition cursor-pointer"><i data-lucide="moon" class="w-4 h-4 text-indigo-400"></i> Dark</button>
+                    <button data-theme="system" onclick="setTheme('system')" class="w-full text-left px-4 py-3 text-sm font-semibold text-gray-200 hover:bg-slate-800 flex items-center gap-2.5 transition cursor-pointer"><i data-lucide="monitor" class="w-4 h-4 text-blue-400"></i> System</button>
+                </div>
+            </div>
+
+            <button onclick="toggleMobileMenu()" class="md:hidden text-gray-300 p-2 cursor-pointer">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </header>
+
+    <div id="mobileMenu" class="fixed inset-0 bg-black/60 z-50 hidden md:hidden flex justify-end transition-opacity">
+        <div class="w-72 bg-[#111827] h-full p-6 flex flex-col shadow-2xl">
+            <div class="flex items-center justify-between pb-4 border-b border-[#374151] mb-6">
+                <span class="font-extrabold text-amber-400 text-lg">Menu</span>
+                <button onclick="toggleMobileMenu()" class="text-gray-400 hover:text-white cursor-pointer"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="flex flex-col gap-3">
+                <a href="#home" onclick="switchPage('home'); toggleMobileMenu();" class="p-3 rounded-xl font-bold text-gray-200 hover:bg-slate-800 flex items-center gap-3"><i data-lucide="home" class="w-5 h-5 text-amber-500"></i> Home</a>
+                <a href="#login" onclick="switchPage('login'); toggleMobileMenu();" class="p-3 rounded-xl font-bold text-gray-200 hover:bg-slate-800 flex items-center gap-3"><i data-lucide="log-in" class="w-5 h-5 text-amber-500"></i> Login</a>
+                <a href="#register" onclick="switchPage('register'); toggleMobileMenu();" class="p-3 rounded-xl font-bold text-gray-200 hover:bg-slate-800 flex items-center gap-3"><i data-lucide="user-plus" class="w-5 h-5 text-amber-500"></i> Register</a>
+                <a href="#changepassword" onclick="switchPage('changepassword'); toggleMobileMenu();" class="p-3 rounded-xl font-bold text-gray-200 hover:bg-slate-800 flex items-center gap-3"><i data-lucide="key" class="w-5 h-5 text-amber-500"></i> Change Password</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 flex w-full">
+
+        <!-- ============================================================================== -->
+        <!-- SECTION 2: PAGE VIEW - HOME / COMMUNITY OVERVIEW                               -->
+        <!-- Contains: Split-view hero banner, core community missions, quick stat counters, -->
+        <!-- and direct access cards for member registration, login, and cause previews     -->
+        <!-- ============================================================================== -->
+        <div id="page-home" class="page-view w-full flex flex-col lg:flex-row flex-1 animate-fadeIn pt-3 px-3 md:px-6 pb-6 gap-3">
+            <!-- LEFT ORANGE PANEL -->
+            <div class="lg:w-[32%] xl:w-[30%] bg-gradient-to-br from-[#963100] via-[#c24603] to-[#eea220] p-8 md:p-12 flex flex-col justify-between relative text-white overflow-hidden lg:sticky lg:top-[84px] lg:h-[calc(100vh-100px)] rounded-[28px] shadow-2xl z-20">
+                <div class="absolute -top-32 -left-32 w-80 h-80 rounded-full bg-white/5 border border-white/15 pointer-events-none"></div>
+                <div class="absolute -bottom-32 -right-32 w-80 h-80 rounded-full bg-white/5 border border-white/10 pointer-events-none"></div>
+                
+                <div class="relative z-10 space-y-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-black/40 border border-amber-300/40 p-1 shadow-md flex items-center justify-center overflow-hidden shrink-0">
+                            <img src="pbk_logo.jpg" alt="PBK Emblem" class="w-full h-full object-contain">
+                        </div>
+                        <span class="px-3.5 py-1.5 rounded-full bg-white/20 text-white text-xs font-extrabold uppercase tracking-widest backdrop-blur-md">PBK SPIRITUAL COMMUNITY</span>
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">Chanda Fund Portal & Contribution Management</h1>
+                    <p class="text-base text-white/90 font-medium">Welcome to the official transparent contribution platform. Support community projects, view instant receipts, and maintain secure member records easily.</p>
+                </div>
+
+                <div class="relative z-10 space-y-4 pt-6 pb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0 shadow-sm border border-white/20">
+                            <i data-lucide="shield-check" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-base">Secure & Transparent</h4>
+                            <p class="text-xs text-white/80">Verifiable contributions & oversight</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0 shadow-sm border border-white/20">
+                            <i data-lucide="file-text" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-base">Instant Receipts</h4>
+                            <p class="text-xs text-white/80">Download records instantly</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0 shadow-sm border border-white/20">
+                            <i data-lucide="history" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-base">Financial History</h4>
+                            <p class="text-xs text-white/80">Track contributions across years</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative z-10 text-xs text-white/70 font-medium">PBK Chanda Fund Portal © 2026</div>
+            </div>
+
+            <!-- RIGHT WORKSPACE -->
+            <div class="lg:w-[68%] xl:w-[70%] p-6 md:p-12 bg-[#0b0f19] text-[#f8fafc] flex flex-col justify-between overflow-y-auto lg:h-[calc(100vh-100px)] rounded-[28px] border border-[#374151]/60 shadow-2xl">
+                <div class="max-w-2xl mx-auto w-full space-y-8">
+                    <div class="border-b border-[#374151] pb-6">
+                        <span class="text-xs font-extrabold text-[#eea220] uppercase tracking-wider">Welcome</span>
+                        <h2 class="text-3xl font-extrabold text-white mt-1">Get Started Today</h2>
+                        <p class="text-sm text-gray-400 mt-1">Choose an option below to access your member account or register as a new community participant.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="bg-[#111827] p-6 rounded-2xl border border-[#374151] hover:border-[#eea220] transition space-y-4">
+                            <div class="w-12 h-12 rounded-xl bg-amber-950/60 text-amber-400 flex items-center justify-center">
+                                <i data-lucide="log-in" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-xl font-extrabold text-white">Member Login</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">Access your secure dashboard to review past contributions and download receipts.</p>
+                            <button onclick="switchPage('login')" class="w-full py-3 bg-[#963100] hover:bg-[#7a2800] text-white font-bold rounded-xl transition flex items-center justify-center gap-2 cursor-pointer">
+                                Login Now <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+
+                        <div class="bg-[#111827] p-6 rounded-2xl border border-[#374151] hover:border-[#eea220] transition space-y-4">
+                            <div class="w-12 h-12 rounded-xl bg-amber-950/60 text-amber-400 flex items-center justify-center">
+                                <i data-lucide="user-plus" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-xl font-extrabold text-white">New Registration</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">Join the PBK community fund platform by registering a verified member profile.</p>
+                            <button onclick="switchPage('register')" class="w-full py-3 bg-gradient-to-r from-[#963100] to-[#c24603] hover:from-[#7a2800] hover:to-[#963100] text-white font-bold rounded-xl transition flex items-center justify-center gap-2 cursor-pointer">
+                                Register <i data-lucide="user-plus" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#111827] p-6 rounded-2xl border border-[#374151] space-y-3">
+                        <div class="flex items-center gap-3 text-amber-400 font-bold">
+                            <i data-lucide="info" class="w-5 h-5"></i> Community Notice
+                        </div>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            All contributions are verified and processed securely. For assistance with your account credentials or password resets, please visit the <a href="#changepassword" onclick="switchPage('changepassword')" class="text-amber-400 underline cursor-pointer">Change Password</a> page.
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-12 text-center text-xs text-gray-500">PBK Community Chanda Fund Portal © 2026</div>
+            </div>
+        </div>
+
+        <!-- ============================================================================== -->
+        <!-- SECTION 3: PAGE VIEW - LOGIN GATEWAY (MEMBER & ADMIN AUTHENTICATION)          -->
+        <!-- Contains: Dual-tab login switcher (Member vs Admin), phone/email identifiers,  -->
+        <!-- password validation, 30-day retention interceptor, and dashboard redirects     -->
+        <!-- ============================================================================== -->
+        <div id="page-login" class="page-view w-full flex flex-col lg:flex-row flex-1 animate-fadeIn pt-3 px-3 md:px-6 pb-6 gap-3 hidden">
+            <!-- LEFT ORANGE PANEL -->
+            <div class="lg:w-[32%] xl:w-[30%] bg-gradient-to-br from-[#963100] via-[#c24603] to-[#eea220] p-8 md:p-12 flex flex-col justify-between relative text-white overflow-hidden lg:sticky lg:top-[84px] lg:h-[calc(100vh-100px)] rounded-[28px] shadow-2xl z-20">
+                <div class="absolute -top-32 -left-32 w-80 h-80 rounded-full bg-white/5 border border-white/15 pointer-events-none"></div>
+                <div class="absolute -bottom-32 -right-32 w-80 h-80 rounded-full bg-white/5 border border-white/10 pointer-events-none"></div>
+                
+                <div class="relative z-10 space-y-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-black/40 border border-amber-300/40 p-1 shadow-md flex items-center justify-center overflow-hidden shrink-0">
+                            <img src="pbk_logo.jpg" alt="PBK Emblem" class="w-full h-full object-contain">
+                        </div>
+                        <span class="px-3.5 py-1.5 rounded-full bg-white/20 text-white text-xs font-extrabold uppercase tracking-widest backdrop-blur-md">MEMBER ACCESS</span>
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">Welcome Back to Your Community</h1>
+                    <p class="text-base text-white/90 font-medium">Access your dashboard to track contributions, view receipts, and support the PBK fund.</p>
+                </div>
+
+                <div class="relative z-10 space-y-4 pt-6 pb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0 shadow-sm border border-white/20">
+                            <i data-lucide="check-circle-2" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-base">Transparent Tracking</h4>
+                            <p class="text-xs text-white/80">View all your historical contributions</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0 shadow-sm border border-white/20">
+                            <i data-lucide="shield-check" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-base">Secure Platform</h4>
+                            <p class="text-xs text-white/80">Protected member authentication</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0 shadow-sm border border-white/20">
+                            <i data-lucide="history" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-base">Instant Receipts</h4>
+                            <p class="text-xs text-white/80">Download or print verification</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative z-10 text-xs text-white/70 font-medium">PBK Chanda Fund Portal © 2026</div>
+            </div>
+
+            <!-- RIGHT WORKSPACE -->
+            <div class="lg:w-[68%] xl:w-[70%] p-6 md:p-12 bg-[#0b0f19] text-[#f8fafc] flex flex-col justify-between overflow-y-auto lg:h-[calc(100vh-100px)] rounded-[28px] border border-[#374151]/60 shadow-2xl">
+                <div class="max-w-2xl mx-auto w-full">
+                    <div class="bg-[#111827] rounded-2xl p-1.5 flex mb-8 border border-[#374151] shadow-inner">
+                        <button class="flex-1 py-3.5 px-6 rounded-xl font-extrabold text-sm text-amber-400 bg-[#1f2937] shadow-md border border-[#374151] transition flex items-center justify-center gap-2 cursor-pointer" onclick="setRole('member')" id="btn-member" type="button">
+                            <i data-lucide="user" class="w-4 h-4"></i> Member Login
+                        </button>
+                        <button class="flex-1 py-3.5 px-6 rounded-xl font-extrabold text-sm text-gray-400 hover:text-white transition flex items-center justify-center gap-2 cursor-pointer" onclick="setRole('admin')" id="btn-admin" type="button">
+                            <i data-lucide="shield" class="w-4 h-4"></i> Admin Login
+                        </button>
+                    </div>
+
+                    <div class="mb-6 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-black/50 border border-amber-500/40 p-1 shadow-md flex items-center justify-center overflow-hidden shrink-0">
+                            <img src="pbk_logo.jpg" alt="PBK Emblem" class="w-full h-full object-contain">
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-white mb-1" id="form-title-text">Member Login</h2>
+                            <p class="text-sm text-gray-400">Enter your credentials to access your account.</p>
+                        </div>
+                    </div>
+
+                    <div id="login-status-message" class="hidden p-4 rounded-xl mb-6 text-sm font-semibold flex items-center gap-3"></div>
+
+                    <form onsubmit="handleLogin(event)" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-300 mb-2">Phone Number (+91), Email, or Member ID</label>
+                            <div class="relative flex items-center">
+                                <i data-lucide="phone" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                <input type="text" id="login-username" class="w-full pl-12 pr-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="e.g. 9876543210, +91 9876543210, or ID" required>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-300 mb-2">Password</label>
+                            <div class="relative flex items-center">
+                                <i data-lucide="lock" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                <input type="password" id="login-password" class="w-full pl-12 pr-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Enter your password" required>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end -mt-2">
+                            <a href="#changepassword" onclick="switchPage('changepassword')" class="text-sm font-bold text-[#eea220] hover:underline cursor-pointer">Forgot Password?</a>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-300 mb-2">Security Verification</label>
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-2">
+    <div id="captcha-display" class="px-4 py-3.5 bg-[#111827] border-2 border-dashed border-[#eea220] rounded-xl font-extrabold text-amber-400 flex items-center justify-center text-base select-none whitespace-nowrap min-w-[130px]">
+        8 + 6 = ?
+    </div>
+
+    <button
+        type="button"
+        onclick="refreshCaptcha()"
+        class="p-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl text-gray-300 hover:text-[#eea220] hover:border-[#eea220] transition cursor-pointer"
+        title="Refresh security verification"
+    >
+        <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+    </button>
+</div>
+                                <input type="number" id="captcha-input" class="w-full py-3.5 px-4 bg-[#111827] border-2 border-[#374151] rounded-xl font-bold text-center text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Answer" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="login-submit-btn" class="w-full py-4 bg-gradient-to-r from-[#963100] to-[#c24603] hover:from-[#7a2800] hover:to-[#963100] text-white font-extrabold rounded-xl shadow-lg transition flex items-center justify-center gap-2 mt-2 cursor-pointer">
+                            Secure Login <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </button>
+                    </form>
+
+                    <div class="mt-8 text-center text-sm font-medium text-gray-400">
+                        Not a member yet? <a href="#register" onclick="switchPage('register')" class="text-amber-400 font-bold hover:underline cursor-pointer">Register Here</a>
+                    </div>
+                </div>
+                <div class="mt-12 text-center text-xs text-gray-500">PBK Community Chanda Fund Login Portal</div>
+            </div>
+        </div>
+
+        <!-- ============================================================================== -->
+        <!-- SECTION 4: PAGE VIEW - REGISTRATION GATEWAY (MEMBER & ADMIN ONBOARDING)       -->
+        <!-- Contains: Member Signup (Profile details, OTP dispatch & verification modal)   -->
+        <!-- and Admin Signup (Invitation code verification, role authorization & setup)    -->
+        <!-- ============================================================================== -->
+        <div id="page-register" class="page-view w-full flex flex-col lg:flex-row flex-1 animate-fadeIn pt-3 px-3 md:px-6 pb-6 gap-3 hidden">
+            <!-- LEFT ORANGE PANEL -->
+            <div class="lg:w-[32%] xl:w-[30%] bg-gradient-to-br from-[#963100] via-[#c24603] to-[#eea220] p-8 md:p-12 flex flex-col justify-between relative text-white overflow-hidden lg:sticky lg:top-[84px] lg:h-[calc(100vh-100px)] rounded-[28px] shadow-2xl z-20">
+                <div class="absolute -top-32 -left-32 w-80 h-80 rounded-full bg-white/5 border border-white/15 pointer-events-none"></div>
+                <div class="absolute -bottom-32 -right-32 w-80 h-80 rounded-full bg-white/5 border border-white/10 pointer-events-none"></div>
+                
+                <div class="relative z-10 space-y-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-black/40 border border-amber-300/40 p-1 shadow-md flex items-center justify-center overflow-hidden shrink-0">
+                            <img src="pbk_logo.jpg" alt="PBK Emblem" class="w-full h-full object-contain">
+                        </div>
+                        <span class="px-3.5 py-1.5 rounded-full bg-white/20 text-white text-xs font-extrabold uppercase tracking-widest backdrop-blur-md">NEW MEMBERSHIP</span>
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">PBK Community Member Registration</h1>
+                    <p class="text-base text-white/90 font-medium">Create your member or administrator account to securely participate in community initiatives and support local causes.</p>
+                </div>
+
+                <div class="relative z-10 space-y-4 pt-6 pb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0 shadow-sm border border-white/20">
+                            <i data-lucide="users" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-base">Join Our Community</h4>
+                            <p class="text-xs text-white/80">Be part of a trusted community</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0 shadow-sm border border-white/20">
+                            <i data-lucide="shield-check" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-base">Secure & Verified</h4>
+                            <p class="text-xs text-white/80">OTP verification for your security</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0 shadow-sm border border-white/20">
+                            <i data-lucide="file-text" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-base">Track Contributions</h4>
+                            <p class="text-xs text-white/80">View and download receipts</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0 shadow-sm border border-white/20">
+                            <i data-lucide="heart-handshake" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-base">Support Good Causes</h4>
+                            <p class="text-xs text-white/80">Contribute to meaningful initiatives</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative z-10 text-xs text-white/70 font-medium">PBK Chanda Fund Portal © 2026</div>
+            </div>
+
+            <!-- RIGHT WORKSPACE -->
+            <div class="lg:w-[68%] xl:w-[70%] p-6 md:p-12 bg-[#0b0f19] text-[#f8fafc] flex flex-col justify-between overflow-y-auto lg:h-[calc(100vh-100px)] rounded-[28px] border border-[#374151]/60 shadow-2xl">
+                <div class="max-w-4xl mx-auto w-full">
+                    <div class="mb-6 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-black/50 border border-amber-500/40 p-1 shadow-md flex items-center justify-center overflow-hidden shrink-0">
+                            <img src="pbk_logo.jpg" alt="PBK Emblem" class="w-full h-full object-contain">
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-white mb-1">Create Your Account</h2>
+                            <p class="text-sm text-gray-400">Join the PBK Community Welfare Fund today.</p>
+                        </div>
+                    </div>
+                    <!-- Member Reg / Admin Reg tabs -->
+                    <div class="bg-[#111827] rounded-2xl p-1.5 flex mb-6 border border-[#374151] shadow-inner">
+                        <button class="flex-1 py-3.5 px-6 rounded-xl font-extrabold text-sm text-amber-400 bg-[#1f2937] shadow-md border border-[#374151] transition flex items-center justify-center gap-2 cursor-pointer" id="btn-member-reg" type="button">
+                            <i data-lucide="user" class="w-4 h-4"></i> Member Reg
+                        </button>
+                        <button class="flex-1 py-3.5 px-6 rounded-xl font-extrabold text-sm text-gray-400 hover:text-white transition flex items-center justify-center gap-2 cursor-pointer" id="btn-admin-reg" type="button">
+                            <i data-lucide="shield" class="w-4 h-4"></i> Admin Reg
+                        </button>
+                    </div>
+
+                    <div id="tab-helper-text" class="text-sm text-gray-400 mb-8 font-medium">
+                        Please fill in your valid details to complete member registration. All fields are fully accessible.
+                    </div>
+
+                    <!-- Member Form -->
+                    <form id="memberRegForm" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-2">First Name *</label>
+                                <div class="relative flex items-center">
+                                    <i data-lucide="user" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                    <input type="text" id="memberFirstName" class="w-full pl-12 pr-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Enter first name" required>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-2">Last Name</label>
+                                <div class="relative flex items-center">
+                                    <i data-lucide="user" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                    <input type="text" id="memberLastName" class="w-full pl-12 pr-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Enter last name">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-300 mb-2">Gender *</label>
+                            <div class="flex gap-4" id="memberGenderGroup">
+                                <button type="button" class="flex-1 py-3.5 border-2 border-[#374151] rounded-xl font-bold text-gray-300 hover:border-[#eea220] transition cursor-pointer" onclick="selectGender('member', 'M')">M</button>
+                                <button type="button" class="flex-1 py-3.5 border-2 border-[#374151] rounded-xl font-bold text-gray-300 hover:border-[#eea220] transition cursor-pointer" onclick="selectGender('member', 'F')">F</button>
+                                <button type="button" class="flex-1 py-3.5 border-2 border-[#374151] rounded-xl font-bold text-gray-300 hover:border-[#eea220] transition cursor-pointer" onclick="selectGender('member', 'N')">N</button>
+                            </div>
+                            <input type="hidden" id="memberGenderVal" required>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                            <!-- Left: Phone Number + Phone OTP Verification -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-2">Phone Number *</label>
+                                <div class="flex gap-3">
+                                    <div class="flex items-center flex-1 rounded-xl border-2 border-[#374151] overflow-hidden bg-[#111827] focus-within:border-[#eea220] transition">
+                                        <span class="flex items-center px-4 py-3.5 bg-[#1f2937] text-amber-400 font-extrabold text-sm border-r-2 border-[#374151] select-none">+91</span>
+                                        <input type="tel" id="memberPhone" class="w-full px-4 py-3.5 bg-transparent font-semibold text-white focus:outline-none placeholder-gray-500" placeholder="9876543210" maxlength="10" pattern="[0-9]{10}" required oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
+                                    </div>
+                                    <button type="button" id="btn-memberPhone" class="px-5 bg-[#1f2937] border-2 border-[#374151] text-amber-400 font-bold rounded-xl hover:bg-slate-700 transition whitespace-nowrap cursor-pointer" onclick="sendOTP('memberPhone')">Send OTP</button>
+                                </div>
+                                <div id="timer-memberPhone" class="text-xs text-amber-500 font-semibold mt-1.5 min-h-[18px]"></div>
+
+                                <!-- Phone OTP Verification (Hidden until Send OTP is clicked) -->
+                                <div id="section-memberPhoneOTP" class="hidden animate-fadeIn mt-3 space-y-2">
+                                    <label class="block text-sm font-bold text-gray-300">Phone OTP Verification *</label>
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex gap-2 flex-1" id="group-memberPhoneOTP">
+                                            <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl m-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" disabled oninput="handleOtpInput(event, 'm-otp', 0)" onkeydown="handleOtpBackspace(event, 'm-otp', 0)">
+                                            <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl m-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" disabled oninput="handleOtpInput(event, 'm-otp', 1)" onkeydown="handleOtpBackspace(event, 'm-otp', 1)">
+                                            <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl m-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" disabled oninput="handleOtpInput(event, 'm-otp', 2)" onkeydown="handleOtpBackspace(event, 'm-otp', 2)">
+                                            <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl m-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" disabled oninput="handleOtpInput(event, 'm-otp', 3)" onkeydown="handleOtpBackspace(event, 'm-otp', 3)">
+                                        </div>
+                                        <div id="member-phone-status-box" class="w-12 h-12 rounded-xl border-2 border-[#374151] flex items-center justify-center font-bold text-gray-400 bg-[#111827] flex-shrink-0">🔒</div>
+                                        <button type="button" id="btn-verify-memberPhone" class="px-5 h-12 bg-[#1f2937] border-2 border-[#374151] text-amber-400 font-bold rounded-xl hover:bg-slate-700 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer" disabled onclick="verifyMemberOTP('phone')">Verify</button>
+                                    </div>
+                                    <div id="msg-memberPhoneOTP" class="text-xs text-gray-400 font-semibold mt-1">Send OTP first to verify</div>
+                                </div>
+                            </div>
+
+                            <!-- Right: Email Address + Email OTP Verification -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-2">Email Address</label>
+                                <div class="flex gap-3">
+                                    <div class="relative flex items-center flex-1">
+                                        <i data-lucide="mail" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                        <input type="email" id="memberEmail" class="w-full pl-12 pr-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="e.g. sai@gmail.com" oninput="validateEmailInput('member')">
+                                    </div>
+                                    <button type="button" id="btn-memberEmail" class="px-5 bg-[#1f2937] border-2 border-[#374151] text-amber-400 font-bold rounded-xl hover:bg-slate-700 transition whitespace-nowrap cursor-pointer" onclick="sendOTP('memberEmail')">Send OTP</button>
+                                </div>
+                                <div id="memberEmailError" class="text-xs text-red-400 font-semibold mt-1 hidden">Please enter a valid email address.</div>
+                                <div id="timer-memberEmail" class="text-xs text-amber-500 font-semibold mt-1.5 min-h-[18px]"></div>
+
+                                <!-- Email OTP Verification (Hidden until Send OTP is clicked) -->
+                                <div id="section-memberEmailOTP" class="hidden animate-fadeIn mt-3 space-y-2">
+                                    <label class="block text-sm font-bold text-gray-300">Email OTP Verification</label>
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex gap-2 flex-1" id="group-memberEmailOTP">
+                                            <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl m-email-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" disabled oninput="handleOtpInput(event, 'm-email-otp', 0)" onkeydown="handleOtpBackspace(event, 'm-email-otp', 0)">
+                                            <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl m-email-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" disabled oninput="handleOtpInput(event, 'm-email-otp', 1)" onkeydown="handleOtpBackspace(event, 'm-email-otp', 1)">
+                                            <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl m-email-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" disabled oninput="handleOtpInput(event, 'm-email-otp', 2)" onkeydown="handleOtpBackspace(event, 'm-email-otp', 2)">
+                                            <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl m-email-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" disabled oninput="handleOtpInput(event, 'm-email-otp', 3)" onkeydown="handleOtpBackspace(event, 'm-email-otp', 3)">
+                                        </div>
+                                        <div id="member-email-status-box" class="w-12 h-12 rounded-xl border-2 border-[#374151] flex items-center justify-center font-bold text-gray-400 bg-[#111827] flex-shrink-0">🔒</div>
+                                        <button type="button" id="btn-verify-memberEmail" class="px-5 h-12 bg-[#1f2937] border-2 border-[#374151] text-amber-400 font-bold rounded-xl hover:bg-slate-700 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer" disabled onclick="verifyMemberOTP('email')">Verify</button>
+                                    </div>
+                                    <div id="msg-memberEmailOTP" class="text-xs text-gray-400 font-semibold mt-1">Send OTP first to verify</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-2">Create Password *</label>
+                                <div class="relative flex items-center">
+                                    <i data-lucide="lock" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                    <input type="password" id="memberPassword" class="w-full pl-12 pr-12 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="New password" required oninput="validatePasswords('member')">
+                                    <button type="button" class="absolute right-4 text-gray-400 hover:text-gray-200 cursor-pointer" onclick="togglePassword('memberPassword', this)">
+                                        <i data-lucide="eye" class="w-5 h-5 eye-on"></i>
+                                        <i data-lucide="eye-off" class="w-5 h-5 eye-off hidden"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-2">Confirm Password *</label>
+                                <div class="relative flex items-center">
+                                    <i data-lucide="lock" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                    <input type="password" id="memberConfirmPassword" class="w-full pl-12 pr-12 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Confirm password" required oninput="validatePasswords('member')">
+                                    <button type="button" class="absolute right-4 text-gray-400 hover:text-gray-200 cursor-pointer" onclick="togglePassword('memberConfirmPassword', this)">
+                                        <i data-lucide="eye" class="w-5 h-5 eye-on"></i>
+                                        <i data-lucide="eye-off" class="w-5 h-5 eye-off hidden"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="memberPasswordError" class="text-xs text-red-400 font-semibold hidden -mt-4">Passwords do not match.</div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-2">State</label>
+                                <input type="text" id="memberState" class="w-full px-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Select state">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-2">District</label>
+                                <input type="text" id="memberDistrict" class="w-full px-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Select district">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-2">City</label>
+                                <div class="relative flex items-center">
+                                    <i data-lucide="map-pin" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                    <input type="text" id="memberCity" class="w-full pl-12 pr-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Enter city">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-2">Village / Area</label>
+                                <div class="relative flex items-center">
+                                    <i data-lucide="home" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                    <input type="text" id="memberVillage" class="w-full pl-12 pr-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Enter village / area">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-300 mb-2">Full Address</label>
+                            <div class="relative flex items-start">
+                                <i data-lucide="navigation" class="absolute left-4 top-4 text-gray-400 w-5 h-5"></i>
+                                <textarea id="memberAddress" class="w-full pl-12 pr-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition resize-y min-h-[100px]" placeholder="Enter your full address"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="pt-6 border-t border-[#374151] flex flex-col sm:flex-row justify-between items-center gap-4">
+                            <a href="#login" onclick="switchPage('login')" class="text-sm font-bold text-amber-400 hover:underline flex items-center gap-2 cursor-pointer">
+                                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Login
+                            </a>
+                            <button type="submit" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-[#963100] to-[#c24603] hover:from-[#7a2800] hover:to-[#963100] text-white font-extrabold rounded-xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
+                                Submit Member Registration <i data-lucide="user-plus" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Admin Form -->
+                    <form id="adminRegForm" class="space-y-6 hidden">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-300 mb-2">Invitation Code *</label>
+                            <div class="flex gap-3">
+                                <div class="relative flex items-center flex-1">
+                                    <i data-lucide="key" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                    <input type="password" id="adminInviteCode" class="w-full pl-12 pr-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Enter code (e.g. ADMIN123)" required>
+                                </div>
+                                <div id="invite-status-box" class="w-12 h-12 rounded-xl border-2 border-[#374151] flex items-center justify-center font-bold text-gray-400 bg-[#111827] flex-shrink-0">🔒</div>
+                                <button type="button" id="btn-adminInviteCode" class="px-5 bg-[#1f2937] border-2 border-[#374151] text-amber-400 font-bold rounded-xl hover:bg-slate-700 transition whitespace-nowrap cursor-pointer" onclick="verifyInviteCode()">Verify</button>
+                            </div>
+                            <div id="timer-adminInviteCode" class="text-xs text-gray-400 font-semibold mt-1.5">Enter valid admin code</div>
+                        </div>
+
+                        <fieldset id="admin-fieldset" disabled class="space-y-6 pt-2 border-0 m-0 p-0 disabled:opacity-60 disabled:cursor-not-allowed">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-300 mb-2">First Name *</label>
+                                    <div class="relative flex items-center">
+                                        <i data-lucide="user" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                        <input type="text" id="adminFirstName" class="w-full pl-12 pr-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="First name" required>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-300 mb-2">Last Name</label>
+                                    <div class="relative flex items-center">
+                                        <i data-lucide="user" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                        <input type="text" id="adminLastName" class="w-full pl-12 pr-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Last name">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-2">Gender *</label>
+                                <div class="flex gap-4" id="adminGenderGroup">
+                                    <button type="button" class="flex-1 py-3.5 border-2 border-[#374151] rounded-xl font-bold text-gray-300 hover:border-[#eea220] transition cursor-pointer" onclick="selectGender('admin', 'M')">M</button>
+                                    <button type="button" class="flex-1 py-3.5 border-2 border-[#374151] rounded-xl font-bold text-gray-300 hover:border-[#eea220] transition cursor-pointer" onclick="selectGender('admin', 'F')">F</button>
+                                    <button type="button" class="flex-1 py-3.5 border-2 border-[#374151] rounded-xl font-bold text-gray-300 hover:border-[#eea220] transition cursor-pointer" onclick="selectGender('admin', 'N')">N</button>
+                                </div>
+                                <input type="hidden" id="adminGenderVal" required>
+                            </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                            <!-- Left: Phone Number + Phone OTP Verification -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-2">Phone Number *</label>
+                                <div class="flex gap-3">
+                                    <div class="flex items-center flex-1 rounded-xl border-2 border-[#374151] overflow-hidden bg-[#111827] focus-within:border-[#eea220] transition">
+                                        <span class="flex items-center px-4 py-3.5 bg-[#1f2937] text-amber-400 font-extrabold text-sm border-r-2 border-[#374151] select-none">+91</span>
+                                        <input type="tel" id="adminPhone" class="w-full px-4 py-3.5 bg-transparent font-semibold text-white focus:outline-none placeholder-gray-500" placeholder="9876543210" maxlength="10" pattern="[0-9]{10}" required oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
+                                    </div>
+                                    <button type="button" id="btn-adminPhone" class="px-5 bg-[#1f2937] border-2 border-[#374151] text-amber-400 font-bold rounded-xl hover:bg-slate-700 transition whitespace-nowrap cursor-pointer" onclick="sendOTP('adminPhone')">Send OTP</button>
+                                </div>
+                                <div id="timer-adminPhone" class="text-xs text-amber-500 font-semibold mt-1.5 min-h-[18px]"></div>
+
+                                <!-- Phone OTP Verification (Hidden until Send OTP is clicked) -->
+                                <div id="section-adminPhoneOTP" class="hidden animate-fadeIn mt-3 space-y-2">
+                                    <label class="block text-sm font-bold text-gray-300">Phone OTP Verification *</label>
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex gap-2 flex-1" id="group-adminPhoneOTP">
+                                            <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl a-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" disabled oninput="handleOtpInput(event, 'a-otp', 0)" onkeydown="handleOtpBackspace(event, 'a-otp', 0)">
+                                            <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl a-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" disabled oninput="handleOtpInput(event, 'a-otp', 1)" onkeydown="handleOtpBackspace(event, 'a-otp', 1)">
+                                            <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl a-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" disabled oninput="handleOtpInput(event, 'a-otp', 2)" onkeydown="handleOtpBackspace(event, 'a-otp', 2)">
+                                            <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl a-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" disabled oninput="handleOtpInput(event, 'a-otp', 3)" onkeydown="handleOtpBackspace(event, 'a-otp', 3)">
+                                        </div>
+                                        <div id="phone-status-box" class="w-12 h-12 rounded-xl border-2 border-[#374151] flex items-center justify-center font-bold text-gray-400 bg-[#111827] flex-shrink-0">🔒</div>
+                                        <button type="button" id="btn-verify-adminPhone" class="px-5 h-12 bg-[#1f2937] border-2 border-[#374151] text-amber-400 font-bold rounded-xl hover:bg-slate-700 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer" disabled onclick="verifyAdminOTP('phone')">Verify</button>
+                                    </div>
+                                    <div id="msg-adminPhoneOTP" class="text-xs text-gray-400 font-semibold mt-1">Send OTP first to verify</div>
+                                </div>
+                            </div>
+
+                            <!-- Right: Email Address + Email OTP Verification -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-2">Email Address *</label>
+                                <div class="flex gap-3">
+                                    <div class="relative flex items-center flex-1">
+                                        <i data-lucide="mail" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                        <input type="email" id="adminEmail" class="w-full pl-12 pr-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="name@example.com" required oninput="validateEmailInput('admin')">
+                                    </div>
+                                    <button type="button" id="btn-adminEmail" class="px-5 bg-[#1f2937] border-2 border-[#374151] text-amber-400 font-bold rounded-xl hover:bg-slate-700 transition whitespace-nowrap cursor-pointer" onclick="sendOTP('adminEmail')">Send OTP</button>
+                                </div>
+                                <div id="adminEmailError" class="text-xs text-red-400 font-semibold mt-1 hidden">Please enter a valid email address.</div>
+                                <div id="timer-adminEmail" class="text-xs text-amber-500 font-semibold mt-1 min-h-[18px]"></div>
+
+                                <!-- Email OTP Verification (Hidden until Send OTP is clicked) -->
+                                <div id="section-adminEmailOTP" class="hidden animate-fadeIn mt-3 space-y-2">
+                                    <label class="block text-sm font-bold text-gray-300">Email OTP Verification *</label>
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex gap-2 flex-1" id="group-adminEmailOTP">
+                                            <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl a-email-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" disabled oninput="handleOtpInput(event, 'a-email-otp', 0)" onkeydown="handleOtpBackspace(event, 'a-email-otp', 0)">
+                                            <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl a-email-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" disabled oninput="handleOtpInput(event, 'a-email-otp', 1)" onkeydown="handleOtpBackspace(event, 'a-email-otp', 1)">
+                                            <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl a-email-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" disabled oninput="handleOtpInput(event, 'a-email-otp', 2)" onkeydown="handleOtpBackspace(event, 'a-email-otp', 2)">
+                                            <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl a-email-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" disabled oninput="handleOtpInput(event, 'a-email-otp', 3)" onkeydown="handleOtpBackspace(event, 'a-email-otp', 3)">
+                                        </div>
+                                        <div id="email-status-box" class="w-12 h-12 rounded-xl border-2 border-[#374151] flex items-center justify-center font-bold text-gray-400 bg-[#111827] flex-shrink-0">🔒</div>
+                                        <button type="button" id="btn-verify-adminEmail" class="px-5 h-12 bg-[#1f2937] border-2 border-[#374151] text-amber-400 font-bold rounded-xl hover:bg-slate-700 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer" disabled onclick="verifyAdminOTP('email')">Verify</button>
+                                    </div>
+                                    <div id="msg-adminEmailOTP" class="text-xs text-gray-400 font-semibold mt-1">Send OTP first to verify</div>
+                                </div>
+                            </div>
+                        </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-300 mb-2">Create Password *</label>
+                                    <div class="relative flex items-center">
+                                        <i data-lucide="lock" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                        <input type="password" id="adminPassword" class="w-full pl-12 pr-12 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="New password" required oninput="validatePasswords('admin')">
+                                        <button type="button" class="absolute right-4 text-gray-400 hover:text-gray-200 cursor-pointer" onclick="togglePassword('adminPassword', this)">
+                                            <i data-lucide="eye" class="w-5 h-5 eye-on"></i>
+                                            <i data-lucide="eye-off" class="w-5 h-5 eye-off hidden"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-300 mb-2">Confirm Password *</label>
+                                    <div class="relative flex items-center">
+                                        <i data-lucide="lock" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                        <input type="password" id="adminConfirmPassword" class="w-full pl-12 pr-12 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Confirm password" required oninput="validatePasswords('admin')">
+                                        <button type="button" class="absolute right-4 text-gray-400 hover:text-gray-200 cursor-pointer" onclick="togglePassword('adminConfirmPassword', this)">
+                                            <i data-lucide="eye" class="w-5 h-5 eye-on"></i>
+                                            <i data-lucide="eye-off" class="w-5 h-5 eye-off hidden"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="adminPasswordError" class="text-xs text-red-400 font-semibold hidden -mt-4">Passwords do not match.</div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-300 mb-2">State</label>
+                                    <input type="text" id="adminState" class="w-full px-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="State">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-300 mb-2">District</label>
+                                    <input type="text" id="adminDistrict" class="w-full px-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="District">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-300 mb-2">City</label>
+                                    <div class="relative flex items-center">
+                                        <i data-lucide="map-pin" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                        <input type="text" id="adminCity" class="w-full pl-12 pr-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="City">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-300 mb-2">Village / Area</label>
+                                    <div class="relative flex items-center">
+                                        <i data-lucide="home" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                        <input type="text" id="adminVillage" class="w-full pl-12 pr-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Village / Area">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-300 mb-2">Full Address</label>
+                                <div class="relative flex items-start">
+                                    <i data-lucide="navigation" class="absolute left-4 top-4 text-gray-400 w-5 h-5"></i>
+                                    <textarea id="adminAddress" class="w-full pl-12 pr-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition resize-y min-h-[100px]" placeholder="Enter your full address"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="pt-6 border-t border-[#374151] flex flex-col sm:flex-row justify-between items-center gap-4">
+                                <a href="#login" onclick="switchPage('login')" class="text-sm font-bold text-amber-400 hover:underline flex items-center gap-2 cursor-pointer">
+                                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Login
+                                </a>
+                                <button type="submit" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-[#963100] to-[#c24603] hover:from-[#7a2800] hover:to-[#963100] text-white font-extrabold rounded-xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
+                                    Submit Admin Registration <i data-lucide="shield-check" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+                <div class="mt-12 text-center text-xs text-gray-500">PBK Community Chanda Fund Registration Portal</div>
+            </div>
+        </div>
+
+        <!-- ============================================================================== -->
+        <!-- SECTION 5: PAGE VIEW - PASSWORD RECOVERY & RESET                               -->
+        <!-- Contains: Account identifier input (Phone/Email), user role selection,          -->
+        <!-- OTP security dispatch & verification, and new password confirmation flow       -->
+        <!-- ============================================================================== -->
+        <div id="page-changepassword" class="page-view w-full flex flex-col lg:flex-row flex-1 animate-fadeIn pt-3 px-3 md:px-6 pb-6 gap-3 hidden">
+            <!-- LEFT ORANGE PANEL -->
+            <div class="lg:w-[32%] xl:w-[30%] bg-gradient-to-br from-[#963100] via-[#c24603] to-[#eea220] p-8 md:p-12 flex flex-col justify-between relative text-white overflow-hidden lg:sticky lg:top-[84px] lg:h-[calc(100vh-100px)] rounded-[28px] shadow-2xl z-20">
+                <div class="absolute -top-32 -left-32 w-80 h-80 rounded-full bg-white/5 border border-white/15 pointer-events-none"></div>
+                <div class="absolute -bottom-32 -right-32 w-80 h-80 rounded-full bg-white/5 border border-white/10 pointer-events-none"></div>
+                
+                <div class="relative z-10 space-y-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-black/40 border border-amber-300/40 p-1 shadow-md flex items-center justify-center overflow-hidden shrink-0">
+                            <img src="pbk_logo.jpg" alt="PBK Emblem" class="w-full h-full object-contain">
+                        </div>
+                        <span class="px-3.5 py-1.5 rounded-full bg-white/20 text-white text-xs font-extrabold uppercase tracking-widest backdrop-blur-md">SECURITY</span>
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">Secure Your Account Credentials</h1>
+                    <p class="text-base text-white/90 font-medium">Update your password regularly to maintain security and safeguard your community contribution records.</p>
+                </div>
+
+                <div class="relative z-10 space-y-4 pt-6 pb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0 shadow-sm border border-white/20">
+                            <i data-lucide="shield-check" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-base">Strong Protection</h4>
+                            <p class="text-xs text-white/80">Encrypted credential updating</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0 shadow-sm border border-white/20">
+                            <i data-lucide="key" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-base">Instant Update</h4>
+                            <p class="text-xs text-white/80">Immediate access with new password</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative z-10 text-xs text-white/70 font-medium">PBK Chanda Fund Portal © 2026</div>
+            </div>
+
+            <!-- RIGHT WORKSPACE -->
+            <div class="lg:w-[68%] xl:w-[70%] p-6 md:p-12 bg-[#0b0f19] text-[#f8fafc] flex flex-col justify-between overflow-y-auto lg:h-[calc(100vh-100px)] rounded-[28px] border border-[#374151]/60 shadow-2xl">
+                <div class="max-w-2xl mx-auto w-full">
+                    <div class="border-b border-[#374151] pb-5 mb-6 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-black/50 border border-amber-500/40 p-1 shadow-md flex items-center justify-center overflow-hidden shrink-0">
+                            <img src="pbk_logo.jpg" alt="PBK Emblem" class="w-full h-full object-contain">
+                        </div>
+                        <div>
+                            <span class="text-xs font-extrabold text-[#eea220] uppercase tracking-wider">Account Security</span>
+                            <h2 class="text-2xl font-extrabold text-white mt-1">Reset & Change Password</h2>
+                            <p class="text-sm text-gray-400 mt-1">Reset via Mobile/Email OTP when forgotten, or change using your current password.</p>
+                        </div>
+                    </div>
+
+                    <!-- Mode Switcher Tabs -->
+                    <div class="grid grid-cols-2 gap-2 p-1.5 bg-[#111827] rounded-2xl border border-[#374151] mb-6">
+                        <button type="button" id="tab-pwd-otp" onclick="switchPwdMode('otp')" class="py-3 px-4 rounded-xl text-xs sm:text-sm font-extrabold transition flex items-center justify-center gap-2 bg-[#eea220] text-gray-950 shadow-md">
+                            <i data-lucide="smartphone" class="w-4 h-4"></i> Reset via OTP
+                        </button>
+                        <button type="button" id="tab-pwd-old" onclick="switchPwdMode('old')" class="py-3 px-4 rounded-xl text-xs sm:text-sm font-extrabold transition flex items-center justify-center gap-2 text-gray-400 hover:text-white hover:bg-white/5">
+                            <i data-lucide="key" class="w-4 h-4"></i> Use Current Password
+                        </button>
+                    </div>
+
+                    <div id="pwd-status-message" class="hidden p-4 rounded-xl text-sm font-semibold flex items-center gap-3 mb-6"></div>
+
+                    <!-- FORM 1: RESET VIA OTP (FORGOT PASSWORD) -->
+                    <form id="form-pwd-otp" onsubmit="handleResetPasswordWithOtp(event)" class="space-y-6">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="block text-sm font-bold text-gray-300">Registered Member ID, Mobile, Email, or Name *</label>
+                                <div class="flex items-center gap-3 text-xs">
+                                    <label class="flex items-center gap-1.5 text-gray-300 cursor-pointer font-semibold">
+                                        <input type="radio" name="reset-channel" value="Phone" checked onchange="onResetChannelChange('Phone')" class="text-amber-500 focus:ring-0">
+                                        <span>Mobile SMS</span>
+                                    </label>
+                                    <label class="flex items-center gap-1.5 text-gray-300 cursor-pointer font-semibold">
+                                        <input type="radio" name="reset-channel" value="Email" onchange="onResetChannelChange('Email')" class="text-amber-500 focus:ring-0">
+                                        <span>Email</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <div class="relative flex items-center flex-1">
+                                    <i id="reset-channel-icon" data-lucide="phone" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                    <input type="text" id="reset-identifier" class="w-full pl-12 pr-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Enter Member ID (e.g. PBK-M021), Mobile, Email, or Name" required>
+                                </div>
+                                <button type="button" id="btn-reset-send-otp" onclick="sendResetPasswordOTP()" class="px-5 py-3.5 bg-[#1f2937] border-2 border-[#374151] text-amber-400 hover:text-amber-300 hover:bg-slate-700 font-extrabold rounded-xl transition whitespace-nowrap cursor-pointer flex items-center gap-2">
+                                    <i data-lucide="send" class="w-4 h-4"></i> <span id="btn-reset-send-text">Send OTP</span>
+                                </button>
+                            </div>
+                            <div id="msg-reset-otp" class="text-xs text-gray-400 font-semibold mt-1">Enter your Member ID, registered mobile number, email, or name to receive a verification OTP.</div>
+                        </div>
+
+                        <!-- 4-digit OTP box -->
+                        <div id="section-reset-otp" class="space-y-2 hidden animate-fadeIn">
+                            <label class="block text-sm font-bold text-gray-300">Enter 4-Digit OTP Code *</label>
+                            <div class="flex items-center gap-3">
+                                <div class="flex gap-2 flex-1 max-w-[240px]" id="group-resetOTP">
+                                    <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl r-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" oninput="handleOtpInput(event, 'r-otp', 0)" onkeydown="handleOtpBackspace(event, 'r-otp', 0)">
+                                    <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl r-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" oninput="handleOtpInput(event, 'r-otp', 1)" onkeydown="handleOtpBackspace(event, 'r-otp', 1)">
+                                    <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl r-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" oninput="handleOtpInput(event, 'r-otp', 2)" onkeydown="handleOtpBackspace(event, 'r-otp', 2)">
+                                    <input type="text" class="w-full h-12 text-center font-bold text-lg bg-[#111827] border-2 border-[#374151] rounded-xl r-otp focus:border-[#eea220] focus:outline-none text-white" maxlength="1" oninput="handleOtpInput(event, 'r-otp', 3)" onkeydown="handleOtpBackspace(event, 'r-otp', 3)">
+                                </div>
+                                <button type="button" id="btn-verify-reset-otp" onclick="verifyResetOtpOnly()" class="px-5 h-12 bg-[#1f2937] border-2 border-[#374151] text-amber-400 font-bold rounded-xl hover:bg-slate-700 transition cursor-pointer">
+                                    Verify
+                                </button>
+                            </div>
+                            <div id="otp-verified-badge" class="hidden text-xs text-emerald-400 font-extrabold flex items-center gap-1.5 mt-1">
+                                <i data-lucide="check-circle" class="w-4 h-4"></i> OTP Code Verified!
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-300 mb-2">Create New Password *</label>
+                            <div class="relative flex items-center">
+                                <i data-lucide="lock" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                <input type="password" id="reset-new-password" class="w-full pl-12 pr-12 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Minimum 6 characters" required>
+                                <button type="button" class="absolute right-4 text-gray-400 hover:text-gray-200 cursor-pointer" onclick="togglePassword('reset-new-password', this)">
+                                    <i data-lucide="eye" class="w-5 h-5 eye-on"></i>
+                                    <i data-lucide="eye-off" class="w-5 h-5 eye-off hidden"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-300 mb-2">Confirm New Password *</label>
+                            <div class="relative flex items-center">
+                                <i data-lucide="lock" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                <input type="password" id="reset-confirm-password" class="w-full pl-12 pr-12 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Re-enter new password" required>
+                                <button type="button" class="absolute right-4 text-gray-400 hover:text-gray-200 cursor-pointer" onclick="togglePassword('reset-confirm-password', this)">
+                                    <i data-lucide="eye" class="w-5 h-5 eye-on"></i>
+                                    <i data-lucide="eye-off" class="w-5 h-5 eye-off hidden"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center pt-4 border-t border-[#374151]">
+                            <a href="#login" onclick="switchPage('login')" class="text-sm font-bold text-amber-400 hover:underline flex items-center gap-2 cursor-pointer">
+                                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Login
+                            </a>
+                            <button type="submit" id="btn-submit-reset-otp" class="px-8 py-4 bg-gradient-to-r from-[#963100] to-[#c24603] hover:from-[#7a2800] hover:to-[#963100] text-white font-extrabold rounded-xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
+                                Reset Password <i data-lucide="shield-check" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- FORM 2: CHANGE WITH CURRENT PASSWORD -->
+                    <form id="form-pwd-old" onsubmit="handleChangePassword(event)" class="space-y-6 hidden">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-300 mb-2">Registered Phone Number (+91), Email, or ID *</label>
+                            <div class="relative flex items-center">
+                                <i data-lucide="phone" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                <input type="text" id="pwd-username" class="w-full pl-12 pr-4 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="e.g. 9876543210, +91 9876543210, or ID" required>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-300 mb-2">Current Password *</label>
+                            <div class="relative flex items-center">
+                                <i data-lucide="lock" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                <input type="password" id="pwd-current" class="w-full pl-12 pr-12 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Enter current password" required>
+                                <button type="button" class="absolute right-4 text-gray-400 hover:text-gray-200 cursor-pointer" onclick="togglePassword('pwd-current', this)">
+                                    <i data-lucide="eye" class="w-5 h-5 eye-on"></i>
+                                    <i data-lucide="eye-off" class="w-5 h-5 eye-off hidden"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-300 mb-2">New Password *</label>
+                            <div class="relative flex items-center">
+                                <i data-lucide="lock" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                <input type="password" id="pwd-new" class="w-full pl-12 pr-12 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Minimum 6 characters" required>
+                                <button type="button" class="absolute right-4 text-gray-400 hover:text-gray-200 cursor-pointer" onclick="togglePassword('pwd-new', this)">
+                                    <i data-lucide="eye" class="w-5 h-5 eye-on"></i>
+                                    <i data-lucide="eye-off" class="w-5 h-5 eye-off hidden"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-300 mb-2">Confirm New Password *</label>
+                            <div class="relative flex items-center">
+                                <i data-lucide="lock" class="absolute left-4 text-gray-400 w-5 h-5"></i>
+                                <input type="password" id="pwd-confirm" class="w-full pl-12 pr-12 py-3.5 bg-[#111827] border-2 border-[#374151] rounded-xl font-semibold text-white focus:border-[#eea220] focus:outline-none transition" placeholder="Re-enter new password" required>
+                                <button type="button" class="absolute right-4 text-gray-400 hover:text-gray-200 cursor-pointer" onclick="togglePassword('pwd-confirm', this)">
+                                    <i data-lucide="eye" class="w-5 h-5 eye-on"></i>
+                                    <i data-lucide="eye-off" class="w-5 h-5 eye-off hidden"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center pt-4 border-t border-[#374151]">
+                            <a href="#login" onclick="switchPage('login')" class="text-sm font-bold text-amber-400 hover:underline flex items-center gap-2 cursor-pointer">
+                                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Login
+                            </a>
+                            <button type="submit" class="px-8 py-4 bg-gradient-to-r from-[#963100] to-[#c24603] hover:from-[#7a2800] hover:to-[#963100] text-white font-extrabold rounded-xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
+                                Update Password <i data-lucide="shield-check" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="mt-12 text-center text-xs text-gray-500">PBK Community Chanda Fund Security Portal</div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ============================================================================== -->
+    <!-- SECTION 6: 30-DAY RETENTION ACCOUNT RESTORATION & SELF-REACTIVATION MODAL     -->
+    <!-- Displays when a soft-deleted member attempts to sign in; offers one-click      -->
+    <!-- undo/reactivation back into the active database before 30-day expiration       -->
+    <!-- ============================================================================== -->
+    <div id="accountRestoreModal" class="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="w-full max-w-lg bg-[#111827] border-2 border-amber-500/60 rounded-3xl p-6 sm:p-7 shadow-2xl text-left">
+            <div class="flex items-start gap-4 mb-4 pb-4 border-b border-gray-800">
+                <div class="w-14 h-14 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center shrink-0">
+                    <i data-lucide="archive-restore" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <span id="restoreModalDaysBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30">30-Day Recovery Period</span>
+                    <h2 id="restoreModalTitle" class="text-xl font-extrabold text-white mt-1">Account Scheduled for Deletion</h2>
+                    <p id="restoreModalName" class="text-xs text-amber-300 font-mono font-bold mt-0.5">—</p>
+                </div>
+            </div>
+
+            <div class="bg-amber-950/20 border border-amber-900/40 rounded-2xl p-4 mb-5 text-sm text-gray-200">
+                <p id="restoreModalDesc" class="leading-relaxed">
+                    Your account is currently scheduled for deletion. All your details, profile data, and contribution receipts are safely preserved in the 30-day retention recycle bin.
+                </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button type="button" onclick="closeRestoreModal()" class="flex-1 py-3.5 rounded-xl border border-gray-700 bg-gray-800/80 hover:bg-gray-800 text-gray-300 font-bold text-sm transition cursor-pointer">
+                    Keep Scheduled / Exit
+                </button>
+                <button type="button" id="restoreModalActionBtn" class="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm shadow-lg shadow-emerald-900/40 transition cursor-pointer flex items-center justify-center gap-2">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Restore My Account
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN JAVASCRIPT LOGIC -->
+    <script src="script.js"></script>
+</body>
+</html>

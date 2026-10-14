@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PBK Community Chanda Fund — Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class', theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] }, colors: {
+            primary: '#b45309', brand: { 50: '#fdf8f6', 100: '#fbe8e4', 500: '#b45309', 600: '#963100', 700: '#7c2d12', 800: '#652b19', 900: '#532314', orange: '#eea220' }
+          }
+        }
+      }
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+</head>
+
+<body class="bg-gray-100 dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen transition-colors">
+
+  <!-- ============================================================================== -->
+  <!-- SECTION 1: TOP HEADER & ADMIN IDENTITY                                         -->
+  <!-- Contains: Brand identity, Theme Switcher, and Admin Avatar / Role              -->
+  <!-- ============================================================================== -->
+  <header
+    class="fixed top-0 inset-x-0 h-16 z-50 bg-gradient-to-r from-amber-900 via-[#963100] to-[#7c2d12] dark:from-gray-900 dark:via-amber-950 dark:to-gray-900 text-white shadow-lg">
+    <div class="h-full px-4 sm:px-6 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <button id="mobileBtn" class="lg:hidden p-2 rounded-lg hover:bg-white/10" aria-label="Toggle navigation menu"><i
+            data-lucide="menu"></i></button>
+        <div class="w-10 h-10 rounded-xl bg-black/40 border border-amber-500/40 p-0.5 shadow-md flex items-center justify-center overflow-hidden shrink-0">
+          <img src="pbk_logo.jpg" alt="PBK Emblem" class="w-full h-full object-contain">
+        </div>
+        <div>
+          <div class="font-extrabold leading-tight">PBK Community</div>
+          <div class="text-[10px] text-[#eea220] font-bold tracking-widest">ADMIN CONTROL CENTER</div>
+        </div>
+      </div>
+      <div class="hidden md:flex items-center gap-4">
+        <div class="relative">
+          <button id="themeBtn"
+            class="px-3 py-2 rounded-xl bg-black/20 border border-white/10 flex gap-2 items-center text-xs font-bold"><i
+              data-lucide="monitor" class="w-4 h-4"></i><span id="themeText">System</span><i data-lucide="chevron-down"
+              class="w-3 h-3"></i></button>
+          <div id="themeMenu"
+            class="hidden absolute right-0 mt-2 w-40 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-xl shadow-xl border dark:border-gray-700 overflow-hidden z-50">
+            <button data-theme="light"
+              class="themeChoice w-full text-left px-4 py-2.5 text-sm hover:bg-amber-50 dark:hover:bg-gray-800">☀
+              Light</button>
+            <button data-theme="dark"
+              class="themeChoice w-full text-left px-4 py-2.5 text-sm hover:bg-amber-50 dark:hover:bg-gray-800">☾
+              Dark</button>
+            <button data-theme="system"
+              class="themeChoice w-full text-left px-4 py-2.5 text-sm hover:bg-amber-50 dark:hover:bg-gray-800">◉
+              System</button>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 bg-black/20 rounded-full px-3 py-1.5 border border-white/10">
+          <div id="adminHeaderAvatar"
+            class="w-8 h-8 rounded-full bg-[#eea220] text-amber-950 flex items-center justify-center font-extrabold text-xs">
+            A</div>
+          <div>
+            <div id="adminHeaderName" class="text-xs font-bold">Administrator</div>
+            <div id="adminHeaderRole" class="text-[10px] text-[#eea220]">Super Admin</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================================== -->
+  <!-- SECTION 2: SIDEBAR NAVIGATION                                                  -->
+  <!-- Order: Overview, Members, Funds, Receipts, Causes & Events, Announcements,    -->
+  <!--        Activity Log, Recycle Bin, Reports, Settings, Logout                    -->
+  <!-- ============================================================================== -->
+  <div id="overlay" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden"></div>
+  <aside id="sidebar"
+    class="fixed top-20 bottom-4 left-4 z-50 w-72 bg-[#f4f0ea] dark:bg-[#171b24] border border-gray-200 dark:border-gray-800 rounded-2xl p-4 transform -translate-x-[calc(100%+1rem)] lg:translate-x-0 transition-transform overflow-y-auto">
+    <div class="mb-5 px-3 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-black/30 dark:bg-black/60 border border-amber-500/30 p-0.5 shadow-sm flex items-center justify-center overflow-hidden shrink-0">
+        <img src="pbk_logo.jpg" alt="PBK Emblem" class="w-full h-full object-contain">
+      </div>
+      <div>
+        <div class="text-[10px] uppercase tracking-widest font-extrabold text-amber-700 dark:text-amber-400">
+          Administration</div>
+        <div class="font-extrabold text-base">Management Menu</div>
+      </div>
+    </div>
+    <nav id="nav" class="space-y-1">
+      <button data-view="overview"
+        class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl font-bold flex gap-3 items-center"><i
+          data-lucide="layout-dashboard"></i> Overview</button>
+      <button data-view="members"
+        class="sidebar-link active w-full text-left px-4 py-2.5 rounded-xl font-bold flex gap-3 items-center"><i
+          data-lucide="users"></i> Members</button>
+      <button data-view="funds"
+        class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl font-bold flex gap-3 items-center"><i
+          data-lucide="landmark"></i> Funds</button>
+      <button data-view="receipts"
+        class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl font-bold flex gap-3 items-center"><i
+          data-lucide="receipt"></i> Receipts</button>
+      <button data-view="causes"
+        class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl font-bold flex gap-3 items-center"><i
+          data-lucide="target"></i> Causes & Events</button>
+      <button data-view="announcements"
+        class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl font-bold flex gap-3 items-center"><i
+          data-lucide="megaphone"></i> Announcements</button>
+      <button data-view="activity"
+        class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl font-bold flex gap-3 items-center"><i
+          data-lucide="history"></i> Activity Log</button>
+      <button data-view="recycle-bin"
+        class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl font-bold flex gap-3 items-center"><i
+          data-lucide="archive-restore"></i> Recycle Bin</button>
+      <button data-view="reports"
+        class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl font-bold flex gap-3 items-center"><i
+          data-lucide="bar-chart-3"></i> Reports</button>
+      <button data-view="settings"
+        class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl font-bold flex gap-3 items-center"><i
+          data-lucide="settings"></i> Settings</button>
+    </nav>
+    <div class="mt-5 pt-4 border-t border-gray-200 dark:border-gray-800">
+      <button id="logoutBtn"
+        class="w-full px-4 py-2.5 rounded-xl border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 font-bold flex gap-2 justify-center"><i
+          data-lucide="log-out"></i> Logout</button>
+    </div>
+  </aside>
+
+  <!-- ============================================================================== -->
+  <!-- MAIN WORKSPACE & TAB SECTIONS                                                  -->
+  <!-- ============================================================================== -->
+  <main class="lg:ml-[19rem] pt-16 min-h-screen">
+    <div class="p-4 sm:p-6 max-w-[1800px] mx-auto">
+
+      <!-- ========================================================================== -->
+      <!-- SECTION 3: TAB VIEW - OVERVIEW                                             -->
+      <!-- Contains: Dashboard KPI Cards, Balance, Quick Stats & Analytics            -->
+      <!-- ========================================================================== -->
+      <section id="view-overview" class="view">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-black/30 dark:bg-black/60 border border-amber-500/40 p-1 shadow-md flex items-center justify-center overflow-hidden shrink-0">
+              <img src="pbk_logo.jpg" alt="PBK Emblem" class="w-full h-full object-contain">
+            </div>
+            <div>
+              <div class="text-xs font-extrabold uppercase tracking-widest text-amber-700 dark:text-amber-400">
+                Administration</div>
+              <h1 class="text-2xl sm:text-3xl font-extrabold">Admin Control Center</h1>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage members, contributions, funds and community
+                content.</p>
+            </div>
+          </div>
+          <div class="flex gap-2"><select id="yearGlobal" onchange="syncFundYearFilter(this.value)"
+              class="px-3 py-2.5 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 font-bold text-sm">
+              <option value="2026 - 2027">2026 - 2027</option>
+              <option value="2025 - 2026">2025 - 2026</option>
+              <option value="2024 - 2025">2024 - 2025</option>
+            </select><button data-open="memberModal"
+              class="px-4 py-2.5 rounded-xl bg-[#b45309] text-white font-bold flex gap-2 items-center"><i
+                data-lucide="user-plus"></i>Add Member</button></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div class="card p-5 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
+            <div class="flex justify-between"><span class="text-xs font-extrabold text-gray-500">TOTAL MEMBERS</span><i
+                data-lucide="users" class="text-amber-600"></i></div>
+            <div class="text-3xl font-extrabold mt-2" id="kMembers">0</div>
+            <div class="text-xs text-emerald-600 font-bold mt-1" id="kMembersSub">Registered members</div>
+          </div>
+          <div class="card p-5 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
+            <div class="flex justify-between"><span class="text-xs font-extrabold text-gray-500">TOTAL
+                COLLECTED</span><i data-lucide="indian-rupee" class="text-emerald-600"></i></div>
+            <div class="text-3xl font-extrabold mt-2 text-emerald-600 dark:text-emerald-400" id="kOverviewCollected">₹0</div>
+            <div class="text-xs text-emerald-600 font-bold mt-1" id="kOverviewCollectedSub">Across active funds</div>
+          </div>
+          <div class="card p-5 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
+            <div class="flex justify-between"><span class="text-xs font-extrabold text-gray-500">TOTAL USED</span><i
+                data-lucide="arrow-up-right" class="text-rose-600"></i></div>
+            <div class="text-3xl font-extrabold mt-2 text-rose-600 dark:text-rose-400" id="kOverviewUsed">₹0</div>
+            <div class="text-xs text-rose-500 font-bold mt-1" id="kOverviewUsedSub">From recorded usages</div>
+          </div>
+          <div class="card p-5 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
+            <div class="flex justify-between"><span class="text-xs font-extrabold text-gray-500">CURRENT
+                BALANCE</span><i data-lucide="wallet" class="text-sky-600"></i></div>
+            <div class="text-3xl font-extrabold mt-2 text-sky-600 dark:text-sky-400" id="kOverviewBalance">₹0</div>
+            <div class="text-xs text-sky-600 font-bold mt-1" id="kOverviewBalanceSub">Active available balance</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 gap-5 mt-5">
+          <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5">
+            <div class="flex justify-between items-center mb-4">
+              <div>
+                <h2 class="font-extrabold">Fund Performance</h2>
+                <p class="text-xs font-bold text-gray-500" id="fundChartSub">Comparison of collected vs used amounts</p>
+              </div>
+              <span class="text-xs font-extrabold px-3 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400" id="fundChartYearBadge">FY 2026 - 2027</span>
+            </div>
+            <div class="relative h-[280px] w-full"><canvas id="fundChart"></canvas></div>
+          </div>
+        </div>
+        <div class="mt-5 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5">
+          <div class="flex justify-between mb-4">
+            <h2 class="font-extrabold">Recent Contributions</h2>
+          </div>
+          <div id="recentTable"></div>
+        </div>
+      </section>
+
+      <!-- ========================================================================== -->
+      <!-- SECTION 4: TAB VIEW - MEMBERS MANAGEMENT                                   -->
+      <!-- Contains: Member Directory Table, Search/Filter, Add/Edit Member Modal,     -->
+      <!-- Status Toggles, and 30-Day Soft Deletion to Recycle Bin                     -->
+      <!-- ========================================================================== -->
+      <section id="view-members" class="view active">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold">Member Management</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage member records, verification and account
+              status.</p>
+          </div>
+          <div class="flex flex-wrap gap-2 items-center">
+            <button onclick="exportMembers()"
+              class="px-3.5 py-2.5 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-sm font-bold flex gap-2 items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+              <i data-lucide="download" class="w-4 h-4"></i>Export
+            </button>
+            <button onclick="importMembers()"
+              class="px-3.5 py-2.5 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-sm font-bold flex gap-2 items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+              <i data-lucide="upload" class="w-4 h-4"></i>Import
+            </button>
+            <button onclick="showView('recycle-bin')" id="btnRecycleBin"
+              class="px-3.5 py-2.5 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-sm font-bold flex gap-2 items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer">
+              <i data-lucide="archive-restore" class="w-4 h-4"></i>Recycle Bin
+            </button>
+            <button data-open="memberModal"
+              class="px-4 py-2.5 rounded-xl bg-[#b45309] hover:bg-[#963100] text-white font-bold flex gap-2 items-center transition cursor-pointer">
+              <i data-lucide="user-plus" class="w-4 h-4"></i>Add Member
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+          <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 shadow-sm">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-xs font-extrabold uppercase tracking-wider text-gray-500">Total Members</span>
+                <div class="text-3xl font-extrabold mt-2 text-gray-900 dark:text-white" id="statTotalMembers">0</div>
+              </div>
+              <div
+                class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-600 flex items-center justify-center">
+                <i data-lucide="users" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="text-xs text-gray-500 mt-3 flex items-center gap-1 font-bold">
+              <span class="text-emerald-600 font-bold">+12%</span> Registered this year
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 shadow-sm">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-xs font-extrabold uppercase tracking-wider text-gray-500">Active Members</span>
+                <div class="text-3xl font-extrabold mt-2 text-emerald-600 dark:text-emerald-400" id="statActiveMembers">
+                  0</div>
+              </div>
+              <div
+                class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 flex items-center justify-center">
+                <i data-lucide="user-check" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="text-xs text-gray-500 mt-3 flex items-center gap-1 font-bold">
+              <span id="statActivePct" class="text-emerald-600 font-bold">0%</span> of total members
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 shadow-sm">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-xs font-extrabold uppercase tracking-wider text-gray-500">Pending Verification</span>
+                <div class="text-3xl font-extrabold mt-2 text-amber-600 dark:text-amber-400" id="statPendingMembers">0
+                </div>
+              </div>
+              <div
+                class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-600 flex items-center justify-center">
+                <i data-lucide="clock" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="text-xs text-gray-500 mt-3 flex items-center gap-1 font-bold">
+              Awaiting admin approval
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 shadow-sm">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-xs font-extrabold uppercase tracking-wider text-gray-500">Inactive Members</span>
+                <div class="text-3xl font-extrabold mt-2 text-rose-600 dark:text-rose-400" id="statInactiveMembers">0
+                </div>
+              </div>
+              <div
+                class="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-950/50 text-rose-600 flex items-center justify-center">
+                <i data-lucide="user-x" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="text-xs text-gray-500 mt-3 flex items-center gap-1 font-bold">
+              <span id="statInactivePct" class="text-rose-600 font-bold">0%</span> of total members
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 shadow-sm mb-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 items-center">
+            <div class="lg:col-span-2 relative">
+              <i data-lucide="search" class="absolute left-3.5 top-3 w-4 h-4 text-gray-400"></i>
+              <input id="memberSearch" oninput="renderMembers()" placeholder="Search name, PBK ID, phone or email..."
+                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent text-sm outline-none focus:border-amber-600">
+            </div>
+            <div>
+              <select id="memberStatus" onchange="renderMembers()"
+                class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-bold bg-transparent">
+                <option value="All">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Pending">Pending</option>
+              </select>
+            </div>
+            <div>
+              <select id="memberVerification" onchange="renderMembers()"
+                class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-bold bg-transparent">
+                <option value="All">All Verification</option>
+                <option value="Verified">Verified</option>
+                <option value="Pending">Pending</option>
+              </select>
+            </div>
+            <div>
+              <select id="memberType" onchange="renderMembers()"
+                class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-bold bg-transparent">
+                <option value="All">All Member Types</option>
+                <option value="General">General</option>
+                <option value="Youth">Youth</option>
+                <option value="Village">Village</option>
+                <option value="Developer">Developer</option>
+              </select>
+            </div>
+            <div>
+              <select id="memberSort" onchange="renderMembers()"
+                class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-bold bg-transparent">
+                <option value="nameAsc">Name (A-Z)</option>
+                <option value="nameDesc">Name (Z-A)</option>
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="contribHigh">Highest Contribution</option>
+                <option value="contribLow">Lowest Contribution</option>
+              </select>
+            </div>
+          </div>
+          <div
+            class="flex flex-col sm:flex-row justify-between items-center gap-3 mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+            <div class="flex items-center gap-2">
+              <span id="selectedCountLabel" class="text-xs font-extrabold text-amber-700 dark:text-amber-400">0
+                selected</span>
+              <button onclick="bulkActivate()"
+                class="px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 text-xs font-bold hover:bg-emerald-100 transition">Activate</button>
+              <button onclick="bulkDisable()"
+                class="px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 text-xs font-bold hover:bg-rose-100 transition">Disable</button>
+              <button onclick="bulkVerify()"
+                class="px-3 py-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 text-xs font-bold hover:bg-amber-100 transition">Verify</button>
+            </div>
+            <button onclick="clearMemberFilters()"
+              class="text-xs font-bold text-gray-500 hover:text-amber-600 transition flex items-center gap-1">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Clear Filters
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden mb-6">
+          <div class="table-wrap">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr
+                  class="text-xs uppercase tracking-wider text-gray-500 border-b dark:border-gray-800 bg-gray-50 dark:bg-gray-950/50">
+                  <th class="p-3.5 w-10 text-center"><input type="checkbox" id="selectAllCheckbox"
+                      onclick="toggleSelectAll(this)" class="rounded accent-amber-600 w-4 h-4 cursor-pointer"></th>
+                  <th class="p-3.5">#</th>
+                  <th class="p-3.5">Member</th>
+                  <th class="p-3.5">PBK ID</th>
+                  <th class="p-3.5">Phone</th>
+                  <th class="p-3.5">Member Type</th>
+                  <th class="p-3.5">Status</th>
+                  <th class="p-3.5">Verification</th>
+                  <th class="p-3.5">Contributions</th>
+                  <th class="p-3.5">Join Date</th>
+                  <th class="p-3.5 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="membersTable"></tbody>
+            </table>
+          </div>
+
+          <div
+            class="p-4 bg-gray-50 dark:bg-gray-950/50 border-t border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+            <div class="text-gray-500 font-bold" id="paginationInfo">Showing 0–0 of 0 members</div>
+            <div class="flex items-center gap-4">
+              <div class="flex items-center gap-2">
+                <span class="text-gray-500 font-bold">Per page:</span>
+                <select id="pageSizeSelect" onchange="changePageSize()"
+                  class="px-2 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent font-bold text-xs">
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+              </div>
+              <div class="flex items-center gap-1" id="paginationButtons"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================== -->
+      <!-- SECTION 5: TAB VIEW - FUNDS MANAGEMENT & DONATION SETTINGS                 -->
+      <!-- Contains: Funds Table, Targets vs Usage, Add Fund Modal,                   -->
+      <!-- and Live UPI & QR Scanner Settings Configuration Panel                      -->
+      <!-- ========================================================================== -->
+      <section id="view-funds" class="view">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold">Fund Management</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Control financial years, fund categories, and
+              balances.</p>
+          </div>
+          <div class="flex flex-wrap gap-2 items-center">
+            <select id="fundYearSelect" onchange="syncFundYearFilter(this.value)"
+              class="px-3.5 py-2.5 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 font-bold text-sm">
+              <option value="2026 - 2027">2026 - 2027</option>
+              <option value="2025 - 2026">2025 - 2026</option>
+              <option value="2024 - 2025">2024 - 2025</option>
+            </select>
+            <button onclick="openAddFundModal()"
+              class="px-4 py-2.5 rounded-xl bg-[#b45309] text-white font-bold flex gap-2 items-center hover:bg-[#963100] transition cursor-pointer">
+              <i data-lucide="plus" class="w-4 h-4"></i>Add Fund
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+          <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-gray-500">Total Collected</span>
+            <div id="kpiCollected" class="text-3xl font-extrabold mt-2 text-emerald-600 dark:text-emerald-400">₹0</div>
+            <div class="text-xs text-gray-500 mt-2 font-bold">In selected financial year</div>
+          </div>
+          <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-gray-500">Total Used</span>
+            <div id="kpiUsed" class="text-3xl font-extrabold mt-2 text-rose-600 dark:text-rose-400">₹0</div>
+            <div class="text-xs text-gray-500 mt-2 font-bold">Disbursed for causes/events</div>
+          </div>
+          <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-gray-500">Current Balance</span>
+            <div id="kpiBalance" class="text-3xl font-extrabold mt-2 text-sky-600 dark:text-sky-400">₹0</div>
+            <div class="text-xs text-gray-500 mt-2 font-bold">Active reserves</div>
+          </div>
+          <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-gray-500">Active Funds</span>
+            <div id="kpiActiveFunds" class="text-3xl font-extrabold mt-2 text-amber-600 dark:text-amber-400">0</div>
+            <div class="text-xs text-gray-500 mt-2 font-bold">Categories operating</div>
+          </div>
+        </div>
+
+        <div class="mb-6 space-y-3">
+          <div class="flex justify-between items-center">
+            <div>
+              <h2 class="font-extrabold text-lg flex items-center gap-2">
+                <i data-lucide="layers" class="w-5 h-5 text-amber-600"></i> Fund Types
+              </h2>
+              <p class="text-xs text-gray-500 mt-0.5">Overview of fund categories, collections, usage, and available balances</p>
+            </div>
+          </div>
+          <div id="adminFundTypesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+        </div>
+
+        <div class="mb-6">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="relative">
+              <i data-lucide="search" class="absolute left-3.5 top-3 w-4 h-4 text-gray-400"></i>
+              <input id="fundSearchInput" oninput="renderFundManagement()" placeholder="Search fund name..."
+                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent text-sm outline-none">
+            </div>
+            <div>
+              <select id="fundCategoryFilter" onchange="renderFundManagement()"
+                class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-bold bg-transparent">
+                <option value="All">All Categories</option>
+                <option>Youth Fund</option>
+                <option>Village Fund</option>
+                <option>General Fund</option>
+                <option>Community Development</option>
+              </select>
+            </div>
+            <div class="flex justify-end">
+              <button onclick="openAddFundModal()"
+                class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-amber-600 text-white font-bold text-sm flex items-center justify-center gap-2 hover:bg-amber-700 transition cursor-pointer">
+                <i data-lucide="plus" class="w-4 h-4"></i>Add New Fund
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden mb-6">
+          <div class="table-wrap">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr
+                  class="text-xs uppercase tracking-wider text-gray-500 border-b dark:border-gray-800 bg-gray-50 dark:bg-gray-950/50">
+                  <th class="p-3.5">#</th>
+                  <th class="p-3.5">Fund Name</th>
+                  <th class="p-3.5">Target Amount</th>
+                  <th class="p-3.5">Collected Amount</th>
+                  <th class="p-3.5">Used Amount</th>
+                  <th class="p-3.5">Balance</th>
+                  <th class="p-3.5">Progress</th>
+                  <th class="p-3.5">Status</th>
+                  <th class="p-3.5 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="fundsTableBody"></tbody>
+            </table>
+          </div>
+
+          <div
+            class="p-4 bg-gray-50 dark:bg-gray-950/50 border-t border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-bold text-gray-700 dark:text-gray-300">
+            <div>Total Summary Bar:</div>
+            <div class="flex flex-wrap gap-6 items-center">
+              <div>Target: <span id="summaryTotalTarget" class="text-gray-900 dark:text-white font-extrabold">₹0</span>
+              </div>
+              <div>Collected: <span id="summaryTotalCollected" class="text-emerald-600 font-extrabold">₹0</span></div>
+              <div>Used: <span id="summaryTotalUsed" class="text-rose-600 font-extrabold">₹0</span></div>
+              <div>Balance: <span id="summaryTotalBalance" class="text-sky-600 font-extrabold">₹0</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fund Usage Management -->
+        <div id="fundUsagePanel"
+          class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden mb-6">
+          <div
+            class="p-5 border-b border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <h2 class="text-lg font-extrabold">Fund Usage</h2>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Track how community funds are used.</p>
+            </div>
+
+            <button type="button" onclick="openFundUsageModal()"
+              class="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm flex items-center gap-2 cursor-pointer">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              Add Fund Usage
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead class="bg-gray-50 dark:bg-gray-950/50">
+                <tr class="text-xs uppercase tracking-wide text-gray-500 border-b border-gray-200 dark:border-gray-800">
+                  <th class="p-3.5">Date</th>
+                  <th class="p-3.5">Fund Type</th>
+                  <th class="p-3.5">Purpose</th>
+                  <th class="p-3.5">Amount Used</th>
+                  <th class="p-3.5 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="fundUsageTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Donation & Scanner / UPI Settings -->
+        <div id="donationSettingsPanel" class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden mb-6">
+          <div class="p-5 border-b border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-gradient-to-r from-amber-50/60 to-transparent dark:from-amber-950/20">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-700 dark:text-amber-400 flex items-center justify-center shrink-0">
+                <i data-lucide="qr-code" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h2 class="text-lg font-extrabold text-gray-900 dark:text-white">Donation &amp; Scanner Settings</h2>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">Live Gateway Sync</span>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Configure official UPI ID, Payee details, QR Code scanner, and Bank info for member contributions.</p>
+              </div>
+            </div>
+            <button type="button" onclick="saveDonationSettings()" id="btnSaveDonationSettings"
+              class="px-5 py-2.5 rounded-xl bg-[#b45309] hover:bg-[#963100] text-white font-extrabold text-xs flex items-center gap-2 transition shadow-sm cursor-pointer shrink-0">
+              <i data-lucide="save" class="w-4 h-4"></i>
+              <span>Save Settings</span>
+            </button>
+          </div>
+
+          <div class="p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left 2 Cols: Settings Inputs -->
+            <div class="lg:col-span-2 space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1.5">Official UPI ID (VPA) *</label>
+                  <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-amber-600 dark:text-amber-400 font-bold"><i data-lucide="at-sign" class="w-4 h-4"></i></span>
+                    <input type="text" id="adminSettingUpiId" oninput="updateAdminQrPreview()" placeholder="e.g. chanda.collection@bank" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  </div>
+                  <p class="text-[11px] text-gray-400 mt-1">This UPI ID is embedded into member QR codes and deep links.</p>
+                </div>
+                <div>
+                  <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1.5">Payee / Organization Name *</label>
+                  <input type="text" id="adminSettingPayeeName" oninput="updateAdminQrPreview()" placeholder="e.g. PBK Community Welfare Fund" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  <p class="text-[11px] text-gray-400 mt-1">Appears on PhonePe, GPay, Paytm as recipient name.</p>
+                </div>
+              </div>
+
+              <div class="pt-2 border-t border-gray-100 dark:border-gray-800">
+                <h4 class="text-xs font-black uppercase tracking-wider text-amber-700 dark:text-amber-400 mb-3 flex items-center gap-1.5">
+                  <i data-lucide="building-2" class="w-3.5 h-3.5"></i> Bank Transfer Account Details
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Bank Name</label>
+                    <input type="text" id="adminSettingBankName" placeholder="e.g. State Bank of India" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Account Number</label>
+                    <input type="text" id="adminSettingAccountNumber" placeholder="e.g. 987654321012" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">IFSC Code</label>
+                    <input type="text" id="adminSettingIfscCode" placeholder="e.g. SBIN0001234" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-bold text-gray-900 dark:text-white uppercase focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Branch Name</label>
+                    <input type="text" id="adminSettingBranchName" placeholder="e.g. Main Branch" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Payment Note / Narration</label>
+                <input type="text" id="adminSettingNotes" placeholder="e.g. PBK Chanda Contribution" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+              </div>
+            </div>
+
+            <!-- Right 1 Col: Live Scanner Preview -->
+            <div class="bg-gray-50 dark:bg-gray-950/50 p-5 rounded-2xl border border-gray-200 dark:border-gray-800 flex flex-col items-center justify-between text-center">
+              <div>
+                <div class="flex items-center justify-center gap-1.5 text-xs font-black uppercase text-amber-700 dark:text-amber-400 mb-2">
+                  <i data-lucide="eye" class="w-4 h-4"></i> Live Scanner Preview
+                </div>
+                <p class="text-[11px] text-gray-500 dark:text-gray-400 mb-3">Live dynamic QR generated from above settings (Sample: ₹501)</p>
+                <div class="p-3 bg-white rounded-2xl border-2 border-gray-200 dark:border-gray-700 inline-block shadow-sm">
+                  <div id="adminQrPreviewContainer" class="w-40 h-40 flex items-center justify-center"></div>
+                </div>
+                <div class="mt-3">
+                  <div class="text-xs font-extrabold text-gray-900 dark:text-white" id="adminPreviewPayeeText">PBK Community Welfare Fund</div>
+                  <div class="text-[11px] font-mono text-amber-700 dark:text-amber-400 mt-0.5" id="adminPreviewUpiText">chanda.collection@bank</div>
+                </div>
+              </div>
+              <div class="w-full mt-4 pt-3 border-t border-gray-200 dark:border-gray-800 text-[11px] text-emerald-600 dark:text-emerald-400 font-bold flex items-center justify-center gap-1">
+                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Compatible with PhonePe, GPay, Paytm, BHIM
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ========================================================================== -->
+      <!-- SECTION 6: TAB VIEW - RECEIPTS & CONTRIBUTIONS AUDIT                       -->
+      <!-- Contains: All Contributions Table, Status Verification, Filter by Fund,   -->
+      <!-- and Transaction ID & Receipt Search                                        -->
+      <!-- ========================================================================== -->
+      <section id="view-receipts" class="view">
+        <div class="pbk-rm-page">
+          <div id="container-receipts-header" style="display:none"></div>
+
+          <div class="pbk-rm-header">
+            <div class="pbk-rm-title-row">
+              <div class="pbk-rm-title-icon"><i data-lucide="receipt-text" style="width:30px;height:30px"></i></div>
+              <div>
+                <div class="pbk-rm-title">Receipt Management</div>
+                <div class="pbk-rm-sub">Review receipt records, verification, printing and audit status.</div>
+              </div>
+            </div>
+            <div class="pbk-rm-head-actions">
+              <select id="pbkReceiptYearTop" class="pbk-rm-control pbk-rm-year">
+                <option>2026 - 2027</option>
+                <option>2025 - 2026</option>
+                <option>2024 - 2025</option>
+              </select>
+              <button type="button" class="pbk-rm-btn" onclick="pbkReceiptExport()"><i
+                  data-lucide="download"></i>Export</button>
+              <button type="button" class="pbk-rm-btn primary" onclick="pbkGenerateReceiptFromDashboard()"><i
+                  data-lucide="plus"></i>Generate Receipt</button>
+            </div>
+          </div>
+
+          <div class="pbk-rm-kpis">
+            <div class="pbk-rm-kpi">
+              <div class="pbk-rm-kpi-icon green"><i data-lucide="receipt-text"></i></div>
+              <div>
+                <div class="pbk-rm-kpi-label">Total Receipts</div>
+                <div id="receiptTotalCount" class="pbk-rm-kpi-value">188</div>
+              </div>
+              <div class="pbk-rm-kpi-side">
+                <div class="pbk-rm-up">↑ 12%</div>
+                <div>vs last year</div>
+              </div>
+            </div>
+            <div class="pbk-rm-kpi">
+              <div class="pbk-rm-kpi-icon blue"><i data-lucide="circle-check"></i></div>
+              <div>
+                <div class="pbk-rm-kpi-label">Verified Receipts</div>
+                <div id="receiptVerifiedCount" class="pbk-rm-kpi-value">179</div>
+              </div>
+              <div id="receiptVerifiedPct" class="pbk-rm-kpi-side">95.2% of total</div>
+            </div>
+            <div class="pbk-rm-kpi">
+              <div class="pbk-rm-kpi-icon amber"><i data-lucide="clock-3"></i></div>
+              <div>
+                <div class="pbk-rm-kpi-label">Pending Verification</div>
+                <div id="receiptPendingCount" class="pbk-rm-kpi-value">7</div>
+              </div>
+              <div id="receiptPendingPct" class="pbk-rm-kpi-side">3.7% of total</div>
+            </div>
+            <div class="pbk-rm-kpi">
+              <div class="pbk-rm-kpi-icon red"><i data-lucide="circle-x"></i></div>
+              <div>
+                <div class="pbk-rm-kpi-label">Rejected Receipts</div>
+                <div id="receiptRejectedCount" class="pbk-rm-kpi-value">2</div>
+              </div>
+              <div id="receiptRejectedPct" class="pbk-rm-kpi-side">1.1% of total</div>
+            </div>
+          </div>
+
+          <div class="pbk-rm-pending" style="margin-bottom: 14px;">
+            <div class="pbk-rm-pending-left">
+              <i class="pbk-rm-pending-icon" data-lucide="clock-3"></i>
+              <div>
+                <div class="pbk-rm-pending-title">Pending Verification (<span id="pbkPendingBannerCount">0</span>)</div>
+                <div class="pbk-rm-pending-sub">These receipts are waiting for verification</div>
+              </div>
+            </div>
+            <button type="button" class="pbk-rm-btn primary" style="height:38px;padding:0 16px"
+              onclick="pbkVerifyAllReceipts()">Verify All</button>
+          </div>
+
+          <div class="pbk-rm-panel">
+            <div class="pbk-rm-filters">
+              <input id="pbkReceiptSearch" class="pbk-rm-filter"
+                placeholder="Search receipt ID, UTR number, member..." />
+              <select id="pbkReceiptStatusFilter" class="pbk-rm-filter">
+                <option>All Status</option>
+                <option>Completed</option>
+                <option>Pending</option>
+                <option>Rejected</option>
+              </select>
+              <select id="pbkReceiptMethodFilter" class="pbk-rm-filter">
+                <option>All Payment Methods</option>
+                <option>UPI</option>
+                <option>Bank Transfer</option>
+                <option>Cash</option>
+              </select>
+              <select id="pbkReceiptFundFilter" class="pbk-rm-filter">
+                <option>All Funds</option>
+                <option>Youth Fund</option>
+                <option>Village Fund</option>
+                <option>General Fund</option>
+              </select>
+              <select id="pbkReceiptYearFilter" class="pbk-rm-filter">
+                <option>2026 - 2027</option>
+                <option>2025 - 2026</option>
+                <option>2024 - 2025</option>
+              </select>
+              <div class="flex items-center gap-2">
+                <button class="pbk-rm-clear" type="button" onclick="pbkClearReceiptFilters()">Clear Filters</button>
+                <button class="pbk-rm-clear pbk-rm-download" type="button" onclick="pbkExportFilteredReceipts()"
+                  title="Download only the currently filtered receipts">
+                  <i data-lucide="download" style="width:16px;height:16px"></i> Download Filtered
+                </button>
+              </div>
+            </div>
+
+            <div class="pbk-rm-table-wrap">
+              <table class="pbk-rm-table">
+                <thead>
+                  <tr>
+                    <th>Member ID</th>
+                    <th>Member</th>
+                    <th>Receipt ID</th>
+                    <th>Fund</th>
+                    <th>Payment Method</th>
+                    <th>Date</th>
+                    <th>UTR / Tran ID</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="receiptTable"></tbody>
+                <tfoot id="receiptTableFoot">
+                  <tr style="background: rgba(13, 23, 39, 0.95); border-top: 2px solid #23354d; font-weight: 800;">
+                    <td colspan="6" style="padding: 12px 14px; text-align: right; color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+                      Receipt Box Totals:
+                    </td>
+                    <td colspan="4" style="padding: 12px 14px;">
+                      <div class="flex items-center gap-4 flex-wrap text-xs">
+                        <span style="color:#10b981;">Collected: <strong id="tfootReceiptCompleted" style="color:#34d399; font-size: 13px;">₹0</strong></span>
+                        <span style="color:#f59e0b;">Pending: <strong id="tfootReceiptPending" style="color:#fbbf24; font-size: 13px;">₹0</strong></span>
+                        <span style="color:#f43f5e;">Rejected: <strong id="tfootReceiptRejected" style="color:#fb7185; font-size: 13px;">₹0</strong></span>
+                        <span style="color:#cbd5e1; border-left: 1px solid #334155; padding-left: 12px;">Total: <strong id="tfootReceiptTotal" style="color:#ffffff; font-size: 13px;">₹0</strong></span>
+                      </div>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+            <div class="pbk-rm-footer">
+              <div id="pbkReceiptShowing">Showing 1 to 10 of 10 receipts</div>
+              <div id="pbkReceiptPages" class="pbk-rm-pages">
+                <button class="pbk-rm-pagebtn" type="button" onclick="pbkReceiptPage(-1)">‹</button>
+                <button class="pbk-rm-pagebtn active" type="button">1</button>
+                <button class="pbk-rm-pagebtn" type="button" onclick="pbkReceiptPage(1)">›</button>
+              </div>
+              <select id="pbkReceiptPageSize" class="pbk-rm-filter" style="width:140px;height:38px">
+                <option value="10">10 per page</option>
+                <option value="25">25 per page</option>
+                <option value="50">50 per page</option>
+                <option value="all">All per page</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <!-- Receipt preview/download surface. It is isolated from the dashboard and is used for both Print and PDF download. -->
+        <div id="pbkReceiptModal" class="pbk-receipt-modal" aria-hidden="true">
+          <div class="pbk-receipt-modal-backdrop" onclick="pbkCloseReceiptPreview()"></div>
+          <div class="pbk-receipt-modal-card">
+            <div class="pbk-receipt-toolbar">
+              <div class="font-extrabold">Receipt Preview</div>
+              <div class="flex gap-2">
+                <button type="button" onclick="pbkPrintReceipt()"
+                  class="px-3 py-2 rounded-lg bg-gray-900 text-white font-bold">Print</button>
+                <button type="button" onclick="pbkCloseReceiptPreview()"
+                  class="px-3 py-2 rounded-lg border font-bold">Close</button>
+              </div>
+            </div>
+            <div class="pbk-receipt-preview-wrap">
+              <div id="pbkReceiptPrintRoot"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================== -->
+      <!-- SECTION 7: TAB VIEW - CAUSES & COMMUNITY EVENTS                            -->
+      <!-- Contains: Community Causes Grid, Target per Member, Raised Amounts, Add Cause-->
+      <!-- ========================================================================== -->
+      <section id="view-causes" class="view">
+        <div id="container-causes-header"></div>
+        <div id="causeCards" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+      </section>
+
+      <!-- ========================================================================== -->
+      <!-- SECTION 8: TAB VIEW - ANNOUNCEMENTS BROADCAST                              -->
+      <!-- Contains: Announcements List, Draft/Publish Toggles, Create Notice Modal   -->
+      <!-- ========================================================================== -->
+      <section id="view-announcements" class="view">
+        <div id="container-ann-header"></div>
+        <div id="announcementList" class="space-y-3"></div>
+      </section>
+
+      <!-- ========================================================================== -->
+      <!-- SECTION 9: TAB VIEW - FINANCIAL & AUDIT REPORTS                            -->
+      <!-- Contains: Member Directory Export, Annual Financial Statement, CSV/PDF     -->
+      <!-- ========================================================================== -->
+      <section id="view-reports" class="view">
+        <div id="container-reports-header"></div>
+        <div id="reportsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4"></div>
+      </section>
+
+      <!-- ========================================================================== -->
+      <!-- SECTION 10: TAB VIEW - ACTIVE LOGIN & AUDIT LOGS                           -->
+      <!-- Contains: User Authentication Logs, Action Type Filters, Actor Trail       -->
+      <!-- ========================================================================== -->
+      <section id="view-activity" class="view">
+        <div id="container-activity-header"></div>
+
+        <!-- Metric Summary Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+          <div class="bg-white dark:bg-gray-900 p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Activities</p>
+              <h3 id="statTotalActivities" class="text-2xl font-black text-slate-800 dark:text-white mt-1">0</h3>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 flex items-center justify-center font-bold">
+              <i data-lucide="history" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="bg-white dark:bg-gray-900 p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Admin Changes</p>
+              <h3 id="statAdminActions" class="text-2xl font-black text-amber-700 dark:text-amber-400 mt-1">0</h3>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 flex items-center justify-center font-bold">
+              <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="bg-white dark:bg-gray-900 p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Member Actions</p>
+              <h3 id="statMemberActions" class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">0</h3>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 flex items-center justify-center font-bold">
+              <i data-lucide="users" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="bg-white dark:bg-gray-900 p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Deletions &amp; Status</p>
+              <h3 id="statDeletions" class="text-2xl font-black text-rose-600 dark:text-rose-400 mt-1">0</h3>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 flex items-center justify-center font-bold">
+              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity & Login Report Box -->
+        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+          <div class="p-5 border-b border-gray-200 dark:border-gray-800 space-y-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <div>
+                <h2 class="text-lg font-extrabold text-gray-900 dark:text-white flex items-center gap-2">
+                  <i data-lucide="activity" class="w-5 h-5 text-amber-600"></i>
+                  Activity &amp; Login Audit Report
+                </h2>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                  Real-time timeline of administrative modifications, member logins, status toggles, and record changes.
+                </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="exportReport('activityLogin')"
+                  class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-sm transition cursor-pointer"
+                  title="Export Activity Login Report">
+                  <i data-lucide="download" class="w-4 h-4"></i>
+                  <span>Export CSV</span>
+                </button>
+                <button type="button" onclick="pbkRefreshActivityLogs()" title="Refresh Logs"
+                  class="p-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition cursor-pointer">
+                  <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Filter Chips & Search Toolbar -->
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-3 border-t border-gray-100 dark:border-gray-800">
+              <!-- Quick Filter Pills -->
+              <div id="activityFilterTabs" class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+                <button type="button" onclick="setActivityCategory('all')" data-cat="all" class="activity-cat-pill active px-3 py-1.5 rounded-lg font-bold transition cursor-pointer bg-amber-600 text-white shadow-xs">All Events</button>
+                <button type="button" onclick="setActivityCategory('admin')" data-cat="admin" class="activity-cat-pill px-3 py-1.5 rounded-lg font-bold transition cursor-pointer bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">Admin Changes</button>
+                <button type="button" onclick="setActivityCategory('member')" data-cat="member" class="activity-cat-pill px-3 py-1.5 rounded-lg font-bold transition cursor-pointer bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">Member Actions</button>
+                <button type="button" onclick="setActivityCategory('login')" data-cat="login" class="activity-cat-pill px-3 py-1.5 rounded-lg font-bold transition cursor-pointer bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">Logins</button>
+                <button type="button" onclick="setActivityCategory('status')" data-cat="status" class="activity-cat-pill px-3 py-1.5 rounded-lg font-bold transition cursor-pointer bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">Status &amp; Verifications</button>
+                <button type="button" onclick="setActivityCategory('delete')" data-cat="delete" class="activity-cat-pill px-3 py-1.5 rounded-lg font-bold transition cursor-pointer bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">Deletions</button>
+              </div>
+
+              <!-- Search & Type Filter Dropdown -->
+              <div class="flex items-center gap-2">
+                <div class="relative flex-1 sm:w-60">
+                  <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                  <input id="activitySearchInput" type="text" placeholder="Search actor, member ID, changes..."
+                    class="w-full pl-9 pr-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/60 dark:bg-gray-800 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-amber-500">
+                </div>
+                <select id="activityTypeFilter"
+                  class="px-2.5 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/60 dark:bg-gray-800 text-xs font-bold text-gray-700 dark:text-gray-200 focus:outline-none cursor-pointer">
+                  <option value="all">All Types</option>
+                  <option value="login">Login</option>
+                  <option value="edit">Edit / Update</option>
+                  <option value="status">Status Change</option>
+                  <option value="verify">Verification</option>
+                  <option value="delete">Delete</option>
+                  <option value="contribution">Contribution</option>
+                  <option value="add">Create / Add</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div id="activityList" class="overflow-x-auto"></div>
+          <div id="activityPaginationBar" class="px-5 py-3 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-2"></div>
+        </div>
+      </section>
+
+      <!-- ========================================================================== -->
+      <!-- SECTION 11: TAB VIEW - RECYCLE BIN & 30-DAY RETENTION RESTORE              -->
+      <!-- Contains: Soft-Deleted Members & Funds Table, 30-Day Retention Countdown,  -->
+      <!-- and One-Click Restore Back to Active MySQL Database                        -->
+      <!-- ========================================================================== -->
+      <section id="view-recycle-bin" class="view">
+        <div id="container-recycle-header">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <h1 class="text-2xl sm:text-3xl font-extrabold">Recycle Bin</h1>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Review and restore deleted members and records back into the active database within the 30-day retention grace period.</p>
+            </div>
+            <button onclick="fetchRecycleBinRecords()" class="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 transition text-white font-bold flex gap-2 items-center cursor-pointer w-max">
+              <i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Metrics -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase text-gray-500 tracking-wider">Total Archived</span>
+              <div class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400">
+                <i data-lucide="archive" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black text-gray-900 dark:text-white mt-2" id="rbTotalCount">0</div>
+          </div>
+          <div class="bg-white dark:bg-gray-900 border border-amber-200 dark:border-amber-900/50 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase text-amber-600 dark:text-amber-400 tracking-wider">Restorable (In 30-Day Window)</span>
+              <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                <i data-lucide="clock" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black text-amber-600 dark:text-amber-400 mt-2" id="rbPendingCount">0</div>
+          </div>
+          <div class="bg-white dark:bg-gray-900 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase text-emerald-600 dark:text-emerald-400 tracking-wider">Successfully Restored</span>
+              <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-2" id="rbRestoredCount">0</div>
+          </div>
+        </div>
+
+        <!-- Filters & Search Toolbar -->
+        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-5 mb-6 shadow-sm">
+          <div class="flex flex-col md:flex-row gap-3 items-center justify-between">
+            <div class="flex flex-wrap gap-2" id="rbFilterPills">
+              <button onclick="filterRecycleBin('all', this)" class="rb-pill active px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-600 text-white transition cursor-pointer">All Records</button>
+              <button onclick="filterRecycleBin('Member', this)" class="rb-pill px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer">Members Only</button>
+              <button onclick="filterRecycleBin('Fund', this)" class="rb-pill px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer">Funds Only</button>
+              <button onclick="filterRecycleBin('Pending', this)" class="rb-pill px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer">Restorable Now</button>
+              <button onclick="filterRecycleBin('Restored', this)" class="rb-pill px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer">Restored</button>
+            </div>
+            <div class="relative w-full md:w-72">
+              <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-gray-400"></i>
+              <input type="text" id="rbSearchInput" oninput="renderRecycleBinTable()" placeholder="Search deleted records..." class="w-full pl-9 pr-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-semibold focus:outline-none focus:border-amber-500 text-gray-900 dark:text-gray-100">
+            </div>
+          </div>
+        </div>
+
+        <!-- Recycle Bin Table Container -->
+        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-gray-50 dark:bg-gray-800/60 border-b border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 font-extrabold uppercase text-[10px] tracking-wider">
+                <tr>
+                  <th class="p-3.5">#</th>
+                  <th class="p-3.5">Record Details</th>
+                  <th class="p-3.5">Type</th>
+                  <th class="p-3.5">Deleted By &amp; Reason</th>
+                  <th class="p-3.5">Deleted On</th>
+                  <th class="p-3.5">30-Day Retention</th>
+                  <th class="p-3.5">Status</th>
+                  <th class="p-3.5 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="recycleBinTableBody" class="divide-y divide-gray-100 dark:divide-gray-800/60 text-gray-700 dark:text-gray-300">
+                <tr>
+                  <td colspan="8" class="p-8 text-center text-gray-500">
+                    <span class="animate-spin inline-block mr-2">⏳</span> Loading deleted records from backend...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="p-3.5 bg-gray-50/50 dark:bg-gray-800/30 border-t border-gray-100 dark:border-gray-800 text-xs text-gray-500 flex items-center justify-between">
+            <div class="flex items-center gap-1.5 text-[11px]">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+              <span>30-Day retention guarantee: Records can be written back into active tables at any time before expiration with full data intact.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================== -->
+      <!-- SECTION 12: TAB VIEW - ADMIN SETTINGS                                      -->
+      <!-- Contains: Organization Profile, System Configuration, Payment QR Settings, -->
+      <!-- Password Resets, Data Retention Policies & System Preferences              -->
+      <!-- ========================================================================== -->
+      <section id="view-settings" class="view">
+        <div id="container-settings-header"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="settingsGridContainer"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ============================================================================== -->
+  <!-- SECTION 13: GLOBAL MODALS, POPUPS & TOAST SYSTEM                               -->
+  <!-- Contains: Fund Usage Modal, Report Export Modal, Member Edit & Details Modals, -->
+  <!-- Contribution Add Modal, Fund Management Modal, Cause Create Modal, 30-Day      -->
+  <!-- Recycle Bin Confirmation Modal, Announcement Publisher Modal, and Live Toasts  -->
+  <!-- ============================================================================== -->
+  <div id="fundUsageModal"
+    class="modal fixed inset-0 z-[115] bg-black/70 backdrop-blur-sm items-center justify-center p-4" aria-hidden="true">
+    <div
+      class="w-full max-w-lg bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 p-6">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 id="fundUsageModalTitle" class="text-xl font-extrabold">Add Fund Usage</h2>
+          <p class="text-sm text-gray-500 mt-1">Record a fund usage transaction.</p>
+        </div>
+        <button data-close="fundUsageModal"
+          class="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"><i
+            data-lucide="x"></i></button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs font-extrabold text-gray-500">Date</label>
+          <input id="fundUsageDate" type="date"
+            class="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent">
+        </div>
+        <div>
+          <label class="text-xs font-extrabold text-gray-500">Fund Type</label>
+          <select id="fundUsageType"
+            class="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent">
+            <option>Youth Fund</option>
+            <option>Education Fund</option>
+            <option>Medical Fund</option>
+            <option>Community Fund</option>
+            <option>Infrastructure Fund</option>
+          </select>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="text-xs font-extrabold text-gray-500">Purpose</label>
+          <input id="fundUsagePurpose" type="text" placeholder="Enter purpose"
+            class="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent">
+        </div>
+        <div>
+          <label class="text-xs font-extrabold text-gray-500">Amount Usage</label>
+          <input id="fundUsageAmount" type="number" min="0" step="0.01" placeholder="0"
+            class="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent">
+        </div>
+        <div>
+          <label class="text-xs font-extrabold text-gray-500">Status</label>
+          <select id="fundUsageStatus"
+            class="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent">
+            <option>Completed</option>
+            <option>Pending</option>
+            <option>Rejected</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 mt-6">
+        <button data-close="fundUsageModal"
+          class="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 font-bold cursor-pointer">Cancel</button>
+        <button id="saveFundUsageBtn" onclick="saveFundUsage()"
+          class="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold cursor-pointer">Save
+          Usage</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="reportModal" class="modal fixed inset-0 z-[110] bg-black/70 backdrop-blur-sm items-center justify-center p-4"
+    aria-hidden="true">
+    <div
+      class="w-full max-w-6xl max-h-[92vh] overflow-hidden bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800">
+      <div class="flex items-center justify-between gap-4 px-6 py-4 border-b border-gray-200 dark:border-gray-800">
+        <div>
+          <div id="reportModalTitle" class="text-xl font-extrabold">Report</div>
+          <div id="reportModalSubtitle" class="text-sm text-gray-500 dark:text-gray-400 mt-1">Generated from current
+            dashboard data.</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="reportModalExport" type="button"
+            class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold flex items-center gap-2 cursor-pointer">
+            <i data-lucide="download" class="w-4 h-4"></i> Export
+          </button>
+          <button data-close="reportModal" type="button"
+            class="p-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+      </div>
+      <div id="reportModalContent" class="overflow-auto max-h-[calc(92vh-80px)] p-6"></div>
+    </div>
+  </div>
+
+  <div id="toastBox" class="fixed top-20 right-4 z-[100] space-y-2 pointer-events-none"></div>
+
+  <div id="memberModal" class="modal fixed inset-0 z-[80] bg-black/60 items-center justify-center p-4">
+    <div class="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-2xl">
+      <div id="memberModalHead"></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div><label class="label">First Name</label><input id="mFirstName" class="field" value=""></div>
+        <div><label class="label">Last Name</label><input id="mLastName" class="field" value=""></div>
+        <div><label class="label">Date of Birth</label><input id="mDob" type="date" class="field" value=""></div>
+        <div>
+          <label class="label">Gender</label>
+          <select id="mGender" class="field">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="label">Phone (10 Digits)</label>
+          <div
+            class="flex rounded-xl border border-gray-300 dark:border-gray-700 overflow-hidden bg-transparent focus-within:border-amber-600">
+            <span
+              class="flex items-center px-3 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-bold text-sm border-r border-gray-300 dark:border-gray-700">+91</span>
+            <input id="mPhone" type="tel" maxlength="10" placeholder="9876543210"
+              class="w-full px-3 py-2.5 bg-transparent outline-none text-sm"
+              oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);">
+          </div>
+        </div>
+        <div><label class="label">Email</label><input id="mEmail" type="email" class="field" value=""></div>
+        <div><label class="label">Member Type</label><select id="mType" class="field">
+            <option value="General">General</option>
+            <option value="Youth">Youth</option>
+            <option value="Village">Village</option>
+            <option value="Developer">Developer</option>
+          </select></div>
+        <div><label class="label">Status</label><select id="mStatus" class="field">
+            <option>Active</option>
+            <option>Pending</option>
+            <option>Inactive</option>
+          </select></div>
+        <div id="mPasswordGroup" class="md:col-span-2 p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60">
+          <div class="flex justify-between items-center mb-1.5">
+            <label class="text-xs font-extrabold uppercase tracking-wider text-amber-900 dark:text-amber-200">Initial Login Password</label>
+            <span class="text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/50 px-2 py-0.5 rounded-md">Default: Member@123</span>
+          </div>
+          <input id="mPassword" type="text" class="field font-mono font-bold bg-white dark:bg-gray-800 text-sm" placeholder="Member@123" value="Member@123">
+          <p class="text-xs text-amber-800 dark:text-amber-300/80 mt-1.5">
+            💡 The member will log in using their <strong>10-digit Phone Number</strong> (or Email) and this <strong>Password</strong>. They can change it anytime via Change Password.
+          </p>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 mt-6">
+        <button data-close="memberModal"
+          class="px-4 py-2 rounded-xl border font-bold hover:bg-gray-100 dark:hover:bg-gray-800 transition">Cancel</button>
+        <button id="saveMember"
+          class="px-5 py-2 rounded-xl bg-[#b45309] hover:bg-[#963100] text-white font-bold transition cursor-pointer">Save
+          Member</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="memberDetailsModal" class="modal fixed inset-0 z-[80] bg-black/60 items-center justify-center p-4">
+    <div class="w-full max-w-xl bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-2xl">
+      <div class="flex justify-between items-center mb-5">
+        <h2 class="text-xl font-extrabold">Member Profile Details</h2>
+        <button data-close="memberDetailsModal"
+          class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"><i
+            data-lucide="x"></i></button>
+      </div>
+      <div id="memberDetailsContent" class="space-y-4 text-sm"></div>
+      <div class="flex justify-end gap-2 mt-6">
+        <button id="editMemberFromDetails" type="button"
+          class="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold transition cursor-pointer flex items-center gap-2">
+          <i data-lucide="pencil" class="w-4 h-4"></i>Edit Member
+        </button>
+        <button data-close="memberDetailsModal"
+          class="px-5 py-2 rounded-xl border font-bold hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="contributionModal" class="modal fixed inset-0 z-[80] bg-black/60 items-center justify-center p-4">
+    <div class="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-2xl">
+      <div id="contribModalHead"></div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div><label class="label">Member ID</label><input id="cMemberId" class="field" value=""
+            placeholder="e.g. PBK-M001"></div>
+        <div><label class="label">Amount (₹)</label><input id="cAmount" type="number" min="0" class="field" value="">
+        </div>
+        <div>
+          <label class="label">Fund</label>
+          <select id="cFund" class="field">
+            <option>Youth Fund</option>
+            <option>Village Fund</option>
+            <option>General Fund</option>
+            <option>Community Development</option>
+          </select>
+        </div>
+        <div><label class="label">Method</label><select id="cMethod" class="field">
+            <option>UPI</option>
+            <option>Bank Transfer</option>
+            <option>Cash</option>
+          </select></div>
+        <div id="cRefContainer"><label class="label">Reference / UTR / Transaction ID</label><input id="cRef"
+            class="field" placeholder="Optional reference number"></div>
+        <div><label class="label">Date</label><input id="cDate" type="date" class="field"></div>
+        <div><label class="label">Status</label><select id="cStatus" class="field">
+            <option>Pending</option>
+            <option>Completed</option>
+            <option>Rejected</option>
+          </select></div>
+      </div>
+      <div class="flex justify-end gap-2 mt-6">
+        <button data-close="contributionModal"
+          class="px-4 py-2 rounded-xl border font-bold hover:bg-gray-100 dark:hover:bg-gray-800 transition">Cancel</button>
+        <button id="saveContribution"
+          class="px-5 py-2 rounded-xl bg-[#b45309] hover:bg-[#963100] text-white font-bold transition">Save
+          Contribution</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="fundModal" class="modal fixed inset-0 z-[80] bg-black/60 items-center justify-center p-4">
+    <div class="w-full max-w-xl bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-2xl">
+      <div id="fundModalHead"></div>
+      <div><label class="label">UPI ID</label><input id="fundUpi" class="field" value="pbkcommunity@upi"></div>
+      <div class="mt-4"><label class="label">QR Code</label>
+        <div class="border-2 border-dashed rounded-xl p-8 text-center text-gray-500">Click to upload QR image<br><span
+            class="text-xs">PNG/JPG recommended</span></div>
+      </div>
+      <div class="flex justify-end gap-2 mt-6">
+        <button data-close="fundModal"
+          class="px-4 py-2 rounded-xl border font-bold hover:bg-gray-100 dark:hover:bg-gray-800 transition">Cancel</button>
+        <button data-close="fundModal"
+          class="px-5 py-2 rounded-xl bg-[#b45309] hover:bg-[#963100] text-white font-bold transition">Save
+          Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="manageFundModal" class="modal fixed inset-0 z-[80] bg-black/60 items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-2xl">
+      <div class="flex justify-between items-center mb-5">
+        <h2 id="manageFundModalTitle" class="text-xl font-extrabold">Add New Fund</h2>
+        <button data-close="manageFundModal"
+          class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"><i
+            data-lucide="x"></i></button>
+      </div>
+      <div class="space-y-4">
+        <div style="display:none;"><label class="label">Financial Year</label><select id="mFundYear" class="field">
+            <option>2026 - 2027</option>
+            <option>2025 - 2026</option>
+            <option>2024 - 2025</option>
+          </select></div>
+        <div><label class="label">Fund Name</label><input id="mFundName" class="field" placeholder="e.g. Youth Fund">
+        </div>
+        <div><label class="label">Target Amount (₹)</label><input id="mFundTarget" type="number" class="field"
+            placeholder="100000"></div>
+        <div><label class="label">Status</label><select id="mFundStatus" class="field">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select></div>
+      </div>
+      <div class="flex justify-end gap-2 mt-6">
+        <button data-close="manageFundModal"
+          class="px-4 py-2 rounded-xl border font-bold hover:bg-gray-100 dark:hover:bg-gray-800 transition">Cancel</button>
+        <button id="saveFundBtn" onclick="saveFundRecord()"
+          class="px-5 py-2 rounded-xl bg-[#b45309] hover:bg-[#963100] text-white font-bold transition cursor-pointer">Save
+          Fund</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="causeModal" class="modal fixed inset-0 z-[80] bg-black/60 items-center justify-center p-4">
+    <div class="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-2xl">
+      <div id="causeModalHead"></div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div><label class="label">Title</label><input id="causeName" class="field" placeholder="e.g. Vinayaka Chavithi" value=""></div>
+        <div>
+          <label class="label">Target Amount per Member (₹)</label>
+          <input id="causeTarget" type="number" class="field" placeholder="e.g. 1000" value="">
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" id="causeTotalTargetCalc">Each individual member contributes this target</p>
+        </div>
+        <div class="md:col-span-2"><label class="label">Description</label><textarea id="causeDesc"
+            class="field h-24" placeholder="Brief cause or event details..."></textarea></div>
+      </div>
+      <div class="flex justify-end gap-2 mt-6">
+        <button data-close="causeModal"
+          class="px-4 py-2 rounded-xl border font-bold hover:bg-gray-100 dark:hover:bg-gray-800 transition">Cancel</button>
+        <button id="saveCause"
+          class="px-5 py-2 rounded-xl bg-[#b45309] hover:bg-[#963100] text-white font-bold transition">Save
+          Cause</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="deleteConfirmModal"
+    class="modal fixed inset-0 z-[120] bg-black/70 backdrop-blur-sm items-center justify-center p-4">
+    <div class="w-full max-w-[480px] bg-[#111827] border border-gray-700/70 rounded-2xl p-7 shadow-2xl text-center">
+      <div class="w-16 h-16 rounded-full bg-red-500/15 text-red-500 flex items-center justify-center mx-auto mb-5">
+        <i data-lucide="trash-2" class="w-8 h-8"></i>
+      </div>
+      <h2 id="deleteConfirmModalTitle" class="text-2xl font-extrabold text-white mb-3">Delete Record</h2>
+      <p id="deleteConfirmModalMessage" class="text-sm sm:text-base text-gray-400 leading-6 mb-7">Are you sure you want
+        to delete this record? This action cannot be undone.</p>
+      <div class="flex justify-center gap-3">
+        <button data-close="deleteConfirmModal"
+          class="flex-1 py-3 rounded-xl border border-gray-600 text-gray-200 font-bold hover:bg-gray-800 transition cursor-pointer">Cancel</button>
+        <button id="deleteConfirmModalAction" onclick="confirmDeleteRecord()"
+          class="flex-1 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold transition cursor-pointer">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dedicated 30-Day Member Account Deletion Modal -->
+  <div id="deleteMemberAccountModal"
+    class="modal fixed inset-0 z-[130] bg-black/80 backdrop-blur-md items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-[#111827] border-2 border-amber-600/60 rounded-3xl p-6 sm:p-7 shadow-2xl text-left">
+      <!-- Warning Header -->
+      <div class="flex items-start gap-4 mb-4 pb-4 border-b border-gray-800">
+        <div class="w-14 h-14 rounded-2xl bg-amber-600/20 border border-amber-500/40 text-amber-500 flex items-center justify-center shrink-0">
+          <i data-lucide="archive-restore" class="w-8 h-8"></i>
+        </div>
+        <div>
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30">30-Day Retention Guarantee</span>
+          <h2 class="text-xl font-extrabold text-white mt-1">Move to Recycle Bin</h2>
+          <p class="text-xs text-gray-400 mt-0.5">Account will be safely archived for 30 days before permanent deletion.</p>
+        </div>
+      </div>
+
+      <!-- Member Details Preview Box -->
+      <div id="deleteMemberPreviewBox" class="bg-gray-900/90 border border-gray-800 rounded-2xl p-4 mb-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h4 id="delMemberTargetName" class="font-extrabold text-white text-base">—</h4>
+            <p id="delMemberTargetId" class="text-xs font-mono font-bold text-amber-400 mt-0.5">—</p>
+          </div>
+          <div class="text-right">
+            <span id="delMemberTargetStatus" class="px-2 py-0.5 rounded text-[11px] font-bold bg-gray-800 text-gray-300">Active</span>
+            <p id="delMemberTargetPhone" class="text-xs text-gray-400 mt-1 font-mono">—</p>
+          </div>
+        </div>
+        <div class="mt-3 pt-3 border-t border-gray-800/80 grid grid-cols-2 gap-2 text-xs">
+          <div>
+            <span class="text-gray-400">Total Contributions:</span>
+            <strong id="delMemberTargetContribs" class="text-emerald-400 block font-bold">₹0</strong>
+          </div>
+          <div>
+            <span class="text-gray-400">Recycle Bin Policy:</span>
+            <strong class="text-amber-400 block font-bold">30 Days Undo / Restore</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Explicit Instructions & Warnings Checklist -->
+      <div class="space-y-2.5 mb-6">
+        <h4 class="text-xs font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+          <i data-lucide="shield-check" class="w-4 h-4"></i> Recycle Bin Safeguards:
+        </h4>
+        <div class="bg-amber-950/20 border border-amber-900/40 rounded-xl p-3 text-xs text-amber-200/90 space-y-2">
+          <div class="flex items-start gap-2">
+            <span class="text-amber-400 font-bold shrink-0">1.</span>
+            <p><strong>30-Day Recovery Period:</strong> The member will be moved to the Recycle Bin. You can restore them back to the active database at any time within 30 days.</p>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="text-amber-400 font-bold shrink-0">2.</span>
+            <p><strong>Self-Restore on Login:</strong> If the member signs in within 30 days, they can also cancel deletion and self-restore their account ("written back").</p>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="text-amber-400 font-bold shrink-0">3.</span>
+            <p><strong>Automatic Purge:</strong> If not restored within 30 days, the record will automatically be permanently purged from the system.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-3">
+        <button data-close="deleteMemberAccountModal"
+          class="flex-1 py-3 rounded-xl border border-gray-700 bg-gray-800/80 hover:bg-gray-800 text-gray-200 font-bold text-sm transition cursor-pointer">
+          Cancel / Keep Account
+        </button>
+        <button id="confirmDeleteMemberBtn" onclick="executePermanentMemberDeletion()"
+          class="flex-1 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-extrabold text-sm shadow-lg shadow-amber-900/40 transition cursor-pointer flex items-center justify-center gap-2">
+          <i data-lucide="archive-restore" class="w-4 h-4"></i>
+          Move to Recycle Bin (30 Days)
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div id="announcementModal" class="modal fixed inset-0 z-[80] bg-black/60 items-center justify-center p-4">
+    <div class="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-2xl">
+      <div id="annModalHead"></div>
+      <div><label class="label">Title</label><input id="annTitle" class="field" value=""></div>
+      <div class="mt-4"><label class="label">Message</label><textarea id="annText" class="field h-28"></textarea></div>
+      <div class="flex justify-end gap-2 mt-6">
+        <button data-close="announcementModal"
+          class="px-4 py-2 rounded-xl border font-bold hover:bg-gray-100 dark:hover:bg-gray-800 transition">Cancel</button>
+        <button id="saveAnnouncement"
+          class="px-5 py-2 rounded-xl bg-[#b45309] hover:bg-[#963100] text-white font-bold transition">Publish</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="qrcode.min.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
