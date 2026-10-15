@@ -360,5 +360,74 @@ Here is the exact breakdown:
 
 Our [`D:\BPK_Community_Fund\.gitignore`](file:///D:/BPK_Community_Fund/.gitignore) already protects you from all mistakes!
 
+----------------------------------------------------------
+
+## 🚀 STEP 10: Step-by-Step GitHub Upload (Box by Box)
+
+Follow this exact command sequence in **PowerShell**:
+
+### 1️⃣ Navigate to Project Root
+```powershell
+cd D:\BPK_Community_Fund
+```
+> **What it does:** Sets the active directory to your project folder.
+
+
+
+### 2️⃣ Initialize Local Git Tracking
+```powershell
+git init
+```
+> **What it does:** Creates a hidden `.git` folder on your disk.
+> **Expected Output:** `Initialized empty Git repository in D:/BPK_Community_Fund/.git/`
+
+
+
+### 3️⃣ Stage All Allowed Files
+```powershell
+git add .
+```
+> **What it does:** Scans your project and stages all source code files. (It skips `venv/` automatically).
+> **Verification command:** `git status` (All your files will appear in **green**).
+
+---
+
+### 4️⃣ Record Your Milestone Snapshot (Commit)
+```powershell
+git commit -m "feat: complete initial setup of BPK Community Fund system"
+```
+> **What it does:** Saves a permanent local version of your code.
+> **Expected Output:** `[main (root-commit) ...] 18 files changed, 2500 insertions(+)`
+
+---
+
+### 5️⃣ Set Main Branch Name
+```powershell
+git branch -M main
+```
+> **What it does:** Renames default branch to `main`.
+
+---
+
+### 6️⃣ Link to Your GitHub Repository
+Go to [github.com](https://github.com/), click **New Repository**, name it `BPK_Community_Fund`, do NOT add README, and copy the repository link:
+
+```powershell
+git remote add origin https://github.com/YOUR_USERNAME/BPK_Community_Fund.git
+```
+*(Replace `YOUR_USERNAME` with your actual GitHub username)*.
+
+---
+
+### 7️⃣ Push Your Code to the Cloud!
+```powershell
+git push -u origin main
+```
+> **What it does:** Uploads all your files to GitHub.
+> **Popup:** A small browser window will appear asking you to sign into GitHub. Click **Sign in with your browser**.
+
+🎉 **Congratulations! Your full stack BPK Community Fund system is now officially live on GitHub!**
+
+
 
 🎉 **Congratulations! Your Billed full stack BPK Community Fund Wed is now officially live !**
