@@ -15,6 +15,8 @@
 
 ## 📌 Table of Contents
 - [📘 10-Step Beginner Master Guide](BEGINNER_GUIDE.md)
+- [🖥️ System Architecture ](FLOWCHART.md)
+- [🗺️ BPK 10-Step Setup Roadmap](SETUP_ROADMAP.svg)
 - [📖 About The Project](#-about-the-project)
 - [🏗️ System Architecture & Workflow](#️-system-architecture--workflow)
 - [✨ Key Features](#-key-features)
