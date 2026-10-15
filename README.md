@@ -152,13 +152,6 @@ BPK_Community_Fund/
         ├── script.js                # Member profile logic, API integration
         └── style.css                # Member portal styling
 ```
-
-## 🗺️ BPK 10-Step Setup Roadmap
-
-<div align="center">
-  <img src="SETUP_ROADMAP.svg" alt="BPK 10-Step Setup Roadmap" width="100%">
-</div>
-
 ---
 
 ## 🚀 Beginner Setup & Installation Guide
