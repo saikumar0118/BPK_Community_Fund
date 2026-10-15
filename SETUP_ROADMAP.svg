@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 2020" width="100%" height="2020" style="background:#0f172a; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  
+  <!-- 1. FULL-WIDTH DARK BACKGROUND -->
+  <rect width="100%" height="100%" fill="#0f172a" />
+
+  <!-- HEADER -->
+  <text x="700" y="45" font-size="28" font-weight="800" fill="#38bdf8" text-anchor="middle">🏛️ BPK Community Fund — 10-Step Visual Flowchart</text>
+  <text x="700" y="75" font-size="15" fill="#94a3b8" text-anchor="middle">Follow these 10 steps sequentially to set up, test, and upload the project to GitHub.</text>
+
+  <!-- CARD 1 (3 LINES IN BLACK BOX) -->
+  <g transform="translate(300, 105)">
+    <rect width="800" height="155" rx="12" fill="#1e293b" />
+    <rect x="0" y="0" width="8" height="155" rx="4" fill="#3b82f6" />
+    <circle cx="52" cy="52" r="20" fill="#3b82f6" />
+    <text x="52" y="52" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="800" fill="#ffffff">1</text>
+    <text x="95" y="32" font-size="17" font-weight="700" fill="#60a5fa">Install Required Software</text>
+    <rect x="680" y="18" width="105" height="22" rx="11" fill="#334155" />
+    <text x="732" y="32" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="700" fill="#cbd5e1" letter-spacing="0.5">PREREQUISITES</text>
+    <text x="95" y="58" font-size="13" fill="#cbd5e1">Install Python 3.10+, MySQL Server/Workbench, Git, and VS Code on your Windows PC.</text>
+    <rect x="95" y="74" width="690" height="70" rx="6" fill="#090d16" stroke="#334155" stroke-width="1" />
+    <text x="110" y="93" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">python --version</text>
+    <text x="110" y="113" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">git --version</text>
+    <text x="110" y="133" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">mysql --version</text>
+  </g>
+  <text x="700" y="285" fill="#64748b" font-size="18" text-anchor="middle">▼</text>
+
+  <!-- CARD 2 (2 LINES IN BLACK BOX) -->
+  <g transform="translate(300, 305)">
+    <rect width="800" height="135" rx="12" fill="#1e293b" />
+    <rect x="0" y="0" width="8" height="135" rx="4" fill="#8b5cf6" />
+    <circle cx="52" cy="52" r="20" fill="#8b5cf6" />
+    <text x="52" y="52" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="800" fill="#ffffff">2</text>
+    <text x="95" y="32" font-size="17" font-weight="700" fill="#a78bfa">Place Project Folders</text>
+    <rect x="690" y="18" width="95" height="22" rx="11" fill="#334155" />
+    <text x="737" y="32" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="700" fill="#cbd5e1" letter-spacing="0.5">STRUCTURE</text>
+    <text x="95" y="58" font-size="13" fill="#cbd5e1">Keep project in your documents. BackEnd holds Python code; FrontEnd holds HTML/CSS/JS.</text>
+    <rect x="95" y="74" width="690" height="50" rx="6" fill="#090d16" stroke="#334155" stroke-width="1" />
+    <text x="110" y="93" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">C:\Users\sai\Documents\BPK_Community_Fund\BackEnd</text>
+    <text x="110" y="113" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">C:\Users\sai\Documents\BPK_Community_Fund\FrontEnd</text>
+  </g>
+  <text x="700" y="465" fill="#64748b" font-size="18" text-anchor="middle">▼</text>
+
+  <!-- CARD 3 (1 LINE) -->
+  <g transform="translate(300, 485)">
+    <rect width="800" height="120" rx="12" fill="#1e293b" />
+    <rect x="0" y="0" width="8" height="120" rx="4" fill="#f59e0b" />
+    <circle cx="52" cy="52" r="20" fill="#f59e0b" />
+    <text x="52" y="52" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="800" fill="#ffffff">3</text>
+    <text x="95" y="32" font-size="17" font-weight="700" fill="#fbbf24">Configure MySQL Password in Code</text>
+    <rect x="695" y="18" width="90" height="22" rx="11" fill="#334155" />
+    <text x="740" y="32" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="700" fill="#cbd5e1" letter-spacing="0.5">SETTINGS</text>
+    <text x="95" y="58" font-size="13" fill="#cbd5e1">Open BackEnd/database.py (Line 16). Replace root:root with your actual MySQL password.</text>
+    <rect x="95" y="74" width="690" height="34" rx="6" fill="#090d16" stroke="#334155" stroke-width="1" />
+    <text x="110" y="96" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">DATABASE_URL = "mysql+pymysql://root:YOUR_PASSWORD@localhost:3306/pbk_db"</text>
+  </g>
+  <text x="700" y="630" fill="#64748b" font-size="18" text-anchor="middle">▼</text>
+
+  <!-- CARD 4 (1 LINE) -->
+  <g transform="translate(300, 650)">
+    <rect width="800" height="120" rx="12" fill="#1e293b" />
+    <rect x="0" y="0" width="8" height="120" rx="4" fill="#f97316" />
+    <circle cx="52" cy="52" r="20" fill="#f97316" />
+    <text x="52" y="52" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="800" fill="#ffffff">4</text>
+    <text x="95" y="32" font-size="17" font-weight="700" fill="#fb923c">Create Database &amp; All 13 Tables</text>
+    <rect x="695" y="18" width="90" height="22" rx="11" fill="#334155" />
+    <text x="740" y="32" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="700" fill="#cbd5e1" letter-spacing="0.5">DATABASE</text>
+    <text x="95" y="58" font-size="13" fill="#cbd5e1">Run our 1-click Python initializer. It creates pbk_db, all 13 tables, and the default Super Admin.</text>
+    <rect x="95" y="74" width="690" height="34" rx="6" fill="#090d16" stroke="#334155" stroke-width="1" />
+    <text x="110" y="96" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">python init_db.py</text>
+  </g>
+  <text x="700" y="795" fill="#64748b" font-size="18" text-anchor="middle">▼</text>
+
+  <!-- CARD 5 (3 LINES IN BLACK BOX) -->
+  <g transform="translate(300, 815)">
+    <rect width="800" height="155" rx="12" fill="#1e293b" />
+    <rect x="0" y="0" width="8" height="155" rx="4" fill="#ef4444" />
+    <circle cx="52" cy="52" r="20" fill="#ef4444" />
+    <text x="52" y="52" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="800" fill="#ffffff">5</text>
+    <text x="95" y="32" font-size="17" font-weight="700" fill="#f87171">Setup Python Virtual Environment</text>
+    <rect x="680" y="18" width="105" height="22" rx="11" fill="#334155" />
+    <text x="732" y="32" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="700" fill="#cbd5e1" letter-spacing="0.5">ENVIRONMENT</text>
+    <text x="95" y="58" font-size="13" fill="#cbd5e1">Isolate packages using Python venv and install all required framework dependencies.</text>
+    <rect x="95" y="74" width="690" height="70" rx="6" fill="#090d16" stroke="#334155" stroke-width="1" />
+    <text x="110" y="93" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">python -m venv venv</text>
+    <text x="110" y="113" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">.\venv\Scripts\Activate.ps1</text>
+    <text x="110" y="133" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">pip install -r requirements.txt</text>
+  </g>
+  <text x="700" y="995" fill="#64748b" font-size="18" text-anchor="middle">▼</text>
+
+  <!-- CARD 6 (2 LINES IN BLACK BOX) -->
+  <g transform="translate(300, 1015)">
+    <rect width="800" height="135" rx="12" fill="#1e293b" />
+    <rect x="0" y="0" width="8" height="135" rx="4" fill="#10b981" />
+    <circle cx="52" cy="52" r="20" fill="#10b981" />
+    <text x="52" y="52" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="800" fill="#ffffff">6</text>
+    <text x="95" y="32" font-size="17" font-weight="700" fill="#34d399">Start &amp; Test FastAPI Backend</text>
+    <rect x="700" y="18" width="85" height="22" rx="11" fill="#334155" />
+    <text x="742" y="32" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="700" fill="#cbd5e1" letter-spacing="0.5">BACKEND</text>
+    <text x="95" y="58" font-size="13" fill="#cbd5e1">Launch the high-performance Uvicorn server on port 8000 and keep terminal open.</text>
+    <rect x="95" y="74" width="690" height="50" rx="6" fill="#090d16" stroke="#334155" stroke-width="1" />
+    <text x="110" y="93" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">uvicorn main:app --reload --host 127.0.0.1 --port 8000</text>
+    <text x="110" y="113" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">Interactive Swagger Docs: http://127.0.0.1:8000/docs</text>
+  </g>
+  <text x="700" y="1175" fill="#64748b" font-size="18" text-anchor="middle">▼</text>
+
+  <!-- CARD 7 (3 LINES IN BLACK BOX) -->
+  <g transform="translate(300, 1195)">
+    <rect width="800" height="155" rx="12" fill="#1e293b" />
+    <rect x="0" y="0" width="8" height="155" rx="4" fill="#06b6d4" />
+    <circle cx="52" cy="52" r="20" fill="#06b6d4" />
+    <text x="52" y="52" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="800" fill="#ffffff">7</text>
+    <text x="95" y="32" font-size="17" font-weight="700" fill="#22d3ee">Launch &amp; Connect Frontend Portals</text>
+    <rect x="695" y="18" width="90" height="22" rx="11" fill="#334155" />
+    <text x="740" y="32" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="700" fill="#cbd5e1" letter-spacing="0.5">FRONTEND</text>
+    <text x="95" y="58" font-size="13" fill="#cbd5e1">Double-click portal HTML files in Windows Explorer to access Login, Admin, and Member views.</text>
+    <rect x="95" y="74" width="690" height="70" rx="6" fill="#090d16" stroke="#334155" stroke-width="1" />
+    <text x="110" y="93" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">FrontEnd\HomeLogRegisPass\HomeLogRegisPass.html (Login &amp; Register)</text>
+    <text x="110" y="113" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">FrontEnd\Admin\admin.html (Admin Management Panel)</text>
+    <text x="110" y="133" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">FrontEnd\Members\member.html (Member Passbook &amp; Donation Receipts)</text>
+  </g>
+  <text x="700" y="1375" fill="#64748b" font-size="18" text-anchor="middle">▼</text>
+
+  <!-- CARD 8 (2 LINES IN BLACK BOX) -->
+  <g transform="translate(300, 1395)">
+    <rect width="800" height="135" rx="12" fill="#1e293b" />
+    <rect x="0" y="0" width="8" height="135" rx="4" fill="#ec4899" />
+    <circle cx="52" cy="52" r="20" fill="#ec4899" />
+    <text x="52" y="52" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="800" fill="#ffffff">8</text>
+    <text x="95" y="32" font-size="17" font-weight="700" fill="#f472b6">End-to-End System Testing</text>
+    <rect x="705" y="18" width="80" height="22" rx="11" fill="#334155" />
+    <text x="745" y="32" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="700" fill="#cbd5e1" letter-spacing="0.5">TESTING</text>
+    <text x="95" y="58" font-size="13" fill="#cbd5e1">Sign in as Super Admin, register new members with OTP, donate, and generate live PDF receipts.</text>
+    <rect x="95" y="74" width="690" height="50" rx="6" fill="#090d16" stroke="#334155" stroke-width="1" />
+    <text x="110" y="93" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">Super Admin: admin@pbkfund.org   (Password: admin)</text>
+    <text x="110" y="113" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">Test Flows: Member Sign-Up with OTP   |   Contribute &amp; PDF Receipts</text>
+  </g>
+  <text x="700" y="1555" fill="#64748b" font-size="18" text-anchor="middle">▼</text>
+
+  <!-- CARD 9 (2 LINES IN BLACK BOX) -->
+  <g transform="translate(300, 1575)">
+    <rect width="800" height="135" rx="12" fill="#1e293b" />
+    <rect x="0" y="0" width="8" height="135" rx="4" fill="#eab308" />
+    <circle cx="52" cy="52" r="20" fill="#eab308" />
+    <text x="52" y="52" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="800" fill="#ffffff">9</text>
+    <text x="95" y="32" font-size="17" font-weight="700" fill="#facc15">GitHub Shield &amp; .gitignore Rules</text>
+    <rect x="700" y="18" width="85" height="22" rx="11" fill="#334155" />
+    <text x="742" y="32" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="700" fill="#cbd5e1" letter-spacing="0.5">SECURITY</text>
+    <text x="95" y="58" font-size="13" fill="#cbd5e1">Verify that .gitignore blocks heavy virtual environments (venv/) and sensitive passwords (.env).</text>
+    <rect x="95" y="74" width="690" height="50" rx="6" fill="#090d16" stroke="#334155" stroke-width="1" />
+    <text x="110" y="93" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">Blocked by .gitignore : venv/ , .env , and __pycache__/</text>
+    <text x="110" y="113" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">Safe to upload        : .py , .html , .css , .js , requirements.txt</text>
+  </g>
+  <text x="700" y="1735" fill="#64748b" font-size="18" text-anchor="middle">▼</text>
+
+  <!-- CARD 10 (4 LINES IN BLACK BOX) -->
+  <g transform="translate(300, 1755)">
+    <rect width="800" height="175" rx="12" fill="#1e293b" />
+    <rect x="0" y="0" width="8" height="175" rx="4" fill="#06b6d4" />
+    <circle cx="52" cy="52" r="20" fill="#06b6d4" />
+    <text x="52" y="52" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="800" fill="#ffffff">10</text>
+    <text x="95" y="32" font-size="17" font-weight="700" fill="#22d3ee">Push to GitHub Step-by-Step</text>
+    <rect x="685" y="18" width="100" height="22" rx="11" fill="#334155" />
+    <text x="735" y="32" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="700" fill="#cbd5e1" letter-spacing="0.5">DEPLOYMENT</text>
+    <text x="95" y="58" font-size="13" fill="#cbd5e1">Upload the full codebase cleanly to your personal GitHub repository cloud.</text>
+    <rect x="95" y="74" width="690" height="90" rx="6" fill="#090d16" stroke="#334155" stroke-width="1" />
+    <text x="110" y="93" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">git init</text>
+    <text x="110" y="113" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">git add .</text>
+    <text x="110" y="133" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">git commit -m "feat: complete initial setup of BPK Community Fund"</text>
+    <text x="110" y="153" font-family="'Consolas', monospace" font-size="12" fill="#38bdf8">git push -u origin main</text>
+  </g>
+
+</svg>
