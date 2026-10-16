@@ -64,11 +64,11 @@ mysql --version
 > **Expected Output:** `mysql Ver 8.0.46 for Win64`  
 > *(If not recognized in PATH, verify that the `MySQL80` service is running in Windows Services).*
 
-### If Not Recognized Run This Code
+#### If Not Recognized Run This Code
 ```powershell
 Get-Service MySQL80
 ```
-### It Says 'Stopped' Run This Code
+#### It Says 'Stopped' Run This Code
 ```powershell
 Start-Service MySQL80
 ```
