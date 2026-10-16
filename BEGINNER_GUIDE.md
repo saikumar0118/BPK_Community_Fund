@@ -41,30 +41,40 @@ flowchart TD
 
 Before touching any code, install these **4 tools**. If you already have any of them installed, you can skip that item.
 
-| Software | What It Does | Official Download Link |
-| :--- | :--- | :--- |
-| **1. Python 3.10+** | Runs the backend code and API | [python.org/downloads](https://www.python.org/downloads/) *(⚠️ Check "Add Python to PATH" during installation!)* |
-| **2. MySQL Community Server 8.0 & Workbench** | Stores the database and all 13 tables | [dev.mysql.com/downloads/installer](https://dev.mysql.com/downloads/installer/) |
-| **3. Visual Studio Code (VS Code)** | Code editor to view and edit files | [code.visualstudio.com](https://code.visualstudio.com/) |
-| **4. Git for Windows** | Uploads and syncs code with GitHub | [git-scm.com/download/win](https://git-scm.com/download/win) |
+| Software | Version Type | What It Does | Official Download Link |
+| :--- | :--- | :--- | :--- |
+| **1. Python 3.10+** | PythonVer 3.13.15 | Runs the backend code and API | [python.org/downloads](https://www.python.org/downloads/) *(⚠️ Check "Add Python to PATH" during installation!)* |
+| **2. MySQL Community Server 8.0 & Workbench** | MysqlVer 8.0.46 | Stores the database and all 13 tables | [dev.mysql.com/downloads/installer](https://dev.mysql.com/downloads/installer/) |
+| **3. Visual Studio Code (VS Code)** | Optional | Code editor to view and edit files | [code.visualstudio.com](https://code.visualstudio.com/) |
+| **4. Git for Windows** | Optional | Uploads and syncs code with GitHub | [git-scm.com/download/win](https://git-scm.com/download/win) |
 
 ### 🔍 How to Verify Software Installations
 Open **Windows PowerShell** and paste these commands one by one:
 
-#### Check Python:
+#### 1. Check Python:
 ```powershell
 python --version
 ```
-> **Expected Output:** `Python 3.13.x` (or higher)
+**Expected Output:** `Python 3.13.15`
 
-#### Check MySQL:
+#### 2. Check MySQL:
 ```powershell
 mysql --version
 ```
-> **Expected Output:** `mysql Ver 8.0.x for Win64`  
+> **Expected Output:** `mysql Ver 8.0.46 for Win64`  
 > *(If not recognized in PATH, verify that the `MySQL80` service is running in Windows Services).*
 
-#### Check Git:
+### If Not Recognized Run This Code
+```powershell
+Get-Service MySQL80
+```
+### It Says 'Stopped' Run This Code
+```powershell
+Start-Service MySQL80
+```
+*after this command, Again run "2. Check MySQL" command *
+                   
+#### 3. Check Git:
 ```powershell
 git --version
 ```
@@ -126,14 +136,27 @@ Your backend Python code needs permission to talk to your MySQL server.
 ### 1. Remember Your MySQL Username & Password 
 When you installed MySQL, you created a **Username and Password** (for example: `Username: root` & `Password: root`).
 
-### 2. Open `BackEnd/database.py` in VS Code
-Look at **Line 16**:
+### 2.Run these commands in CMD 
+```MySQL
+mysql -u <YOUR_USER> -p
+```
+> **Expected Output:** `Enter Passwoard`  
+> *Enter Your MySQL passwoard*
+
+### 3.Create database with 'pdb_db' 
+```MySQL
+CREATE DATABASE pbk_db;
+```
+> **Expected Output:** `Query OK, 1 row affected`  
+
+### 4. Open `BackEnd/database.py` in VS Code
+Look at **Line 15**:
 
 ```python
 DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://root:root@localhost:3306/pbk_db")
 ```
 
-### 3. Replace with your actual MySQL username & password:
+### 5. Replace with your actual MySQL username & password:
 ```text
 mysql+pymysql://<YOUR_USER>:<YOUR_PASSWORD>@localhost:3306/pbk_db
 ```
@@ -150,31 +173,37 @@ Save the file (`Ctrl + S`).
 
 ---
 
-## 🐍 STEP 4: Setup Python Virtual Environment & Install Packages
+## 🐍 STEP 4: Install Packages Setup & Python Virtual Environment
 
 A Python virtual environment keeps your project packages isolated from other apps on your PC.
 
 ### Run these commands in PowerShell (one by one):
 
-#### 1. Navigate to BackEnd:
+#### 1. Enable PowerShell Script Execution:
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+*Allows Running Virtual Environments Without Permission Errors*
+
+#### 2. Navigate to BackEnd:
 ```powershell
 cd C:\Users\sai\Documents\BPK_Community_Fund\BackEnd
 ```
 
-#### 2. Create the Virtual Environment:
+#### 3. Create the Virtual Environment:
 ```powershell
-python -m venv venv
+python -m venv .venv
 ```
 *Creates an isolated `venv` folder.*
 
-#### 3. Activate the Environment:
+#### 4. Activate the Environment:
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 ```
 > *(You will see `(venv)` appear on the left side of your terminal line).*
 
-#### 4. Install All Required Dependencies:
+#### 5. Install All Required Dependencies:
 ```powershell
 pip install -r requirements.txt
 ```
@@ -210,9 +239,9 @@ python init_db.py
 
 Now start the backend engine!
 
-### 1. Run the Uvicorn Server Command:
+### 1.Start the backend server:
 ```powershell
-uvicorn main:app --reload --host 127.0.0.1 --port 8000
+uvicorn main:app --reload --port 8000
 ```
 
 ### 2. What You Will See in the Terminal:
