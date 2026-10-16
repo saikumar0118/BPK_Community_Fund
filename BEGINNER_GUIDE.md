@@ -138,9 +138,9 @@ When you installed MySQL, you created a **Username and Password** (for example: 
 
 ### 2.Run these commands in CMD 
 ```MySQL
-mysql -u <YOUR_USER> -p
+mysql -u <YOUR_USERNAME> -p
 ```
-> **Expected Output:** `Enter Passwoard`  
+> **Expected Output:** `Enter Passwoard:`  
 > *Enter Your MySQL passwoard*
 
 ### 3.Create database with 'pdb_db' 
@@ -158,7 +158,7 @@ DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://root:root@localhost:33
 
 ### 5. Replace with your actual MySQL username & password:
 ```text
-mysql+pymysql://<YOUR_USER>:<YOUR_PASSWORD>@localhost:3306/pbk_db
+DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://<YOUR_USERNAME>:<YOUR_PASSWORD>@localhost:3306/pbk_db")
 ```
 
 ### 🔄 Example Comparison Box:
