@@ -57,18 +57,18 @@ python --version
 ```
 > **Expected Output:** `Python 3.13.x` (or higher)
 
-#### Check Git:
-```powershell
-git --version
-```
-> **Expected Output:** `git version 2.x.x.windows.1`
-
 #### Check MySQL:
 ```powershell
 mysql --version
 ```
 > **Expected Output:** `mysql Ver 8.0.x for Win64`  
 > *(If not recognized in PATH, verify that the `MySQL80` service is running in Windows Services).*
+
+#### Check Git:
+```powershell
+git --version
+```
+> **Expected Output:** `git version 2.x.x.windows.1`
 
 ---
 
