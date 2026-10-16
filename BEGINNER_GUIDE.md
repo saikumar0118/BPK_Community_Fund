@@ -45,8 +45,8 @@ Before touching any code, install these **4 tools**. If you already have any of 
 | :--- | :--- | :--- |
 | **1. Python 3.10+** | Runs the backend code and API | [python.org/downloads](https://www.python.org/downloads/) *(⚠️ Check "Add Python to PATH" during installation!)* |
 | **2. MySQL Community Server 8.0 & Workbench** | Stores the database and all 13 tables | [dev.mysql.com/downloads/installer](https://dev.mysql.com/downloads/installer/) |
-| **3. Git for Windows** | Uploads and syncs code with GitHub | [git-scm.com/download/win](https://git-scm.com/download/win) |
-| **4. Visual Studio Code (VS Code)** | Code editor to view and edit files | [code.visualstudio.com](https://code.visualstudio.com/) |
+| **3. Visual Studio Code (VS Code)** | Code editor to view and edit files | [code.visualstudio.com](https://code.visualstudio.com/) |
+| **4. Git for Windows** | Uploads and syncs code with GitHub | [git-scm.com/download/win](https://git-scm.com/download/win) |
 
 ### 🔍 How to Verify Software Installations
 Open **Windows PowerShell** and paste these commands one by one:
