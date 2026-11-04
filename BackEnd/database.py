@@ -5,14 +5,16 @@
 #          session factory definition, and declarative base model instantiation.
 # ==============================================================================
 
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # ------------------------------------------------------------------------------
 # 1. DATABASE CONNECTION URL
-# Configures MySQL connection to the 'pbk_db' database via PyMySQL driver
+# Format: mysql+pymysql://<DB_USER>:<DB_PASSWORD>@<DB_HOST>:<DB_PORT>/<DB_NAME>
+# Change 'root:root' to your own MySQL username:password if different!
 # ------------------------------------------------------------------------------
-DATABASE_URL = "mysql+pymysql://root:root@localhost:3306/pbk_db"
+DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://root:root@localhost:3306/pbk_db")
 
 # ------------------------------------------------------------------------------
 # 2. SQLALCHEMY ENGINE

@@ -43,6 +43,8 @@ class MemberRegister(BaseModel):
     district: str | None = None
     city: str | None = None
     village: str | None = None
+    country: str | None = "India"
+    pincode: str | None = None
     address: str | None = None
     password: str
 
@@ -67,6 +69,8 @@ class AdminRegister(BaseModel):
     district: str | None = None
     city: str | None = None
     village: str | None = None
+    country: str | None = "India"
+    pincode: str | None = None
     address: str | None = None
     password: str
 
@@ -297,6 +301,8 @@ class MemberProfileUpdate(BaseModel):
     district: str | None = None
     city: str | None = None
     village: str | None = None
+    country: str | None = "India"
+    pincode: str | None = None
     address: str | None = None
 
 
@@ -357,6 +363,14 @@ class MemberAdminCreate(BaseModel):
     dob: str | None = None
     member_type: str | None = "General"
     status: str | None = "active"
+    door_no: str | None = None
+    village: str | None = None
+    city: str | None = None
+    district: str | None = None
+    state: str | None = None
+    country: str | None = "India"
+    pincode: str | None = None
+    address: str | None = None
     password: str | None = None
 
 
@@ -370,6 +384,14 @@ class MemberAdminUpdate(BaseModel):
     dob: str | None = None
     member_type: str | None = None
     status: str | None = None
+    door_no: str | None = None
+    village: str | None = None
+    city: str | None = None
+    district: str | None = None
+    state: str | None = None
+    country: str | None = None
+    pincode: str | None = None
+    address: str | None = None
 
 
 # ==============================================================================
@@ -418,6 +440,54 @@ class AdminInvitationGenerate(BaseModel):
     """Payload to generate a new cryptographic administrator invitation token."""
     role: str = "Admin"
     admin_id: int | None = None
+
+
+# ==============================================================================
+# 13B. ADMIN USER MANAGEMENT SCHEMAS
+# Linked Views: Admin Portal -> Admins Tab (List, Create, Update, Status)
+# ==============================================================================
+
+class AdminCreate(BaseModel):
+    """Payload when a Super Admin creates a new administrator."""
+    first_name: str
+    last_name: str | None = None
+    gender: str = "M"
+    phone: str
+    email: str
+    role: str = "Admin"
+    status: str = "active"
+    state: str | None = None
+    district: str | None = None
+    city: str | None = None
+    village: str | None = None
+    country: str | None = "India"
+    pincode: str | None = None
+    address: str | None = None
+    password: str | None = "Admin@123"
+
+
+class AdminUpdate(BaseModel):
+    """Payload when a Super Admin updates an existing administrator."""
+    first_name: str | None = None
+    last_name: str | None = None
+    gender: str | None = None
+    phone: str | None = None
+    email: str | None = None
+    role: str | None = None
+    status: str | None = None
+    state: str | None = None
+    district: str | None = None
+    city: str | None = None
+    village: str | None = None
+    country: str | None = None
+    pincode: str | None = None
+    address: str | None = None
+    password: str | None = None
+
+
+class AdminStatusUpdate(BaseModel):
+    """Payload for updating an administrator's active/inactive status."""
+    status: str
 
 
 # ==============================================================================

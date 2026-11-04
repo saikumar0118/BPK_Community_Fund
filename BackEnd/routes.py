@@ -61,6 +61,7 @@ from schemas import (
     MemberPasswordChange, MemberPhoneOtpSend, MemberPhoneOtpVerify,
     MemberEmailOtpSend, MemberEmailOtpVerify,
     AdminInvitationGenerate,
+    AdminCreate, AdminUpdate, AdminStatusUpdate,
     MemberDisableAccount, MemberDeleteOtpSend, MemberDeleteConfirm, MemberSelfRestore
 )
 
@@ -269,6 +270,8 @@ def register_member(
         district=member_data.district,
         city=member_data.city,
         village=member_data.village,
+        country=member_data.country or "India",
+        pincode=member_data.pincode,
         address=member_data.address,
         password_hash=hashed_password,
         status="active"
@@ -474,6 +477,8 @@ def register_admin(
         district=admin_data.district,
         city=admin_data.city,
         village=admin_data.village,
+        country=admin_data.country or "India",
+        pincode=admin_data.pincode,
         address=admin_data.address,
         password_hash=hashed_password,
         role=assigned_role,
@@ -788,9 +793,19 @@ def verify_and_change_password(
 # SECTION 5: ADMIN INVITATION CODES MANAGEMENT
 # Linked Frontend: Admin Portal -> Settings Tab & HomeLogRegisPass Admin Register
 # Endpoints:
-#   - POST /api/admin-invitations/generate : Generate 10-char cryptographic invite code
-#   - POST /api/admin-invitations/verify   : Check code validity, role, and expiry
+#   - GET  /api/admin-invitations/bootstrap-status : Check if initial Super Admin setup is required
+#   - POST /api/admin-invitations/generate         : Generate 10-char cryptographic invite code
+#   - POST /api/admin-invitations/verify           : Check code validity, role, and expiry
 # ==============================================================================
+
+@router.get("/admin-invitations/bootstrap-status")
+def get_admin_bootstrap_status(db: Session = Depends(get_db)):
+    admin_count = db.query(Admin).count()
+    return {
+        "needs_bootstrap": admin_count == 0,
+        "admin_count": admin_count
+    }
+
 
 @router.post("/admin-invitations/generate")
 def generate_admin_invitation(
@@ -808,22 +823,30 @@ def generate_admin_invitation(
         if data.admin_id:
             requester_id = data.admin_id
 
-    # Verify requester has Super Admin permission
-    # Verify requester has Super Admin permission
-    requester_role = None
-    requester_admin = None
-    if requester_id:
-        requester_admin = db.query(Admin).filter(Admin.id == requester_id).first()
-        if requester_admin and requester_admin.role:
-            requester_role = requester_admin.role
-    if not requester_role and x_admin_role:
-        requester_role = x_admin_role
+    # Security Check: Verify requester has verified Super Admin permission
+    admin_count = db.query(Admin).count()
 
-    if requester_role != "Super Admin":
-        raise HTTPException(
-            status_code=403,
-            detail=f"Permission Denied: Only Super Admin can generate invitation codes. Your role is '{requester_role}'."
-        )
+    # Case A: Initial setup (0 admins exist) -> Allow generating the 1st Super Admin code
+    if admin_count == 0:
+        requester_role = "Super Admin"
+        target_role = "Super Admin"
+        requester_admin = None
+    else:
+        # Case B: Database is initialized -> STRICTLY require an authenticated Super Admin from database
+        requester_admin = None
+        if requester_id:
+            requester_admin = db.query(Admin).filter(
+                Admin.id == requester_id,
+                Admin.status == "active"
+            ).first()
+
+        if not requester_admin or requester_admin.role != "Super Admin":
+            raise HTTPException(
+                status_code=403,
+                detail="Security Violation: Only an active, authenticated Super Admin can generate invitation codes."
+            )
+
+        requester_role = requester_admin.role
 
     # Validate target role
     valid_roles = ["Super Admin", "Admin", "General Admin"]
@@ -1545,6 +1568,9 @@ def get_all_members(
             "city": m.city or "",
             "district": m.district or "",
             "state": m.state or "",
+            "village": m.village or "",
+            "country": m.country or "India",
+            "pincode": m.pincode or "",
             "address": m.address or "",
             "status": "Active" if m.status == "active" else "Inactive",
             "verified": True,
@@ -1577,6 +1603,8 @@ def get_member_profile(
         "district": member.district or "",
         "city": member.city or "",
         "village": member.village or "",
+        "country": member.country or "India",
+        "pincode": member.pincode or "",
         "address": member.address or "",
         "status": member.status
     }
@@ -1602,6 +1630,8 @@ def update_member_profile(
     if data.district is not None: member.district = data.district
     if data.city is not None: member.city = data.city
     if data.village is not None: member.village = data.village
+    if data.country is not None: member.country = data.country
+    if data.pincode is not None: member.pincode = data.pincode
     if data.address is not None: member.address = data.address
 
     db.commit()
@@ -2797,6 +2827,15 @@ def admin_create_member(
         gender=gender_val,
         phone=clean_phone,
         email=clean_email,
+        dob=data.dob,
+        door_no=data.door_no,
+        village=data.village,
+        city=data.city,
+        district=data.district,
+        state=data.state,
+        country=data.country or "India",
+        pincode=data.pincode,
+        address=data.address,
         password_hash=hashed,
         status="active" if (data.status or "").lower() == "active" else "inactive"
     )
@@ -2871,6 +2910,15 @@ def admin_update_member(
     if data.last_name is not None: m.last_name = data.last_name.strip()
     if data.gender is not None:
         m.gender = "M" if data.gender.upper().startswith("M") else ("F" if data.gender.upper().startswith("F") else "N")
+    if data.dob is not None: m.dob = data.dob
+    if data.door_no is not None: m.door_no = data.door_no
+    if data.village is not None: m.village = data.village
+    if data.city is not None: m.city = data.city
+    if data.district is not None: m.district = data.district
+    if data.state is not None: m.state = data.state
+    if data.country is not None: m.country = data.country
+    if data.pincode is not None: m.pincode = data.pincode
+    if data.address is not None: m.address = data.address
     if data.status is not None: m.status = data.status.lower()
 
     changed_items = []
@@ -3368,4 +3416,301 @@ def update_donation_settings(
 
     return current
 
-
+
+# ==============================================================================
+# SECTION 23: ADMINISTRATOR MANAGEMENT PIPELINE (SUPER ADMIN ONLY)
+# Linked Frontend: Admin Portal -> Admins Tab (Monitor, Add, Edit, Toggle, Delete)
+# Endpoints:
+#   - GET    /api/admin/admins                   : List all administrators
+#   - POST   /api/admin/admins                   : Manually create new administrator
+#   - PUT    /api/admin/admins/{admin_id}        : Update administrator details (Super Admin protected)
+#   - PUT    /api/admin/admins/{admin_id}/status : Toggle administrator active status (Super Admin protected)
+#   - DELETE /api/admin/admins/{admin_id}        : Delete administrator account (Super Admin protected)
+# ==============================================================================
+
+@router.get("/admin/admins")
+def get_all_administrators(
+    x_admin_role: str | None = Header(None, alias="X-Admin-Role"),
+    x_admin_id: int | None = Header(None, alias="X-Admin-Id"),
+    db: Session = Depends(get_db)
+):
+    check_admin_permission("Super Admin", x_admin_role, x_admin_id, db)
+    admins = db.query(Admin).order_by(Admin.id).all()
+
+    return [
+        {
+            "id": f"PBK-A{str(a.id).zfill(3)}",
+            "db_id": a.id,
+            "name": f"{a.first_name} {a.last_name or ''}".strip(),
+            "firstName": a.first_name,
+            "lastName": a.last_name or "",
+            "gender": "Male" if a.gender == "M" else ("Female" if a.gender == "F" else "Other"),
+            "phone": f"+91 {a.phone}" if a.phone and not a.phone.startswith("+91") else (a.phone or "—"),
+            "rawPhone": a.phone or "",
+            "email": a.email or "—",
+            "role": a.role or "Admin",
+            "status": "Active" if a.status == "active" else "Inactive",
+            "state": a.state or "",
+            "district": a.district or "",
+            "city": a.city or "",
+            "village": a.village or "",
+            "country": a.country or "India",
+            "pincode": a.pincode or "",
+            "address": a.address or "",
+            "joinDate": a.created_at.strftime("%d %b %Y") if a.created_at else "2026",
+            "is_super_admin": (a.role == "Super Admin")
+        }
+        for a in admins
+    ]
+
+
+@router.post("/admin/admins")
+def create_administrator(
+    data: AdminCreate,
+    x_admin_role: str | None = Header(None, alias="X-Admin-Role"),
+    x_admin_id: int | None = Header(None, alias="X-Admin-Id"),
+    db: Session = Depends(get_db)
+):
+    check_admin_permission("Super Admin", x_admin_role, x_admin_id, db)
+
+    clean_phone = normalize_phone_number(data.phone)
+    if not clean_phone or len(clean_phone) != 10:
+        raise HTTPException(
+            status_code=400,
+            detail="Please provide a valid 10-digit mobile number."
+        )
+
+    # Unique phone check
+    existing_phone = db.query(Admin).filter(
+        Admin.phone.in_(get_phone_variants(data.phone))
+    ).first()
+    if existing_phone:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Phone number '{clean_phone}' is already registered to administrator '{existing_phone.first_name} {existing_phone.last_name or ''}'."
+        )
+
+    # Unique email check
+    clean_email = data.email.strip().lower()
+    existing_email = db.query(Admin).filter(func.lower(Admin.email) == clean_email).first()
+    if existing_email:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Email address '{clean_email}' is already registered to administrator '{existing_email.first_name} {existing_email.last_name or ''}'."
+        )
+
+    initial_password = (data.password.strip() if data.password and data.password.strip() else "Admin@123")
+    hashed = bcrypt.hashpw(initial_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+    gender_val = "M" if data.gender.upper().startswith("M") else ("F" if data.gender.upper().startswith("F") else "N")
+
+    assigned_role = data.role.strip() if data.role else "Admin"
+    if assigned_role not in ["Super Admin", "Admin", "General Admin"]:
+        assigned_role = "Admin"
+
+    new_admin = Admin(
+        first_name=data.first_name.strip(),
+        last_name=(data.last_name or "").strip(),
+        gender=gender_val,
+        phone=clean_phone,
+        email=clean_email,
+        role=assigned_role,
+        status="active" if (data.status or "").lower() == "active" else "inactive",
+        state=data.state,
+        district=data.district,
+        city=data.city,
+        village=data.village,
+        country=data.country or "India",
+        pincode=data.pincode,
+        address=data.address,
+        password_hash=hashed
+    )
+
+    db.add(new_admin)
+    db.commit()
+    db.refresh(new_admin)
+
+    # Log to ActivityLog
+    admin_actor_id = int(x_admin_id) if x_admin_id and str(x_admin_id).isdigit() else 1
+    log = ActivityLog(
+        user_type="Admin",
+        user_id=admin_actor_id,
+        action="Admin Created",
+        description=f"Super Admin created new administrator PBK-A{new_admin.id:03d} ({new_admin.first_name} {new_admin.last_name or ''}) with role '{new_admin.role}'"
+    )
+    db.add(log)
+    db.commit()
+
+    return {
+        "message": "Administrator created successfully",
+        "id": new_admin.id,
+        "admin_code": f"PBK-A{str(new_admin.id).zfill(3)}",
+        "role": new_admin.role,
+        "default_password": initial_password
+    }
+
+
+@router.put("/admin/admins/{admin_id}")
+def update_administrator(
+    admin_id: int,
+    data: AdminUpdate,
+    x_admin_role: str | None = Header(None, alias="X-Admin-Role"),
+    x_admin_id: int | None = Header(None, alias="X-Admin-Id"),
+    db: Session = Depends(get_db)
+):
+    check_admin_permission("Super Admin", x_admin_role, x_admin_id, db)
+
+    adm = db.query(Admin).filter(Admin.id == admin_id).first()
+    if not adm:
+        raise HTTPException(status_code=404, detail="Administrator not found")
+
+    # RULE: Super Admin cannot edit a Super Admin account!
+    if adm.role == "Super Admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Protected Account: Super Admin accounts cannot be edited or modified."
+        )
+
+    if data.phone is not None:
+        clean_p = normalize_phone_number(data.phone)
+        if len(clean_p) != 10:
+            raise HTTPException(status_code=400, detail="Please provide a valid 10-digit phone number.")
+        other_phone = db.query(Admin).filter(
+            Admin.id != admin_id,
+            Admin.phone.in_(get_phone_variants(data.phone))
+        ).first()
+        if other_phone:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Phone number '{clean_p}' is already registered to administrator '{other_phone.first_name} {other_phone.last_name or ''}'."
+            )
+        adm.phone = clean_p
+
+    if data.email is not None:
+        clean_e = data.email.strip().lower()
+        other_email = db.query(Admin).filter(
+            Admin.id != admin_id,
+            func.lower(Admin.email) == clean_e
+        ).first()
+        if other_email:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Email address '{clean_e}' is already registered to administrator '{other_email.first_name} {other_email.last_name or ''}'."
+            )
+        adm.email = clean_e
+
+    if data.first_name is not None: adm.first_name = data.first_name.strip()
+    if data.last_name is not None: adm.last_name = data.last_name.strip()
+    if data.gender is not None:
+        adm.gender = "M" if data.gender.upper().startswith("M") else ("F" if data.gender.upper().startswith("F") else "N")
+    if data.role is not None and data.role in ["Admin", "General Admin"]:
+        adm.role = data.role.strip()
+    if data.status is not None:
+        adm.status = "active" if data.status.lower() == "active" else "inactive"
+    if data.state is not None: adm.state = data.state
+    if data.district is not None: adm.district = data.district
+    if data.city is not None: adm.city = data.city
+    if data.village is not None: adm.village = data.village
+    if data.country is not None: adm.country = data.country
+    if data.pincode is not None: adm.pincode = data.pincode
+    if data.address is not None: adm.address = data.address
+
+    if data.password is not None and data.password.strip():
+        adm.password_hash = bcrypt.hashpw(data.password.strip().encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+    admin_actor_id = int(x_admin_id) if x_admin_id and str(x_admin_id).isdigit() else 1
+    log = ActivityLog(
+        user_type="Admin",
+        user_id=admin_actor_id,
+        action="Admin Updated",
+        description=f"Super Admin updated administrator PBK-A{adm.id:03d} ({adm.first_name} {adm.last_name or ''}) - Role: {adm.role}"
+    )
+    db.add(log)
+    db.commit()
+
+    return {"message": "Administrator profile updated successfully"}
+
+
+@router.put("/admin/admins/{admin_id}/status")
+def toggle_administrator_status(
+    admin_id: int,
+    status: str | None = None,
+    payload: dict | None = None,
+    x_admin_role: str | None = Header(None, alias="X-Admin-Role"),
+    x_admin_id: int | None = Header(None, alias="X-Admin-Id"),
+    db: Session = Depends(get_db)
+):
+    check_admin_permission("Super Admin", x_admin_role, x_admin_id, db)
+
+    adm = db.query(Admin).filter(Admin.id == admin_id).first()
+    if not adm:
+        raise HTTPException(status_code=404, detail="Administrator not found")
+
+    # RULE: Super Admin cannot edit a Super Admin account!
+    if adm.role == "Super Admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Protected Account: Super Admin account status cannot be modified or deactivated."
+        )
+
+    target_status = (status or (payload.get("status") if payload else "")).strip().lower()
+    if target_status not in ["active", "inactive"]:
+        raise HTTPException(status_code=400, detail="Status must be 'active' or 'inactive'")
+
+    adm.status = target_status
+
+    admin_actor_id = int(x_admin_id) if x_admin_id and str(x_admin_id).isdigit() else 1
+    log = ActivityLog(
+        user_type="Admin",
+        user_id=admin_actor_id,
+        action="Admin Status Changed",
+        description=f"Super Admin changed administrator PBK-A{adm.id:03d} ({adm.first_name} {adm.last_name or ''}) status to {target_status.capitalize()}"
+    )
+    db.add(log)
+    db.commit()
+
+    return {
+        "message": f"Administrator status updated to {target_status.capitalize()}",
+        "id": adm.id,
+        "status": adm.status
+    }
+
+
+@router.delete("/admin/admins/{admin_id}")
+def delete_administrator(
+    admin_id: int,
+    x_admin_role: str | None = Header(None, alias="X-Admin-Role"),
+    x_admin_id: int | None = Header(None, alias="X-Admin-Id"),
+    db: Session = Depends(get_db)
+):
+    check_admin_permission("Super Admin", x_admin_role, x_admin_id, db)
+
+    adm = db.query(Admin).filter(Admin.id == admin_id).first()
+    if not adm:
+        raise HTTPException(status_code=404, detail="Administrator not found")
+
+    # RULE: Super Admin cannot delete a Super Admin account!
+    if adm.role == "Super Admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Protected Account: Super Admin accounts cannot be deleted."
+        )
+
+    admin_name = f"{adm.first_name} {adm.last_name or ''}".strip()
+    admin_code = f"PBK-A{adm.id:03d}"
+
+    admin_actor_id = int(x_admin_id) if x_admin_id and str(x_admin_id).isdigit() else 1
+    log = ActivityLog(
+        user_type="Admin",
+        user_id=admin_actor_id,
+        action="Admin Deleted",
+        description=f"Super Admin deleted administrator {admin_code} ({admin_name})"
+    )
+    db.add(log)
+
+    db.delete(adm)
+    db.commit()
+
+    return {"message": f"Administrator {admin_code} deleted successfully"}
+
+
+

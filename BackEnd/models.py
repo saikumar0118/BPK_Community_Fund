@@ -59,6 +59,8 @@ class Member(Base):
     district = Column(String(100))
     city = Column(String(100))
     village = Column(String(100))
+    country = Column(String(100), default="India")
+    pincode = Column(String(20))
     address = Column(Text)
 
     # Authentication & Security
@@ -101,6 +103,8 @@ class Admin(Base):
     district = Column(String(100))
     city = Column(String(100))
     village = Column(String(100))
+    country = Column(String(100), default="India")
+    pincode = Column(String(20))
     address = Column(Text)
 
     # Security & Role
