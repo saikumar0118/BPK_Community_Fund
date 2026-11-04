@@ -185,25 +185,31 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 ```
 *Allows Running Virtual Environments Without Permission Errors*
 
-#### 2. Navigate to BackEnd:
+#### 2. check your active settings:
+```powershell
+Get-ExecutionPolicy -List
+```
+*You should see an output like this, confirming CurrentUser is now RemoteSigned:*
+
+#### 3. Navigate to BackEnd:
 ```powershell
 cd C:\Users\sai\Documents\BPK_Community_Fund\BackEnd
 ```
 
-#### 3. Create the Virtual Environment:
+#### 4. Create the Virtual Environment:
 ```powershell
 python -m venv .venv
 ```
 *Creates an isolated `venv` folder.*
 
-#### 4. Activate the Environment:
+#### 5. Activate the Environment:
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\.venv\Scripts\Activate.ps1
 ```
 > *(You will see `(venv)` appear on the left side of your terminal line).*
 
-#### 5. Install All Required Dependencies:
+#### 6. Install All Required Dependencies:
 ```powershell
 pip install -r requirements.txt
 ```
