@@ -196,20 +196,25 @@ Get-ExecutionPolicy -List
 cd C:\Users\sai\Documents\BPK_Community_Fund\BackEnd
 ```
 
-#### 4. Create the Virtual Environment:
+#### 4. Delete the old .venv folde:
+```powershell
+Remove-Item -Recurse -Force .venv
+```
+
+#### 5. Create the Virtual Environment:
 ```powershell
 python -m venv .venv
 ```
 *Creates an isolated `venv` folder.*
 
-#### 5. Activate the Environment:
+#### 6. Activate the Environment:
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\.venv\Scripts\Activate.ps1
 ```
 > *(You will see `(venv)` appear on the left side of your terminal line).*
 
-#### 6. Install All Required Dependencies:
+#### 7. Install All Required Dependencies:
 ```powershell
 pip install -r requirements.txt
 ```
